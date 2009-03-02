@@ -72,6 +72,15 @@ include the lookup url in your site's `urls.py`
     (r'^ajax/', include('ajax_select.urls')),
 }}}
 
+or insert it directly (there is only one):
+
+{{{
+    url(r'^ajax_lookup/(?P<channel>[-\w]+)$',
+        'ajax_select.views.ajax_lookup',
+        name = 'ajax_lookup'
+    )
+}}}
+
 for an example model:
 
 {{{
@@ -94,11 +103,11 @@ admin.site.register(ContactMailing,ContactMailingAdmin)
 in `forms.py` for that app:
 
 {{{
-from ajax_select.multi_autocompletefield
+from ajax_select.fields import AutoCompleteSelectMultipleField
 class ContactMailingForm(models.ModelForm):
 
     # specify to use the field and specify the named channel that it uses
-    contacts = MultiAutoCompleteField('contact', required=False)
+    contacts = AutoCompleteSelectMultipleField('contact', required=False)
 }}}
 
 Note that the form can be used outside of the django admin.
@@ -112,21 +121,26 @@ appear on the page.
 
 ===Foreign Key Fields===
 
-Foreign keys use `ModelAutoCompleteField` and use the same lookup channel
+Foreign keys use `AutoCompleteSelectField` and use the same lookup channel
 
 {{{
-from ajax_select.model_autocompletefield
+from ajax_select.fields import AutoCompleteSelectField
 
-contact = ModelAutoCompleteField('contact')
+contact = AutoCompleteSelectField('contact')
 }}}
 
+==customizing==
+
+`select_template` is used to choose a template to render the interface:
+	`autocompleteselect_{channel}.html or autocompleteselect.html`
+
+blocks will be defined later that will allow you to inherit from the main widget template
 
 ==Improvements==
 
   * including of media will be improved to use field/admin's Media but it would be preferable if that can be integrated with django-compress 
   * a factory to generate simple lookup channels
   * a factory to generate a form for an admin class if you don't want to write a form class
-  * use templates for the controls with customizable templates
   * ajax niceness (searching...)
   * integration with (+) add item via popup in django-admin
   * help_text still not showing

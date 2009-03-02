@@ -1,0 +1,47 @@
+<input type="text" name="{{name}}_text" id="{{html_id}}_text" value="{{current_name}}" size="40" />
+<p class="help">Enter text to search.{{help_text}}</p>
+<p id="{{html_id}}_on_deck" class="results_on_deck"></p>
+<input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" />
+<script type="text/javascript">
+$(function(){
+	function formatItem_{{html_id}}(row) {
+		return row[2];
+	}
+	function formatResult_{{html_id}}(row) {
+		return row[1];
+	}
+	$("#{{html_id}}_text").autocomplete('{{lookup_url}}', {
+		width: 320,
+		multiple: true,
+		multipleSeparator: " ",
+		scroll: true,
+		scrollHeight:  300,
+		formatItem: formatItem_{{html_id}},
+		formatResult: formatResult_{{html_id}}
+	});
+	$("#{{html_id}}_text").result(function(event, data, formatted) {
+		id = data[0];
+		if( $("#{{html_id}}").val().indexOf( "|"+id+"|" ) == -1) {
+			if($("#{{html_id}}").val() == '') {
+				$("#{{html_id}}").val('|');
+			}
+			$("#{{html_id}}").val( $("#{{html_id}}").val() + id + "|");
+			addKiller_{{html_id}}(data[1],id);
+			//$("#{{html_id}}_text").val(''); can't clear the input field ?
+		}
+	});
+	function addKiller_{{html_id}}(repr,id) {
+		kill = "<span class='iconic' id='kill_" + id + "'>X</span>	";
+		$( "#{{html_id}}_on_deck" ).append("<div id='{{html_id}}_on_deck_" + id +"'>" + kill + repr + " </div>");
+		$("#kill_"+id).click(function(num) { return function(){kill_{{html_id}}(num)}}(id) );
+	}
+	function kill_{{html_id}}(id) {
+		$("#{{html_id}}").val( $("#{{html_id}}").val().replace( "|" + id + "|", "|" ) );
+		$("#{{html_id}}_on_deck_" + id).remove();
+	}
+	currentRepr = {{current_reprs}};
+	currentRepr.forEach(function(its){
+		addKiller_{{html_id}}(its[0],its[1]);
+	});
+});
+</script>
