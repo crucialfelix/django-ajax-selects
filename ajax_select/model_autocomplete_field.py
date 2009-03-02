@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# http://www.djangosnippets.org/snippets/1097/
+# based on http://www.djangosnippets.org/snippets/1097/
 
 from django import forms
 from django.utils.safestring import mark_safe

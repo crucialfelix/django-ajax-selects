@@ -1,11 +1,8 @@
 
 from django.http import HttpResponse
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-from django.contrib.auth.decorators import user_passes_test
 from ajax_select import get_lookup
 
-@user_passes_test(lambda u: u.is_staff)
 def ajax_lookup(request,channel):
     """ this view supplies results for both foreign keys and many to many fields """
     
