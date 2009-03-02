@@ -1,0 +1,136 @@
+
+=Initial version=
+
+This is working for foreign key fields and many to many fields.
+
+Improvements still to come.
+
+
+==Requirements==
+
+  * Django 1.0 +
+  * jquery 1.26 +
+  * Autocomplete - jQuery plugin 1.0.2 [http://bassistance.de/jquery-plugins/jquery-plugin-autocomplete/]
+  * jquery.autocomplete.css
+
+
+==Usage==
+
+install as a normal django app
+
+{{{
+INSTALLED_APPS = (
+                ...,
+                'ajax_select'
+                )
+}}}
+
+There is a single view for ajax lookups that uses named channels and lookup objects that do the searching and formatting work.
+
+`peoplez/managers.py`
+{{{
+from peoplez.models import Contact
+from django.db.models import Q
+
+class ContactLookup(object):
+
+    def get_query(self,q,request):
+        """ perform the search.  you have access to the request in case you need to check user permissions """
+        return Contact.objects.filter(Q(name__startswith=q) | Q(fname__startswith=q) | Q(lname__startswith=q) | Q(email__icontains=q))
+    
+    def format_item(self,contact):
+        """ simple display of an object """
+        return unicode(contact)
+
+    def format_result(self,contact):
+        """ a more verbose display, used in the search results display.  may contain html and multi-lines """
+        return u"%s %s %s (%s)" % (contact.fname, contact.lname,contact.name,contact.email)
+
+    def get_objects(self,ids):
+        """ given a list of ids, return the objects ordered as you would like them on the admin page """
+        return Contact.objects.filter(pk__in=ids).order_by('name','lname')
+}}}
+
+
+in your `settings.py` define the channels in use on the site:
+
+{{{
+AJAX_LOOKUP_CHANNELS = {
+    'contact' : ('peoplez.managers', 'ContactLookup'),
+    'country' : ('placez.lookups', 'CountryLookup'),
+    'label' : ('music.lookups','LabelLookup'),
+    'release' : ('music.lookups','ReleaseLookup'),
+}
+}}}
+
+this specifies to look for `ContactLookup` in the `peoplez.managers` module
+
+
+include the lookup url in your site's `urls.py`
+
+{{{
+    (r'^ajax/', include('ajax_select.urls')),
+}}}
+
+for an example model:
+
+{{{
+class ContactMailing(AbsMail):
+    """ can mail to contacts """
+    contacts = models.ManyToManyField(Contact,blank=True)
+    ...
+}}}
+
+in the `admin.py` for this app:
+
+{{{
+class ContactMailingAdmin(admin.ModelAdmin):
+    # specify a form
+    form = ContactMailingForm
+
+admin.site.register(ContactMailing,ContactMailingAdmin)
+}}}
+
+in `forms.py` for that app:
+
+{{{
+from ajax_select.multi_autocompletefield
+class ContactMailingForm(models.ModelForm):
+
+    # specify to use the field and specify the named channel that it uses
+    contacts = MultiAutoCompleteField('contact', required=False)
+}}}
+
+Note that the form can be used outside of the django admin.
+
+make sure that
+  * jquery 1.26 +
+  * Autocomplete - jQuery plugin 1.0.2
+  * jquery.autocomplete.css
+
+appear on the page.
+
+===Foreign Key Fields===
+
+Foreign keys use `ModelAutoCompleteField` and use the same lookup channel
+
+{{{
+from ajax_select.model_autocompletefield
+
+contact = ModelAutoCompleteField('contact')
+}}}
+
+
+==Improvements==
+
+  * including of media will be improved to use field/admin's Media but it would be preferable if that can be integrated with django-compress 
+  * a factory to generate simple lookup channels
+  * a factory to generate a form for an admin class if you don't want to write a form class
+  * use templates for the controls with customizable templates
+  * ajax niceness (searching...)
+  * integration with (+) add item via popup in django-admin
+  * help_text still not showing
+  * let channel customize the interface's help text
+  * make css tags work with jquery-ui
+
+
