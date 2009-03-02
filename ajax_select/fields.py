@@ -57,8 +57,17 @@ class AutoCompleteSelectField(forms.fields.CharField):
             *args, **kwargs)
 
     def clean(self, value):
-        return value # id of object
-        # possible error condition if someone else deleted object while you editing
+        if value:
+            lookup = get_lookup(self.channel)
+            objs = lookup.get_objects( [ value] )
+            if len(objs) != 1:
+                # someone else might have deleted it while you were editing
+                # or your channel is faulty
+                # out of the scope of this app to do anything more than tell you it doesn't exist
+                raise forms.ValidationError("The selected item does not exist.")
+            return objs[0]
+        else:
+            return None
 
 
 
