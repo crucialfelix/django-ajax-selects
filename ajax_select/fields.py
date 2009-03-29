@@ -64,9 +64,11 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 # someone else might have deleted it while you were editing
                 # or your channel is faulty
                 # out of the scope of this app to do anything more than tell you it doesn't exist
-                raise forms.ValidationError("The selected item does not exist.")
+                raise forms.ValidationError(u"The selected item does not exist.")
             return objs[0]
         else:
+            if self.required:
+                raise forms.ValidationError(self.error_messages['required'])
             return None
 
 
@@ -145,6 +147,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
+        if not value and self.required:
+            raise forms.ValidationError(self.error_messages['required'])
         return value # a list of IDs from widget value_from_datadict
         # should: check that none of the objects have been deleted by somebody else
 
