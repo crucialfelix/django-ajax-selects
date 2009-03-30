@@ -190,5 +190,6 @@ There is one block 'help' that allows you to inherit from the main widget templa
   * help_text is still not showing
   * let channel customize the interface's help text
   * make css tags work with jquery-ui
+  * make it work within inline many to many fields (when the inlines themselves have lookups)
 
 

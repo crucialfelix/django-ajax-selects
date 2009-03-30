@@ -3,7 +3,7 @@ from django.conf import settings
 
 from django.forms.models import ModelForm
 from django.db.models.fields.related import ForeignKey, ManyToManyField
-
+from django.core.exceptions import ImproperlyConfigured
 
 def make_ajax_form(model,fieldlist,superclass=ModelForm):
     """ this will create a ModelForm subclass inserting
