@@ -6,6 +6,8 @@ from django.core.urlresolvers import reverse
 from ajax_select import get_lookup
 
 
+
+
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
     """  widget to select a model """
 
@@ -80,7 +82,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
     """ widget to select multiple models """
 
     html_id = ''
-    
+
     def __init__(self,
                  channel,
                  help_text='',
@@ -104,9 +106,9 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             current_ids = "|" + "|".join( str(id) for id in value ) + "|" # id|id of current
         else:
             current_ids = "|"
-        
+
         objects = lookup.get_objects(value)
-        
+
         # text repr of currently selected items
         current_repr = []
         current_repr_json = []
@@ -115,7 +117,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             current_repr_json.append( """new Array("%s",%s)""" % (repr,obj.id) )
 
         current_reprs = mark_safe("new Array(%s)" % ",".join(current_repr_json))
-        
+
         vars = dict(name=name,
          html_id=html_id,
          lookup_url=lookup_url,
@@ -150,6 +152,62 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         if not value and self.required:
             raise forms.ValidationError(self.error_messages['required'])
         return value # a list of IDs from widget value_from_datadict
-        # should: check that none of the objects have been deleted by somebody else
+        # should: check that none of the objects have been deleted by somebody else while we were editing
 
+
+class AutoCompleteWidget(forms.TextInput):
+    """
+    Widget to select a search result and enter the result as raw text in the text input field.
+    the user may also simply enter text and ignore any auto complete suggestions.
+    """
+    channel = None
+    help_text = ''
+    html_id = ''
+
+    def __init__(self, channel, *args, **kwargs):
+        self.channel = channel
+        self.help_text = kwargs.pop('help_text', '')
+
+        super(AutoCompleteWidget, self).__init__(*args, **kwargs)
+
+    def render(self, name, value, attrs=None):
+        if attrs is not None:
+            html_id = attrs.get('id', name)
+        else:
+            html_id = name
+
+        self.html_id = html_id
+        value = value or ''
+
+        context = {
+            'current_name': value,
+            'current_id': value,
+            'help_text': self.help_text,
+            'html_id': self.html_id,
+            'lookup_url': reverse('ajax_lookup', args=[self.channel]),
+            'name': name,
+        }
+
+        templates = ('autocomplete_%s.html' % self.channel,
+                     'autocomplete.html')
+        return mark_safe(render_to_string(templates, context))
+
+
+class AutoCompleteField(forms.CharField):
+    """
+    Field uses an AutoCompleteWidget to lookup possible completions using a channel and stores raw text (not a foreign key)
+    """
+    channel = None
+
+    def __init__(self, channel, *args, **kwargs):
+        self.channel = channel
+
+        widget = AutoCompleteWidget(channel,
+                                    help_text=kwargs.get('help_text', ''))
+
+        defaults = {'max_length': 255,
+                    'widget': widget}
+        defaults.update(kwargs)
+
+        super(AutoCompleteField, self).__init__(*args, **defaults)
 

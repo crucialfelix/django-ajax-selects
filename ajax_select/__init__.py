@@ -24,7 +24,9 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm):
             where 'author' is a foreign key field, specifying here to also use the lookup channel 'contact'
 
     """
-    from ajax_select.fields import AutoCompleteSelectMultipleField, AutoCompleteSelectField
+    from ajax_select.fields import AutoCompleteField, \
+                                   AutoCompleteSelectMultipleField, \
+                                   AutoCompleteSelectField
 
     class TheForm(superclass):
         class Meta:
@@ -39,6 +41,8 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm):
             f = AutoCompleteSelectMultipleField(channel,required=not field.blank)
         elif isinstance(field,ForeignKey):
             f = AutoCompleteSelectField(channel,required=not field.blank)
+        else:
+            f = AutoCompleteField(channel, required=not field.blank)
 
         # django internals are very difficult to work with.
         # it requires too much knowledge and is thus breakable

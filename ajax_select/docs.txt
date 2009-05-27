@@ -1,10 +1,18 @@
 
-This allows jquery autocomplete powered editing of ForeignKey and ManyToMany Fields.
+This enables editing of ForeignKey, ManyToMany and simple text fields using the Autocomplete - jQuery plugin.
+
 Ajax selects will work in any normal form as well as in the admin.
 
-A single view services all searches, delegating the searches to named channels.
+User experience:
+
+The user is presented with a text field.  They type a few characters of a name they are looking for, an ajax request is sent to the server, a search channel returns possible results.  Results are displayed as a drop down menu.
+
+
+A single view services all of the ajax search requests, delegating the searches to named channels.
 
 For instance the search channel 'contacts' would search for Contact models.
+
+Simple search channels can be automatically generated, you merely specify the model and the field to search against (see examples below).
 
 Custom search channels can be written when you need to do a more complex search, check the user's permissions, format the results differently or customize the sort order of the results.
 
@@ -14,7 +22,7 @@ Custom search channels can be written when you need to do a more complex search,
   * Django 1.0 +
   * jquery 1.26 +
   * Autocomplete - jQuery plugin 1.0.2 [http://bassistance.de/jquery-plugins/jquery-plugin-autocomplete/]
-  * jquery.autocomplete.css
+  * jquery.autocomplete.css (included with Autocomplete)
 
 
 ==Installation==
@@ -34,6 +42,8 @@ Make sure that these js/css files appear on your page:
   * jquery-1.2.6.js
   * jquery.autocomplete.js
   * jquery.autocomplete.css
+
+There is one css class `.iconic` that is used in the html interface.  Example styling for that is in the iconic.css file.
 
 I like to use django-compress:
 
@@ -81,7 +91,7 @@ AJAX_LOOKUP_CHANNELS = {
 }
 }}}
 
-Custom search channels can be written when you need to do a more complex search, check the user's permissions, format the results differently or customize the sort order of the results.   Search channel objects should implement the 4 methods shown in the following example.
+Custom search channels can be written when you need to do a more complex search, check the user's permissions (which contacts they are allowed to see), format the results differently or customize the sort order of the results.   Search channel objects should implement the 4 methods shown in the following example.
 
 `peoplez/lookups.py`
 {{{
@@ -94,13 +104,13 @@ class ContactLookup(object):
         """ return a query set.  you also have access to request.user if needed """
         return Contact.objects.filter(Q(name__istartswith=q) | Q(fname__istartswith=q) | Q(lname__istartswith=q) | Q(email__icontains=q))
 
-    def format_item(self,contact):
-        """ simple display of an object when it is displayed in the list of selected objects """
-        return unicode(contact)
-
     def format_result(self,contact):
         """ a more verbose display, used in the search results display.  may contain html and multi-lines """
         return u"%s %s %s (%s)" % (contact.fname, contact.lname,contact.name,contact.email)
+
+    def format_item(self,contact):
+        """ simple display of an object when it is displayed in the list of currently selected objects """
+        return unicode(contact)
 
     def get_objects(self,ids):
         """ given a list of ids, return the objects ordered as you would like them on the admin page.
@@ -119,11 +129,12 @@ include the lookup url in your site's `urls.py`
 }}}
 
 
+==Example==
 
 for an example model:
 
 {{{
-class ContactMailing(AbsMail):
+class ContactMailing(models.Model):
     """ can mail to multiple contacts, has one author """
     contacts = models.ManyToManyField(Contact,blank=True)
     author = models.ForeignKey(Contact,blank=False)
@@ -145,7 +156,7 @@ so in this example the `author` field (ManyToMany) uses the 'contact' channel
 and the `contacts` field (ForeignKey) also uses the 'contact' channel
 
 
-If you need to write your own form class:
+If you need to write your own form class then specify that form for the admin as usual:
 
 {{{
 from forms import ContactMailingForm
@@ -189,7 +200,6 @@ There is one block 'help' that allows you to inherit from the main widget templa
   * ajax niceness ("searching...")
   * help_text is still not showing
   * let channel customize the interface's help text
-  * make css tags work with jquery-ui
   * make it work within inline many to many fields (when the inlines themselves have lookups)
 
 

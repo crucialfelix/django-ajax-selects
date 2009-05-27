@@ -1,5 +1,6 @@
+{% load i18n %}
 <input type="text" name="{{name}}_text" id="{{html_id}}_text" value="{{current_name}}" size="40" />
-{% block help %}<p class="help">Enter text to search.{{help_text}}</p>{% endblock %}<input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_id}}" />
+{% block help %}<p class="help">{% trans 'Enter text to search.' %}{{help_text}}</p>{% endblock %}<input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_id}}" />
 <script type="text/javascript">
 $(function(){
 	function formatItem_{{html_id}}(row) {
