@@ -4,16 +4,16 @@
 
 <script type="text/javascript"><!--
     $(function(){
-        function formatItem_{{ html_id|cut:"-" }}(row) {
+        function formatItem_{{ html_id }}(row) {
             return row[2]
         }
-        function formatResult_{{ html_id|cut:"-" }}(row) {
+        function formatResult_{{ html_id }}(row) {
             return row[1]
         }
         $('#{{ html_id }}').autocomplete('{{ lookup_url }}', {
             width: 320,
-            formatItem: formatItem_{{ html_id|cut:"-" }},
-            formatResult: formatResult_{{ html_id|cut:"-" }}
+            formatItem: formatItem_{{ html_id }},
+            formatResult: formatResult_{{ html_id }}
         })
         $('#{{ html_id }}').result(function(event, data, formatted) {
             $('#{{ html_id }}').val(data[1])
