@@ -1,6 +1,6 @@
 /*
 	most of the css that makes it look good is in the jquery.autocomplete.css that comes with the autocomplete plugin.
-	this formats the dropdown of search results.
+	that formats the dropdown of search results.
 
 	one class is used on the html interface itself and that's the X that allows you to remove an item.
 	here is the styling I use.  add this to your main css file and season to taste.

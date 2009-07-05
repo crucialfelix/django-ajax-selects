@@ -1,48 +1,48 @@
 {% load i18n %}
-<input type="text" name="{{name}}_text" id="{{html_id}}_text" value="{{current_name}}" size="40" />
+<input type="text" name="{{name}}_text" id="{{html_id|cut:"-"}}_text" value="{{current_name}}" size="40" />
 {% block help %}<p class="help">{% trans 'Enter text to search.' %}{{help_text}}</p>{% endblock %}
-<p id="{{html_id}}_on_deck" class="results_on_deck"></p>
-<input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" />
+<p id="{{html_id|cut:"-"}}_on_deck" class="results_on_deck"></p>
+<input type="hidden" name="{{name}}" id="{{html_id|cut:"-"}}" value="{{current_ids}}" />
 <script type="text/javascript">
 $(function(){
-	function formatItem_{{html_id}}(row) {
+	function formatItem_{{html_id|cut:"-"}}(row) {
 		return row[2];
 	}
-	function formatResult_{{html_id}}(row) {
+	function formatResult_{{html_id|cut:"-"}}(row) {
 		return row[1];
 	}
-	$("#{{html_id}}_text").autocomplete('{{lookup_url}}', {
+	$("#{{html_id|cut:"-"}}_text").autocomplete('{{lookup_url}}', {
 		width: 320,
 		multiple: true,
 		multipleSeparator: " ",
 		scroll: true,
 		scrollHeight:  300,
-		formatItem: formatItem_{{html_id}},
-		formatResult: formatResult_{{html_id}}
+		formatItem: formatItem_{{html_id|cut:"-"}},
+		formatResult: formatResult_{{html_id|cut:"-"}}
 	});
-	$("#{{html_id}}_text").result(function(event, data, formatted) {
+	$("#{{html_id|cut:"-"}}_text").result(function(event, data, formatted) {
 		id = data[0];
-		if( $("#{{html_id}}").val().indexOf( "|"+id+"|" ) == -1) {
-			if($("#{{html_id}}").val() == '') {
-				$("#{{html_id}}").val('|');
+		if( $("#{{html_id|cut:"-"}}").val().indexOf( "|"+id+"|" ) == -1) {
+			if($("#{{html_id|cut:"-"}}").val() == '') {
+				$("#{{html_id|cut:"-"}}").val('|');
 			}
-			$("#{{html_id}}").val( $("#{{html_id}}").val() + id + "|");
-			addKiller_{{html_id}}(data[1],id);
-			//$("#{{html_id}}_text").val(''); can't clear the input field ?
+			$("#{{html_id|cut:"-"}}").val( $("#{{html_id|cut:"-"}}").val() + id + "|");
+			addKiller_{{html_id|cut:"-"}}(data[1],id);
+			//$("#{{html_id|cut:"-"}}_text").val(''); can't clear the input field ?
 		}
 	});
-	function addKiller_{{html_id}}(repr,id) {
+	function addKiller_{{html_id|cut:"-"}}(repr,id) {
 		kill = "<span class='iconic' id='kill_" + id + "'>X</span>	";
-		$( "#{{html_id}}_on_deck" ).append("<div id='{{html_id}}_on_deck_" + id +"'>" + kill + repr + " </div>");
-		$("#kill_"+id).click(function(num) { return function(){kill_{{html_id}}(num)}}(id) );
+		$( "#{{html_id|cut:"-"}}_on_deck" ).append("<div id='{{html_id|cut:"-"}}_on_deck_" + id +"'>" + kill + repr + " </div>");
+		$("#kill_"+id).click(function(num) { return function(){kill_{{html_id|cut:"-"}}(num)}}(id) );
 	}
-	function kill_{{html_id}}(id) {
-		$("#{{html_id}}").val( $("#{{html_id}}").val().replace( "|" + id + "|", "|" ) );
-		$("#{{html_id}}_on_deck_" + id).remove();
+	function kill_{{html_id|cut:"-"}}(id) {
+		$("#{{html_id|cut:"-"}}").val( $("#{{html_id|cut:"-"}}").val().replace( "|" + id + "|", "|" ) );
+		$("#{{html_id|cut:"-"}}_on_deck_" + id).remove();
 	}
 	currentRepr = {{current_reprs}};
 	currentRepr.forEach(function(its){
-		addKiller_{{html_id}}(its[0],its[1]);
+		addKiller_{{html_id|cut:"-"}}(its[0],its[1]);
 	});
 });
 </script>
