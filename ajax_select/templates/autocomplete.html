@@ -1,5 +1,5 @@
 {% load i18n %}
-<input type="text" name="{{ name }}" id="{{ html_id|cut:"-" }}" value="{{ current_name }}" size="40" />
+<input type="text" name="{{ name }}" id="{{ html_id }}" value="{{ current_name }}" size="40" />
 {% block help_text %}<p class="help">{% if help_text %}{{ help_text }}{% else %}{% trans 'Enter text to search.' %}{% endif %}</p>{% endblock %}
 
 <script type="text/javascript"><!--
@@ -10,13 +10,13 @@
         function formatResult_{{ html_id|cut:"-" }}(row) {
             return row[1]
         }
-        $('#{{ html_id|cut:"-" }}').autocomplete('{{ lookup_url }}', {
+        $('#{{ html_id }}').autocomplete('{{ lookup_url }}', {
             width: 320,
             formatItem: formatItem_{{ html_id|cut:"-" }},
             formatResult: formatResult_{{ html_id|cut:"-" }}
         })
-        $('#{{ html_id|cut:"-" }}').result(function(event, data, formatted) {
-            $('#{{ html_id|cut:"-" }}').val(data[1])
+        $('#{{ html_id }}').result(function(event, data, formatted) {
+            $('#{{ html_id }}').val(data[1])
         })
     })
 --></script>
