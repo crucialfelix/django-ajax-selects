@@ -13,7 +13,8 @@
         $('#{{ html_id }}').autocomplete('{{ lookup_url }}', {
             width: 320,
             formatItem: formatItem_{{ html_id|cut:"-" }},
-            formatResult: formatResult_{{ html_id|cut:"-" }}
+            formatResult: formatResult_{{ html_id|cut:"-" }},
+			dataType: "text"
         })
         $('#{{ html_id }}').result(function(event, data, formatted) {
             $('#{{ html_id }}').val(data[1])

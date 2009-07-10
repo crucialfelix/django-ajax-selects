@@ -5,8 +5,10 @@ from ajax_select import get_lookup
 
 def ajax_lookup(request,channel):
     """ this view supplies results for both foreign keys and many to many fields """
-    
-    query = request.GET.get('q', None)
+
+    # it should come in as GET unless global $.ajaxSetup({type:"POST"}) has been set
+    # in which case we'll support POST
+    query = request.GET['q'] if request.method == "GET" else request.POST['q']
     
     lookup_channel = get_lookup(channel)
     

@@ -18,7 +18,8 @@ $(function(){
 		scroll: true,
 		scrollHeight:  300,
 		formatItem: formatItem_{{html_id|cut:"-"}},
-		formatResult: formatResult_{{html_id|cut:"-"}}
+		formatResult: formatResult_{{html_id|cut:"-"}},
+		dataType: "text"
 	});
 	$("#{{html_id}}_text").result(function(event, data, formatted) {
 		id = data[0];
