@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from ajax_select import get_lookup
-
+from django.forms.util import flatatt
 
 
 
@@ -34,7 +34,15 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         else:
             current_name = ''
         lookup_url = reverse('ajax_lookup',kwargs={'channel':self.channel})
-        vars = dict(name=name, html_id=html_id,lookup_url=lookup_url,current_id=value,current_name=current_name,help_text=self.help_text)
+        vars = dict(
+                name=name,
+                html_id=html_id,
+                lookup_url=lookup_url,
+                current_id=value,
+                current_name=current_name,
+                help_text=self.help_text,
+                extra_attrs=mark_safe(flatatt(self.attrs))
+                )        
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),vars))
 
     def value_from_datadict(self, data, files, name):
@@ -53,8 +61,11 @@ class AutoCompleteSelectField(forms.fields.CharField):
 
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
+        widget = kwargs.get("widget", False)
+        if not widget or not isinstance(widget, AutoCompleteSelectWidget):
+            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=kwargs.get('help_text',''))
+
         super(AutoCompleteSelectField, self).__init__(
-            widget = AutoCompleteSelectWidget(channel=channel,help_text=kwargs.get('help_text','')),
             max_length=255,
             *args, **kwargs)
 
