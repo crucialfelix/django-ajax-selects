@@ -11,8 +11,8 @@ $(function(){
 	}
 	$("#{{html_id}}_text").autocomplete('{{lookup_url}}', {
 		width: 320,
-		formatItem: formatItem_{{html_id}},
-		formatResult: formatResult_{{html_id}},
+		formatItem: formatItem_{{html_id|cut:"-"}},
+		formatResult: formatResult_{{html_id|cut:"-"}},
 		dataType: "text"
 	});
 	$("#{{html_id}}_text").result(function(event, data, formatted) {
