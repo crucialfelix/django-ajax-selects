@@ -43,7 +43,7 @@ $(function(){
 	}
 	currentRepr = {{current_reprs}};
 	currentRepr.forEach(function(its){
-		addKiller_{{html_id}}(its[0],its[1]);
+		addKiller_{{html_id|cut:"-"}}(its[0],its[1]);
 	});
 });
 </script>
