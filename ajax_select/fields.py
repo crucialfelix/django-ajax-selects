@@ -25,7 +25,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
     def render(self, name, value, attrs=None):
         if value == None:
             value = ''
-        html_id = attrs.get('id', name)
+        html_id = attrs.get('pk', name)
         self.html_id = html_id
 
         lookup = get_lookup(self.channel)
@@ -105,7 +105,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
     def render(self, name, value, attrs=None):
         if value == None:
             value = []
-        html_id = attrs.get('id', name)
+        html_id = attrs.get('pk', name)
         self.html_id = html_id
 
         lookup = get_lookup(self.channel)
@@ -114,7 +114,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         current_name = ""# the text field starts empty
         # value = [3002L, 1194L]
         if value:
-            current_ids = "|" + "|".join( str(id) for id in value ) + "|" # id|id of current
+            current_ids = "|" + "|".join( str(pk) for pk in value ) + "|" # pk|pk of current
         else:
             current_ids = "|"
 
@@ -125,7 +125,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         current_repr_json = []
         for obj in objects:
             repr = lookup.format_item(obj)
-            current_repr_json.append( """new Array("%s",%s)""" % (repr,obj.id) )
+            current_repr_json.append( """new Array("%s",%s)""" % (repr,obj.pk) )
 
         current_reprs = mark_safe("new Array(%s)" % ",".join(current_repr_json))
 
@@ -183,7 +183,7 @@ class AutoCompleteWidget(forms.TextInput):
 
     def render(self, name, value, attrs=None):
         if attrs is not None:
-            html_id = attrs.get('id', name)
+            html_id = attrs.get('pk', name)
         else:
             html_id = name
 
