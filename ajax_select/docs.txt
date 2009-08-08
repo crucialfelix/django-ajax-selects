@@ -10,7 +10,7 @@ The user is presented with a text field.  They type a few characters of a name t
 
 A single view services all of the ajax search requests, delegating the searches to named channels.
 
-For instance the search channel 'contacts' would search for Contact models.
+For instance the search channel 'contacts' would search for Contact models.  This channel can be used for both AutoCompleteSelect ( foreign key, single item ) and AutoCompleteSelectMultiple (many to many) fields. 
 
 Simple search channels can be automatically generated, you merely specify the model and the field to search against (see examples below).
 
@@ -152,8 +152,8 @@ class ContactMailingAdmin(Admin):
 }}}
 
 `make_ajax_form( model, fieldlist )` is a factory function which will insert the ajax powered form field inputs 
-so in this example the `author` field (ManyToMany) uses the 'contact' channel
-and the `contacts` field (ForeignKey) also uses the 'contact' channel
+so in this example the `author` field (ForeignKey) uses the 'contact' channel
+and the `contacts` field (ManyToMany) also uses the 'contact' channel
 
 
 If you need to write your own form class then specify that form for the admin as usual:
@@ -191,6 +191,23 @@ django's `select_template` is used to choose the template to render the widget's
 So by writing a template `autocompleteselect_{channel}.html` you can customize the interface just for that channel.
 
 There is one block 'help' that allows you to inherit from the main widget template.
+
+=On item removed=
+
+For AutoCompleteSelectMultiple when you remove an item (by clicking the X) a "killed" trigger/signal/dispatch/handler is fired on the P element that holds the selected ("on-deck") items.
+
+{{{
+$("#{{html_id}}_on_deck").trigger("killed"); // run killed() on {{html_id}}_on_deck if it is defined
+}}}
+
+this is the element that receives the trigger:
+{{{
+<p id="{{html_id}}_on_deck">
+}}}
+
+see:
+http://docs.jquery.com/Events/trigger
+
 
 
 ==Planned Improvements==
