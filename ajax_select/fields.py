@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 from ajax_select import get_lookup
 from django.forms.util import flatatt
-
+from django.template.defaultfilters import escapejs
 
 
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
@@ -125,7 +125,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         current_repr_json = []
         for obj in objects:
             repr = lookup.format_item(obj)
-            current_repr_json.append( """new Array("%s",%s)""" % (repr,obj.pk) )
+            current_repr_json.append( """new Array("%s",%s)""" % (escapejs(repr),obj.pk) )
 
         current_reprs = mark_safe("new Array(%s)" % ",".join(current_repr_json))
 
