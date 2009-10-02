@@ -3,7 +3,7 @@
 {% block help_text %}<p class="help">{% if help_text %}{{ help_text }}{% else %}{% trans 'Enter text to search.' %}{% endif %}</p>{% endblock %}
 
 <script type="text/javascript">
-(function($){
+jQuery(document).ready(function($){
 	function formatItem_{{ html_id|cut:"-" }}(row) {
 		return row[2]
 	}
@@ -19,5 +19,5 @@
 	$('#{{ html_id }}').result(function(event, data, formatted) {
 		$('#{{ html_id }}').val(data[1])
 	})
-})(jQuery);
+});
 </script>

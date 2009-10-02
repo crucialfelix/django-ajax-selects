@@ -4,7 +4,7 @@
 <p id="{{html_id}}_on_deck" class="results_on_deck"></p>
 <input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" />
 <script type="text/javascript">
-(function($){
+jQuery(document).ready(function($){
 	function formatItem_{{html_id|cut:"-"}}(row) {
 		return row[2];
 	}
@@ -48,5 +48,5 @@
 	currentRepr.forEach(function(its){
 		addKiller_{{html_id|cut:"-"}}(its[0],its[1]);
 	});
-})(jQuery);
+});
 </script>
