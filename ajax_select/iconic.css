@@ -17,6 +17,7 @@
 .iconic:hover {
 	text-decoration: none;
 	color: #fff;
-	background: #000
+	background: #000;
+	cursor: pointer;
 }
 
