@@ -39,7 +39,7 @@ INSTALLED_APPS = (
 
 Make sure that these js/css files appear on your page:
 
-  * jquery-1.2.6.js
+  * jquery-1.2.6.js or greater
   * jquery.autocomplete.js
   * jquery.autocomplete.css
 
@@ -91,7 +91,7 @@ AJAX_LOOKUP_CHANNELS = {
 }
 }}}
 
-Custom search channels can be written when you need to do a more complex search, check the user's permissions (which contacts they are allowed to see), format the results differently or customize the sort order of the results.   Search channel objects should implement the 4 methods shown in the following example.
+Custom search channels can be written when you need to do a more complex search, check the user's permissions (if the lookup URL should even be accessible to them, and then to perhaps filter which items they are allowed to see), format the results differently or customize the sort order of the results.   Search channel objects should implement the 4 methods shown in the following example.
 
 `peoplez/lookups.py`
 {{{
@@ -120,6 +120,22 @@ class ContactLookup(object):
 }}}
 
 
+Example showing security:
+{{{
+from django.http import HttpResponseForbidden
+
+class ContactLookup(object):
+
+    def get_query(self,q,request):
+        """ return a query set.  you also have access to request.user if needed """
+          if not request.user.is_authenticated():
+             raise HttpResponseForbidden() # raising an exception, django will catch this and return an Http 403
+        # filtering only this user's contacts
+        return Contact.objects.filter(Q(name__istartswith=q)).filter(created_by=request.user)
+
+    ...
+
+}}}
 
 
 include the lookup url in your site's `urls.py`
