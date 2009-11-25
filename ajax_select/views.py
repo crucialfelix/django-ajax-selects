@@ -8,7 +8,15 @@ def ajax_lookup(request,channel):
 
     # it should come in as GET unless global $.ajaxSetup({type:"POST"}) has been set
     # in which case we'll support POST
-    query = request.GET['q'] if request.method == "GET" else request.POST['q']
+    if request.method == "GET":
+        # we could also insist on an ajax request
+        if 'q' not in request.GET:
+            return HttpResponse('')
+        query = request.GET['q']
+    else:
+        if 'q' not in request.POST:
+            return HttpResponse('') # suspicious
+        query = request.POST['q']
     
     lookup_channel = get_lookup(channel)
     
