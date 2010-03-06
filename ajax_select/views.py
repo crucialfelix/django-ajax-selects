@@ -1,7 +1,9 @@
 
-from django.http import HttpResponse
-from django.conf import settings
 from ajax_select import get_lookup
+from django.contrib.admin import site
+from django.db import models
+from django.http import HttpResponse
+
 
 def ajax_lookup(request,channel):
     """ this view supplies results for both foreign keys and many to many fields """
@@ -27,7 +29,24 @@ def ajax_lookup(request,channel):
 
     results = []
     for item in instances:
-        results.append(u"%s|%s|%s\n" % (item.pk,lookup_channel.format_item(item),lookup_channel.format_result(item)))
+        itemf = lookup_channel.format_item(item)
+        itemf = itemf.replace("\n","").replace("|","&brvbar;")
+        resultf = lookup_channel.format_result(item)
+        resultf = resultf.replace("\n","").replace("|","&brvbar;")
+        results.append( "|".join((unicode(item.pk),itemf,resultf)) )
     return HttpResponse("\n".join(results))
 
+
+def add_popup(request,app_label,model):
+    """ present an admin site add view, hijacking the result if its the dismissAddAnotherPopup js and returning didAddPopup """ 
+    themodel = models.get_model(app_label, model) 
+    admin = site._registry[themodel]
+
+    admin.admin_site.root_path = "/ajax_select/" # warning: your URL should be configured here. I should be able to auto-figure this out but ...
+
+    response = admin.add_view(request,request.path)
+    if request.method == 'POST':
+        if response.content.startswith('<script type="text/javascript">opener.dismissAddAnotherPopup'):
+            return HttpResponse( response.content.replace('dismissAddAnotherPopup','didAddPopup' ) )
+    return response
 

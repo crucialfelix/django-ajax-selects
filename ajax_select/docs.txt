@@ -5,10 +5,11 @@ Ajax selects will work in any normal form as well as in the admin.
 
 User experience:
 
-The user is presented with a text field.  They type a few characters of a name they are looking for, an ajax request is sent to the server, a search channel returns possible results.  Results are displayed as a drop down menu.
+The user is presented with a text field.  They type a search term or a few letters of a name they are looking for, an ajax request is sent to the server, a search channel returns possible results.  Results are displayed as a drop down menu.
 
+A single view services all of the ajax search requests, delegating the searches to named 'channels'.
 
-A single view services all of the ajax search requests, delegating the searches to named channels.
+A channel is a simple class that handles the actual searching, defines how you want to treat the query input (split first name and last name, which fields to search etc.) and returns id and formatted results back to the view which sends it to the browser.
 
 For instance the search channel 'contacts' would search for Contact models.  This channel can be used for both AutoCompleteSelect ( foreign key, single item ) and AutoCompleteSelectMultiple (many to many) fields. 
 
@@ -27,7 +28,7 @@ Custom search channels can be written when you need to do a more complex search,
 
 ==Installation==
 
-install as a normal django app
+in settings.py :
 
 {{{
 INSTALLED_APPS = (
@@ -141,7 +142,7 @@ class ContactLookup(object):
 include the lookup url in your site's `urls.py`
 
 {{{
-    (r'^ajax/', include('ajax_select.urls')),
+    (r'^ajax_select/', include('ajax_select.urls')),
 }}}
 
 
@@ -196,6 +197,46 @@ class ContactMailingForm(models.ModelForm):
 
 }}}
 
+
+==Add another via popup==
+
+Note that ajax_selects does not need to be in an admin.  Popups will use an admin view, even if your form does not.
+
+1. subclass AjaxSelectAdmin or include the autoselect_fields_check_can_add hook in your admin's get_form()  [see AjaxSelectAdmin]
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(AjaxSelectAdmin,self).get_form(request,obj,**kwargs)
+        autoselect_fields_check_can_add(form,self.model,request.user)
+        return form
+
+2. Include js/ajax_select.js in your admin's media or in your site's admin js stack.
+
+
+autoselect_fields_check_can_add(form,model,user)
+
+This checks if the user has permission to add the model, 
+delegating first to the channel if that implements can_add(user,model) 
+otherwise using django's standard user.has_perm check.
+
+The pop up is served by a custom view that uses the model's registered admin
+
+Once the related object is successfully added, the mischevious view hijacks the little javascript response and substitutes a different javascript function.  That function is in ajax_select.js
+
+
+
+
+Integrating with Django's normal popup admin system is tricky for a number of reasons.
+
+ModelAdmin creates default fields for each field on the model.  Then for ForeignKey and ManyToMany fields it wraps the (default) form field's widget with a RelatedFieldWidgetWrapper that adds the magical green +.  (Incidentally it adds this regardless of whether you have permission to add the model or not.  This is a bug I need to file)
+
+It then overwrites all of those with any explicitly declared fields.  AutoComplete fields are declared fields on your form, so if there was a Select field with a wrapper, it gets overwritten by the AutoCompleteSelect.  That doesn't matter anyway because RelatedFieldWidgetWrapper operates only with the default SelectField that it is expecting.
+
+The green + pops open a window with a GET param: _popup=1.  The ModelAdmin recognizes this, the template uses if statements to reduce the page's html a bit, and when the ModelAdmin saves, it returns a simple response with just some javascript that calls dismissAddAnotherPopup(win, newId, newRepr) which is a function in RelatedObjects.js.  That looks for the form field, and if it is a SelectField as expected then it alters that accordingly.  Then it shuts the pop up window.
+
+tl/dr: there's no clean hack
+
+
+
 ==Using ajax selects in a FormSet==
 
 There might be a better way to do this.
@@ -229,33 +270,90 @@ django's `select_template` is used to choose the template to render the widget's
 
 So by writing a template `autocompleteselect_{channel}.html` you can customize the interface just for that channel.
 
-There is one block 'help' that allows you to inherit from the main widget template.
 
-=On item removed=
+=Handlers: On item added or removed=
 
-For AutoCompleteSelectMultiple when you remove an item (by clicking the X) a "killed" trigger/signal/dispatch/handler is fired on the P element that holds the selected ("on-deck") items.
+Triggers are a great way to keep code clean and untangled.  Two triggers/signals are sent: 'added' and 'killed'.  These are sent to the p 'on deck' element.  That is the area that surrounds the currently selected items.  Its quite easy to bind functions to respond to these triggers.
 
+Extend the template, implement the extra_script block and bind functions that will respond to the trigger:
+
+multi select:
 {{{
-$("#{{html_id}}_on_deck").trigger("killed"); // run killed() on {{html_id}}_on_deck if it is defined
+{% block extra_script %}
+	$("#{{html_id}}_on_deck").bind('added',function() {
+		id = $("#{{html_id}}").val();
+		alert('added id:' + id );
+	});
+	$("#{{html_id}}_on_deck").bind('killed',function() {
+		current = $("#{{html_id}}").val()
+		alert('removed, current is:' + current);
+	});
+{% endblock %}
 }}}
 
-this is the element that receives the trigger:
+select:
 {{{
-<p id="{{html_id}}_on_deck">
+{% block extra_script %}
+	$("#{{html_id}}_on_deck").bind('added',function() {
+		id = $("#{{html_id}}").val();
+		alert('added id:' + id );
+	});
+	$("#{{html_id}}_on_deck").bind('killed',function() {
+		alert('removed');
+	});
+{% endblock %}
 }}}
+
+auto-complete text select
+{{{
+{% block extra_script %}
+$('#{{ html_id }}').bind('added',function() {
+	entered = $('#{{ html_id }}').val();
+	alert( entered );
+});
+{% endblock %}
+}}}
+
+There is no remove as there is no kill/delete button. The user may clear the text themselves but there is no javascript involved.
+
 
 see:
 http://docs.jquery.com/Events/trigger
 
 
+Help text
+
+Django has some historical confusions baked in.  The help text is in the db field, and it obviously shouldn't have been. The form field passes it to the widget ... who sadly has nothing to do with displaying help.  
+
+Displaying the help text in the widget body results in it being shown twice, as the admin also displays the help text.  But only for AutoCompleteSelectMultiple ?!  AutoCompleteSelect shows it only once.  I would prefer to keep it consistent.
+
+I have commented out the hard-coded help text from the widgets, but there is a help_text block if you are extending the templates.
+
+
+==CSS==
+
+See iconic.css for some example styling.  autocomplete.js adds the .ac_loading class to the text field while the search is being served.  You can style this with fashionable ajax spinning discs etc.
+
 
 ==Planned Improvements==
 
-  * integration with (+) add item via popup in django-admin
   * including of media will be improved to use field/admin's Media but it would be preferable if that can be integrated with django-compress
-  * ajax niceness ("searching...")
-  * help_text is still not showing
-  * let channel customize the interface's help text
+
+
   * make it work within inline many to many fields (when the inlines themselves have lookups)
 
 
+Changelog
+
+Changed AutoCompleteSelect to work like AutoCompleteSelectMultiple:
+	after the result is selected it is displayed below the text input and the text input is cleared.
+	a clickable span is added to remove the item
+Simplified functions a bit
+Added blocks: script and extra_script
+Added 'killed' and 'added' triggers/signals
+
+1.1.0 
+
+	adding + pop up functionality
+	fixing several bugs with escaping and with multiple fields on a page
+	more compact and cleaner code

@@ -21,3 +21,28 @@
 	cursor: pointer;
 }
 
+input.ac_loading {
+	background: #FFF url('../images/loading-indicator.gif') no-repeat;
+	background-position: right;
+}
+
+
+/* change the X to an image */
+.results_on_deck .iconic, .results_on_deck .iconic:hover {
+    float: left;
+    background: url(../shared/images/Trashcan.gif) no-repeat;
+    color: transparent;
+    border: 0;
+}
+
+/* specific to a site I worked on. the formatted results were tables.  I sized them and floated them left, next to the icon */
+.results_on_deck div table {
+    float: left;
+    width: 300px;
+    border: 0;
+}
+/* and each div in the result clears to start a new row */
+.results_on_deck > div {
+    clear: both;
+}
+

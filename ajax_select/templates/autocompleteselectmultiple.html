@@ -1,52 +1,60 @@
 {% load i18n %}
-<input type="text" name="{{name}}_text" id="{{html_id}}_text" value="{{current_name}}" size="40" />
-{% block help %}<p class="help">{% trans 'Enter text to search.' %}{{help_text}}</p>{% endblock %}
+<input type="text" name="{{name}}_text" id="{{html_id}}_text" value="{{current_name}}" {{ extra_attrs }} />
+{% if add_link %}
+	<a href="{{ add_link }}" class="add-another" id="add_{{ html_id }}" onclick="return showAddAnotherPopup(this);"> <img src="{{ admin_media_prefix }}img/admin/icon_addlink.gif" width="10" height="10" alt="Add Another"></a>
+{% endif %}
+{% block help %}{# {% if help_text %}<p class="help">{{help_text}}</p>{% endif %} #}{% endblock %}
 <p id="{{html_id}}_on_deck" class="results_on_deck"></p>
 <input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" />
 <script type="text/javascript">
-jQuery(document).ready(function($){
-	function formatItem_{{html_id|cut:"-"}}(row) {
-		return row[2];
-	}
-	function formatResult_{{html_id|cut:"-"}}(row) {
-		return row[1];
-	}
+jQuery(document).ready(function($){{% block script %}
 	$("#{{html_id}}_text").autocomplete('{{lookup_url}}', {
 		width: 320,
 		multiple: true,
 		multipleSeparator: " ",
 		scroll: true,
 		scrollHeight:  300,
-		formatItem: formatItem_{{html_id|cut:"-"}},
-		formatResult: formatResult_{{html_id|cut:"-"}},
+		formatItem: function(row) { return row[2]; },
+		formatResult: function(row) { return row[1]; },
 		dataType: "text"
 	});
-	$("#{{html_id}}_text").result(function(event, data, formatted) {
+	function receiveResult(event, data) {
 		id = data[0];
 		if( $("#{{html_id}}").val().indexOf( "|"+id+"|" ) == -1) {
 			if($("#{{html_id}}").val() == '') {
 				$("#{{html_id}}").val('|');
 			}
 			$("#{{html_id}}").val( $("#{{html_id}}").val() + id + "|");
-			addKiller_{{html_id|cut:"-"}}(data[1],id);
-			$("#{{html_id}}_text").val(''); //can't clear the input field ?
+			addKiller_{{func_slug}}(data[1],id);
+			$("#{{html_id}}_text").val('');
+			$("#{{html_id}}_on_deck").trigger("added");
 		}
-	});
-	function addKiller_{{html_id|cut:"-"}}(repr,id) {
-		kill = "<span class='iconic' id='kill_" + id + "'>X</span>	";
+	}
+	$("#{{html_id}}_text").result(receiveResult);
+	function addKiller_{{func_slug}}(repr,id) {
+		killer_id = "kill_{{ html_id }}" + id
+		kill = "<span class='iconic' id='"+killer_id+"'>X</span>	";
 		$( "#{{html_id}}_on_deck" ).append("<div id='{{html_id}}_on_deck_" + id +"'>" + kill + repr + " </div>");
-		$("#kill_"+id).click(function(num) { return function(){
-			kill_{{html_id|cut:"-"}}(num);
-			$("#{{html_id}}_on_deck").trigger("killed");//send signal
+		$("#"+killer_id).click(function(frozen_id) { return function(){
+			kill_{{func_slug}}(frozen_id);
+			{#  send signal to enclosing p, you may register for this event #}
+			$("#{{html_id}}_on_deck").trigger("killed");
 		}}(id) );
 	}
-	function kill_{{html_id|cut:"-"}}(id) {
+	function kill_{{func_slug}}(id) {
 		$("#{{html_id}}").val( $("#{{html_id}}").val().replace( "|" + id + "|", "|" ) );
-		$("#{{html_id}}_on_deck_" + id).remove();
+		$("#{{html_id}}_on_deck_" + id).fadeOut().remove();
 	}
 	currentRepr = {{current_reprs}};
 	currentRepr.forEach(function(its){
-		addKiller_{{html_id|cut:"-"}}(its[0],its[1]);
+		addKiller_{{func_slug}}(its[0],its[1]);
 	});
-});
+	$("#{{ html_id }}").bind('didAddPopup',function(event,id,repr) {
+		data = Array();
+		data[0] = id;
+		data[1] = repr;
+		receiveResult(null,data);
+	});
+{% block extra_script %}{% endblock %}
+{% endblock %}});
 </script>
