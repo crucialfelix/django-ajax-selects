@@ -7,7 +7,6 @@ from django.template.defaultfilters import escapejs
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from globalapp.debug import dbug
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
