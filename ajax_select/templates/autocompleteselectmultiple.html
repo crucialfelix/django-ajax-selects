@@ -46,7 +46,7 @@ jQuery(document).ready(function($){{% block script %}
 		$("#{{html_id}}_on_deck_" + id).fadeOut().remove();
 	}
 	currentRepr = {{current_reprs}};
-	currentRepr.forEach(function(its){
+	$.each(currentRepr,function(i,its){
 		addKiller_{{func_slug}}(its[0],its[1]);
 	});
 	$("#{{ html_id }}").bind('didAddPopup',function(event,id,repr) {
