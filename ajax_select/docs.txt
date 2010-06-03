@@ -231,6 +231,10 @@ otherwise using django's standard user.has_perm check.
 
 The pop up is served by a custom view that uses the model's registered admin
 
+3. For this to work you must include ajax_select/urls.py in your root urls.py under this directory:    
+
+	`(r'^ajax_select/', include('ajax_select.urls')),`
+
 
 Once the related object is successfully added, the mischevious custom view hijacks the little javascript response and substitutes `didAddPopup(win,newId,newRepr)` which is in `ajax_select.js`
 
@@ -331,11 +335,13 @@ http://docs.jquery.com/Events/trigger
 
 ==Help text==
 
-I think that Django has some historical confusions baked in.  The help text is in the db field, and it probably shouldn't have been. The form field passes it to the widget ... who sadly has nothing to do with displaying help.
+If you are using AutoCompleteSelectMultiple outside of the admin then pass in `show_help_text=True`. 
 
-Displaying the help text in the widget body results in it being shown twice, as the admin also displays the help text (in `fieldset.html`).  But only for `AutoCompleteSelectMultiple` ?!  `AutoCompleteSelect` shows it only once.
+This is because the admin displays the widget's help text and the widget would also.  But when used outside of the admin you need the help text.  This is not the case for `AutoCompleteSelect`.
 
-I have commented out the hard-coded help text from the widgets, but there is a help_text block if you are extending the templates.
+When defining a db ManyToMany field django will append 'Hold down "Control", or "Command" on a Mac, to select more than one.' regardless of what widget is actually used. http://code.djangoproject.com/ticket/12359
+
+Thus you should always define the help text in your form field, and its usually nicer to tell people what fields will be searched against.  Its not inherently obvious that the text field is ajax powered.
 
 
 ==CSS==

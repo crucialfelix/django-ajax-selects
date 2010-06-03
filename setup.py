@@ -2,8 +2,8 @@
 
 from distutils.core import setup
 
-setup(name='Ajax Select',
-      version='1.0',
+setup(name='django-ajax-selects',
+      version='1.1.1',
       description='jQuery-powered auto-complete fields for ForeignKey and ManyToMany fields',
       author='crucialfelix',
       author_email='crucialfelix@gmail.com',

@@ -1,9 +1,16 @@
+"""JQuery-Ajax Autocomplete fields for Django Forms"""
+__version__ = "1.1.1"
+__author__ = "crucialfelix"
+__contact__ = "crucialfelix@gmail.com"
+__homepage__ = "http://code.google.com/p/django-ajax-selects/"
 
 from django.conf import settings
-
-from django.forms.models import ModelForm
-from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.forms.models import ModelForm
+from django.utils.text import capfirst
+from django.utils.translation import ugettext_lazy as _, ugettext
+
 
 def make_ajax_form(model,fieldlist,superclass=ModelForm):
     """ this will create a ModelForm subclass inserting
@@ -24,9 +31,6 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm):
             where 'author' is a foreign key field, specifying here to also use the lookup channel 'contact'
 
     """
-    from ajax_select.fields import AutoCompleteField, \
-                                   AutoCompleteSelectMultipleField, \
-                                   AutoCompleteSelectField
 
     class TheForm(superclass):
         class Meta:
@@ -34,18 +38,8 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm):
         setattr(Meta, 'model', model)
 
     for model_fieldname,channel in fieldlist.iteritems():
-
-        field = model._meta.get_field(model_fieldname)
-
-        if isinstance(field,ManyToManyField):
-            f = AutoCompleteSelectMultipleField(channel,required=not field.blank)
-        elif isinstance(field,ForeignKey):
-            f = AutoCompleteSelectField(channel,required=not field.blank)
-        else:
-            f = AutoCompleteField(channel, required=not field.blank)
-
-        # django internals are very difficult to work with.
-        # it requires too much knowledge and is thus breakable
+        f = make_ajax_field(model,model_fieldname,channel)
+        
         TheForm.declared_fields[model_fieldname] = f
         TheForm.base_fields[model_fieldname] = f
         setattr(TheForm,model_fieldname,f)
@@ -53,7 +47,65 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm):
     return TheForm
 
 
+def make_ajax_field(model,model_fieldname,channel,**kwargs):
+    """ makes an ajax select / multiple select / autocomplete field
+        copying the label and help text from the model's db field
+    
+        optional args:
+            help_text - note that django's ManyToMany db field will append 
+                'Hold down "Control", or "Command" on a Mac, to select more than one.'
+                to your db field's help text.
+                Therefore you are better off passing it in here
+            label - default is db field's verbose name
+            required - default's to db field's (not) blank
+            """
 
+    from ajax_select.fields import AutoCompleteField, \
+                                   AutoCompleteSelectMultipleField, \
+                                   AutoCompleteSelectField
+
+    field = model._meta.get_field(model_fieldname)
+    if kwargs.has_key('label'):
+        label = kwargs.pop('label')
+    else:
+        label = _(capfirst(unicode(field.verbose_name)))
+    if kwargs.has_key('help_text'):
+        help_text = kwargs.pop('help_text')
+    else:
+        if isinstance(field.help_text,basestring):
+            help_text = _(field.help_text)
+        else:
+            help_text = field.help_text
+    if kwargs.has_key('required'):
+        required = kwargs.pop('required')
+    else:
+        required = not field.blank
+
+    if isinstance(field,ManyToManyField):
+        f = AutoCompleteSelectMultipleField(
+            channel,
+            required=required,
+            help_text=help_text,
+            label=label,
+            **kwargs
+            )
+    elif isinstance(field,ForeignKey):
+        f = AutoCompleteSelectField(
+            channel,
+            required=required,
+            help_text=help_text,
+            label=label,
+            **kwargs
+            )
+    else:
+        f = AutoCompleteField(
+            channel,
+            required=required,
+            help_text=help_text,
+            label=label,
+            **kwargs
+            )
+    return f
 
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """

@@ -42,7 +42,10 @@ def add_popup(request,app_label,model):
     themodel = models.get_model(app_label, model) 
     admin = site._registry[themodel]
 
-    admin.admin_site.root_path = "/ajax_select/" # warning: your URL should be configured here. I should be able to auto-figure this out but ...
+    admin.admin_site.root_path = "/ajax_select/" # warning: your URL should be configured here. 
+    # as in your root urls.py includes :
+    #    (r'^ajax_select/', include('ajax_select.urls')),
+    # I should be able to auto-figure this out but ...
 
     response = admin.add_view(request,request.path)
     if request.method == 'POST':

@@ -1,14 +1,16 @@
 
 from ajax_select import get_lookup
 from django import forms
+from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.forms.util import flatatt
 from django.template.defaultfilters import escapejs
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
+
+
 
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
@@ -27,12 +29,17 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
     def render(self, name, value, attrs=None):
 
         value = value or ''
-        final_attrs = self.build_attrs(attrs,  name=name)
-        self.html_id = final_attrs.pop('pk', name)
+        final_attrs = self.build_attrs(attrs)
+        self.html_id = final_attrs.pop('id', name)
 
         lookup = get_lookup(self.channel)
         if value:
-            current_result = mark_safe(lookup.format_result( lookup.get_objects([value])[0] ))
+            objs = lookup.get_objects([value])
+            try:
+                obj = objs[0]
+            except IndexError:
+                raise Exception("%s cannot find object:%s" % (lookup, value))
+            current_result = mark_safe(lookup.format_item( obj ) )
         else:
             current_result = ''
 
@@ -82,7 +89,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 # someone else might have deleted it while you were editing
                 # or your channel is faulty
                 # out of the scope of this field to do anything more than tell you it doesn't exist
-                raise forms.ValidationError(u"The selected item does not exist.")
+                raise forms.ValidationError(u"%s cannot find object: %s" % (lookup,value))
             return objs[0]
         else:
             if self.required:
@@ -103,17 +110,20 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
     def __init__(self,
                  channel,
                  help_text='',
+                 show_help_text=False,#admin will also show help. set True if used outside of admin
                  *args, **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
         self.help_text = help_text
+        self.show_help_text = show_help_text
 
     def render(self, name, value, attrs=None):
 
         if value is None:
             value = []
-        final_attrs = self.build_attrs(attrs,  name=name)
-        self.html_id = final_attrs.pop('pk', name)
+
+        final_attrs = self.build_attrs(attrs)
+        self.html_id = final_attrs.pop('id', name)
 
         lookup = get_lookup(self.channel)
 
@@ -142,7 +152,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'current_name':current_name,
             'current_ids':current_ids,
             'current_reprs':current_reprs,
-            'help_text':self.help_text,
+            'help_text':self.help_text if self.show_help_text else '',
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
@@ -165,7 +175,11 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
-        kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel,help_text=kwargs.get('help_text',_('Enter text to search.')))
+        help_text = kwargs.get('help_text',_('Enter text to search.'))
+        # admin will also show help text, so by default do not show it in widget
+        # if using in a normal form then set to True so the widget shows help
+        show_help_text = kwargs.get('show_help_text',False)
+        kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -195,8 +209,8 @@ class AutoCompleteWidget(forms.TextInput):
     def render(self, name, value, attrs=None):
 
         value = value or ''
-        final_attrs = self.build_attrs(attrs,  name=name)
-        self.html_id = final_attrs.pop('pk', name)
+        final_attrs = self.build_attrs(attrs)
+        self.html_id = final_attrs.pop('id', name)
 
         context = {
             'current_name': value,
