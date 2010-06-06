@@ -36,6 +36,13 @@ Custom search channels can be written when you need to do a more complex search,
 
 ==Installation==
 
+`pip install django-ajax-selects`
+or
+`easy_install django-ajax-selects`
+or
+download or checkout the distribution
+or install using buildout by adding `django-ajax-selects` to your `eggs`
+
 in settings.py :
 
 {{{
