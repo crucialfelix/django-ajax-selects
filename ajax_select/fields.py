@@ -143,6 +143,10 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             current_repr_json.append( """new Array("%s",%s)""" % (escapejs(repr),obj.pk) )
 
         current_reprs = mark_safe("new Array(%s)" % ",".join(current_repr_json))
+        if self.show_help_text:
+            help_text = self.help_text
+        else:
+            help_text = ''
 
         context = {
             'name':name,
@@ -152,11 +156,11 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'current_name':current_name,
             'current_ids':current_ids,
             'current_reprs':current_reprs,
-            'help_text':self.help_text if self.show_help_text else '',
+            'help_text':help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
-            'admin_media_prefix' : settings.ADMIN_MEDIA_PREFIX            
+            'admin_media_prefix' : settings.ADMIN_MEDIA_PREFIX
         }
         return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
 
