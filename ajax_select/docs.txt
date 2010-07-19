@@ -3,6 +3,7 @@ Enables editing of `ForeignKey`, `ManyToMany` and simple text fields using the A
 
 django-ajax-selects will work in any normal form as well as in the admin.
 
+
 ==User experience==
 
 selecting...
@@ -30,8 +31,10 @@ Custom search channels can be written when you need to do a more complex search,
 
   * Django 1.0 +
   * jquery 1.26 +
-  * Autocomplete - jQuery plugin 1.0.2 [http://bassistance.de/jquery-plugins/jquery-plugin-autocomplete/]
+  * Autocomplete - jQuery plugin 1.1 [http://bassistance.de/jquery-plugins/jquery-plugin-autocomplete/]
   * jquery.autocomplete.css (included with Autocomplete)
+
+The Autocomplete jQuery plugin has now been merged into jQuery UI 1.8 and been improved (2010-06-23).  I will migrate this package to use the jQuery UI version and release that as django_ajax_select 1.2, but as of this reading (you, reading this right now) you should download and use his 1.1 version.
 
 
 ==Installation==
@@ -348,7 +351,7 @@ This is because the admin displays the widget's help text and the widget would a
 
 When defining a db ManyToMany field django will append 'Hold down "Control", or "Command" on a Mac, to select more than one.' regardless of what widget is actually used. http://code.djangoproject.com/ticket/12359
 
-Thus you should always define the help text in your form field, and its usually nicer to tell people what fields will be searched against.  Its not inherently obvious that the text field is ajax powered.
+Thus you should always define the help text in your form field, and its usually nicer to tell people what fields will be searched against.  Its not inherently obvious that the text field is "ajax powered" or what a brand of window cleaner has to do with filling out this dang form anyway.
 
 
 ==CSS==
@@ -358,9 +361,20 @@ See iconic.css for some example styling.  autocomplete.js adds the .ac_loading c
 
 ==Planned Improvements==
 
+  * Migrating to use the jQuery 1.8 version of autocomplete.  This will integrate it with ThemeRoller and would slightly reduce the js codebase.
+
   * including of media will be improved to use field/admin's Media but it would be preferable if that can be integrated with django-compress
 
   * make it work within inline many to many fields (when the inlines themselves have lookups)
+
+
+==License==
+
+Copyright (c) 2009 Chris Sattinger
+
+Dual licensed under the MIT and GPL licenses:
+   http://www.opensource.org/licenses/mit-license.php
+   http://www.gnu.org/licenses/gpl.html
 
 
 ==Changelog==
