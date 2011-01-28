@@ -46,6 +46,9 @@ or
 download or checkout the distribution
 or install using buildout by adding `django-ajax-selects` to your `eggs`
 
+on fedora:
+su -c 'yum install django-ajax-selects'
+
 in settings.py :
 
 {{{
@@ -388,6 +391,8 @@ Added blocks: script and extra_script
 Added 'killed' and 'added' triggers/signals
 Support for adding an item via a pop up (ie. the django admin green + sign)
 
-
+1.1.4
+Fixed python 2.4 compatiblity
+Added LICENSE
 
 

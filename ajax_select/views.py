@@ -30,9 +30,9 @@ def ajax_lookup(request,channel):
     results = []
     for item in instances:
         itemf = lookup_channel.format_item(item)
-        itemf = itemf.replace("\n","").replace("|","&brvbar;")
+        itemf = itemf.replace("\n","").replace("|","&#124;")
         resultf = lookup_channel.format_result(item)
-        resultf = resultf.replace("\n","").replace("|","&brvbar;")
+        resultf = resultf.replace("\n","").replace("|","&#124;")
         results.append( "|".join((unicode(item.pk),itemf,resultf)) )
     return HttpResponse("\n".join(results))
 
