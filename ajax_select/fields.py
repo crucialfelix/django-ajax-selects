@@ -10,8 +10,6 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
-
-
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     """  widget to select a model """
@@ -53,7 +51,6 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'extra_attrs': mark_safe(flatatt(final_attrs)),
                 'func_slug': self.html_id.replace("-",""),
                 'add_link' : self.add_link,
-                'admin_media_prefix' : settings.ADMIN_MEDIA_PREFIX
                 }
 
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
@@ -160,7 +157,6 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
-            'admin_media_prefix' : settings.ADMIN_MEDIA_PREFIX
         }
         return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
 

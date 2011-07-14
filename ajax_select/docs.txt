@@ -46,9 +46,6 @@ or
 download or checkout the distribution
 or install using buildout by adding `django-ajax-selects` to your `eggs`
 
-on fedora:
-su -c 'yum install django-ajax-selects'
-
 in settings.py :
 
 {{{
