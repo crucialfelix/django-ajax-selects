@@ -19,9 +19,9 @@ def ajax_lookup(request,channel):
         if 'q' not in request.POST:
             return HttpResponse('') # suspicious
         query = request.POST['q']
-    
+
     lookup_channel = get_lookup(channel)
-    
+
     if query:
         instances = lookup_channel.get_query(query,request)
     else:
@@ -38,11 +38,11 @@ def ajax_lookup(request,channel):
 
 
 def add_popup(request,app_label,model):
-    """ present an admin site add view, hijacking the result if its the dismissAddAnotherPopup js and returning didAddPopup """ 
-    themodel = models.get_model(app_label, model) 
+    """ present an admin site add view, hijacking the result if its the dismissAddAnotherPopup js and returning didAddPopup """
+    themodel = models.get_model(app_label, model)
     admin = site._registry[themodel]
 
-    admin.admin_site.root_path = "/ajax_select/" # warning: your URL should be configured here. 
+    admin.admin_site.root_path = "/ajax_select/" # warning: your URL should be configured here.
     # as in your root urls.py includes :
     #    (r'^ajax_select/', include('ajax_select.urls')),
     # I should be able to auto-figure this out but ...

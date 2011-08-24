@@ -13,9 +13,9 @@ from django.utils.translation import ugettext as _
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     """  widget to select a model """
-    
+
     add_link = None
-    
+
     def __init__(self,
                  channel,
                  help_text='',
@@ -101,9 +101,9 @@ class AutoCompleteSelectField(forms.fields.CharField):
 class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
     """ widget to select multiple models """
-    
+
     add_link = None
-    
+
     def __init__(self,
                  channel,
                  help_text='',

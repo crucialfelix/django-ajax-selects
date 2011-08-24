@@ -6,4 +6,3 @@ function didAddPopup(win,newId,newRepr) {
     $("#"+name).trigger('didAddPopup',[html_unescape(newId),html_unescape(newRepr)]);
     win.close();
 }
-

@@ -39,7 +39,7 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm):
 
     for model_fieldname,channel in fieldlist.iteritems():
         f = make_ajax_field(model,model_fieldname,channel)
-        
+
         TheForm.declared_fields[model_fieldname] = f
         TheForm.base_fields[model_fieldname] = f
         setattr(TheForm,model_fieldname,f)
@@ -50,9 +50,9 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm):
 def make_ajax_field(model,model_fieldname,channel,**kwargs):
     """ makes an ajax select / multiple select / autocomplete field
         copying the label and help text from the model's db field
-    
+
         optional args:
-            help_text - note that django's ManyToMany db field will append 
+            help_text - note that django's ManyToMany db field will append
                 'Hold down "Control", or "Command" on a Mac, to select more than one.'
                 to your db field's help text.
                 Therefore you are better off passing it in here
