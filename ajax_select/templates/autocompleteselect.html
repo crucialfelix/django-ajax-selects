@@ -7,24 +7,33 @@
 <div id="{{html_id}}_on_deck" class="results_on_deck"><div>{{current_result|safe}}</div></div>
 <input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_id}}" />
 <script type="text/javascript">
-jQuery(document).ready(function($){{% block script %}
-	$("#{{html_id}}_text").autocomplete('{{lookup_url}}', {
-		width: 320,
-		formatItem: function(row) { return row[2]; },
-		formatResult: function(row) { return row[1]; },
-		dataType: "text"
-	});
-	function receiveResult(event, data) {
-		prev = $("#{{html_id}}").val();
-		if(prev) {
-			kill_{{ func_slug }}(prev);
+	$("#{{html_id}}_text").autocomplete({
+		source: '{{lookup_url}}',
+		focus: function(event, ui) {
+			$("#{{html_id}}_text").val(ui.item.label);
+			return false;
+		},
+		select: function(event, ui) {
+			prev = $("#{{html_id}}").val();
+			if(prev) {
+				kill_{{ func_slug }}(prev);
+			}
+
+			$("#{{html_id}}").val(ui.item.pk);
+			$("#{{html_id}}_text").val(ui.item.label);
+			$("#{{html_id}}_on_deck").html(ui.item.desc);
+
+			addKiller_{{ func_slug }}(ui.item.desc, ui.item.pk);
+			$("#{{html_id}}_on_deck").trigger("added");
+
+			return false;
 		}
-		$("#{{html_id}}").val(data[0]);
-		$("#{{html_id}}_text").val("");
-		addKiller_{{ func_slug }}(data[1],data[0]);
-		$("#{{html_id}}_on_deck").trigger("added");
-	}
-	$("#{{html_id}}_text").result(receiveResult);
+	}).data("autocomplete")._renderItem = function(ul, item) {
+			return $("<li></li>")
+				.data("item.autocomplete", item)
+				.append("<a>" + item.label + "</a>")
+				.appendTo(ul);
+		};
 	function addKiller_{{func_slug}}(repr,id) {
 		kill = "<span class='iconic' id='kill_{{ html_id }}'>X</span>	";
 		if(repr){
@@ -52,6 +61,5 @@ jQuery(document).ready(function($){{% block script %}
 		receiveResult(null,data);
 	});
 {% block extra_script %}{% endblock %}
-{% endblock %}});
 </script>
 

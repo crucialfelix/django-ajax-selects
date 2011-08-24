@@ -21,8 +21,8 @@
 	cursor: pointer;
 }
 
-input.ac_loading {
-	background: #FFF url('../images/loading-indicator.gif') no-repeat;
+.ui-autocomplete-loading {
+	background: white url('../images/loading-indicator.gif') no-repeat;
 	background-position: right;
 }
 
