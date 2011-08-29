@@ -7,6 +7,7 @@
 <div id="{{html_id}}_on_deck" class="results_on_deck"><div>{{current_result|safe}}</div></div>
 <input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_id}}" />
 <script type="text/javascript">
+//<![CDATA[
 	$("#{{html_id}}_text").autocomplete({
 		source: '{{lookup_url}}',
 		focus: function(event, ui) {
@@ -61,5 +62,6 @@
 		receiveResult(null,data);
 	});
 {% block extra_script %}{% endblock %}
+//]]>
 </script>
 
