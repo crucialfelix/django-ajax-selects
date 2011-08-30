@@ -1,18 +1,26 @@
 {% load i18n %}
-<input type="text" name="{{ name }}" id="{{ html_id }}" value="{{ current_name }}" {{ extra_attrs }} />
+<input type="text" name="{{name}}" id="{{html_id}}" value="{{current_name}}" {{ extra_attrs }} />
 {% block help %}{# {% if help_text %}<p class="help">{{ help_text }}</p>{% endif %} #}{% endblock %}
 <script type="text/javascript">
-jQuery(document).ready(function($){{% block script %}
-	$('#{{ html_id }}').autocomplete('{{ lookup_url }}', {
-		width: 320,
-		formatItem: function(row) { return row[2]; },
-		formatResult: function(row) { return row[1]; },
-		dataType: "text"
-	})
-	$('#{{ html_id }}').result(function(event, data, formatted) {
-		$('#{{ html_id }}').val(data[1]);
-		$('#{{ html_id }}').trigger("added");
-	})
+//<![CDATA[
+	$("#{{html_id}}_text").autocomplete({
+		source: '{{lookup_url}}',
+		focus: function(event, ui) {
+			$("#{{html_id}}").val(ui.item.label);
+			return false;
+		},
+		select: function(event, ui) {
+			$("#{{html_id}}").val(ui.item.label);
+			$("#{{html_id}}").trigger("added");
+
+			return false;
+		}
+	}).data("autocomplete")._renderItem = function(ul, item) {
+			return $("<li></li>")
+				.data("item.autocomplete", item)
+				.append("<a>" + item.label + "</a>")
+				.appendTo(ul);
+		};
 {% block extra_script %}{% endblock %}
-{% endblock %}});
+//]]>
 </script>
