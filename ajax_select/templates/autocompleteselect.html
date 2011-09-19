@@ -9,6 +9,7 @@
 <script type="text/javascript">
 //<![CDATA[
 	$("#{{html_id}}_text").autocomplete({
+		minLength: {{min_length}},
 		source: '{{lookup_url}}',
 		focus: function(event, ui) {
 			$("#{{html_id}}_text").val(ui.item.label);

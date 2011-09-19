@@ -44,6 +44,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         context = {
                 'name': name,
                 'html_id' : self.html_id,
+                'min_length': getattr(lookup, 'min_length', 1),
                 'lookup_url': reverse('ajax_lookup',kwargs={'channel':self.channel}),
                 'current_id': value,
                 'current_result': current_result,
@@ -148,6 +149,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         context = {
             'name':name,
             'html_id':self.html_id,
+            'min_length': getattr(lookup, 'min_length', 1),
             'lookup_url':reverse('ajax_lookup',kwargs={'channel':self.channel}),
             'current':value,
             'current_name':current_name,
@@ -217,6 +219,7 @@ class AutoCompleteWidget(forms.TextInput):
             'current_id': value,
             'help_text': self.help_text,
             'html_id': self.html_id,
+            'min_length': getattr(lookup, 'min_length', 1),
             'lookup_url': reverse('ajax_lookup', args=[self.channel]),
             'name': name,
             'extra_attrs':mark_safe(flatatt(final_attrs)),
