@@ -6,10 +6,6 @@
 	$("#{{html_id}}_text").autocomplete({
 		minLength: {{min_length}},
 		source: '{{lookup_url}}',
-		focus: function(event, ui) {
-			$("#{{html_id}}").val(ui.item.label);
-			return false;
-		},
 		select: function(event, ui) {
 			$("#{{html_id}}").val(ui.item.label);
 			$("#{{html_id}}").trigger("added");
