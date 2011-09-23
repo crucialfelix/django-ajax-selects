@@ -185,11 +185,3 @@ But when used outside of the admin you need the help text. This is not the case 
 Dual licensed under the MIT and GPL licenses:
    http://www.opensource.org/licenses/mit-license.php
    http://www.gnu.org/licenses/gpl.html
-
-
-##Changelog
-
-1.2 -
-Js files was refactored.
-All static content is collected into 'static' folder.
-And example project was written.
