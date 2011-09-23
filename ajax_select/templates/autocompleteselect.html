@@ -18,7 +18,7 @@
 			}
 
 			$("#{{html_id}}").val(ui.item.pk);
-			$("#{{html_id}}_text").val(ui.item.label);
+			$("#{{html_id}}_text").val('');
 			$("#{{html_id}}_on_deck").html(ui.item.desc);
 
 			addKiller_{{ func_slug }}(ui.item.desc, ui.item.pk);
