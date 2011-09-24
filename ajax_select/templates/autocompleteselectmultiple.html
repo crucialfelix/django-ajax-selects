@@ -4,33 +4,34 @@
 	<a href="{{ add_link }}" class="add-another" id="add_{{ html_id }}" onclick="return showAddAnotherPopup(this);"> <img src="{{ STATIC_URL }}admin/img/icon_addlink.gif" width="10" height="10" alt="Add Another"></a>
 {% endif %}
 {% block help %}{% if help_text %}<p class="help">{{help_text}}</p>{% endif %}{% endblock %}
-<p id="{{html_id}}_on_deck" class="results_on_deck"></p>
+<div id="{{html_id}}_on_deck" class="results_on_deck"></div>
 <input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" />
 <script type="text/javascript">
-jQuery(document).ready(function($){{% block script %}
-	$("#{{html_id}}_text").autocomplete('{{lookup_url}}', {
-		width: 320,
-		multiple: true,
-		multipleSeparator: " ",
-		scroll: true,
-		scrollHeight:  300,
-		formatItem: function(row) { return row[2]; },
-		formatResult: function(row) { return row[1]; },
-		dataType: "text"
-	});
-	function receiveResult(event, data) {
-		id = data[0];
+//<![CDATA[
+	function receiveResult_{{func_slug}}(event, ui) {
+		id = ui.item.pk;
 		if( $("#{{html_id}}").val().indexOf( "|"+id+"|" ) == -1) {
 			if($("#{{html_id}}").val() == '') {
 				$("#{{html_id}}").val('|');
 			}
 			$("#{{html_id}}").val( $("#{{html_id}}").val() + id + "|");
-			addKiller_{{func_slug}}(data[1],id);
+			addKiller_{{func_slug}}(ui.item.desc,id);
 			$("#{{html_id}}_text").val('');
 			$("#{{html_id}}_on_deck").trigger("added");
 		}
+
+		return false;
 	}
-	$("#{{html_id}}_text").result(receiveResult);
+	$("#{{html_id}}_text").autocomplete({
+		minLength: {{min_length}},
+		source: '{{lookup_url}}',
+		select: receiveResult_{{func_slug}}
+	}).data("autocomplete")._renderItem = function(ul, item) {
+			return $("<li></li>")
+				.data("item.autocomplete", item)
+				.append("<a>" + item.label + "</a>")
+				.appendTo(ul);
+		};
 	function addKiller_{{func_slug}}(repr,id) {
 		killer_id = "kill_{{ html_id }}" + id
 		kill = "<span class='iconic' id='"+killer_id+"'>X</span>	";
@@ -50,11 +51,9 @@ jQuery(document).ready(function($){{% block script %}
 		addKiller_{{func_slug}}(its[0],its[1]);
 	});
 	$("#{{ html_id }}").bind('didAddPopup',function(event,id,repr) {
-		data = Array();
-		data[0] = id;
-		data[1] = repr;
-		receiveResult(null,data);
+		ui = { item: { pk: id, desc: repr } }
+		receiveResult(null,ui);
 	});
 {% block extra_script %}{% endblock %}
-{% endblock %}});
+//]]>
 </script>
