@@ -125,7 +125,6 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
         lookup = get_lookup(self.channel)
 
-        current_name = "" # the text field starts empty
         # eg. value = [3002L, 1194L]
         if value:
             current_ids = "|" + "|".join( str(pk) for pk in value ) + "|" # |pk|pk| of current
@@ -152,7 +151,6 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'min_length': getattr(lookup, 'min_length', 1),
             'lookup_url':reverse('ajax_lookup',kwargs={'channel':self.channel}),
             'current':value,
-            'current_name':current_name,
             'current_ids':current_ids,
             'current_reprs':current_reprs,
             'help_text':help_text,

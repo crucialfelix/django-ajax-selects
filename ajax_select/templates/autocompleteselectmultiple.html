@@ -1,5 +1,5 @@
 {% load i18n %}
-<input type="text" name="{{name}}_text" id="{{html_id}}_text" value="{{current_name}}" {{ extra_attrs }} />
+<input type="text" name="{{name}}_text" id="{{html_id}}_text" value="" {{ extra_attrs }} />
 {% if add_link %}
 	<a href="{{ add_link }}" class="add-another" id="add_{{ html_id }}" onclick="return showAddAnotherPopup(this);"> <img src="{{ STATIC_URL }}admin/img/icon_addlink.gif" width="10" height="10" alt="Add Another"></a>
 {% endif %}
