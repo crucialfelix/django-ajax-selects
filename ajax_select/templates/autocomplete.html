@@ -3,7 +3,7 @@
 {% block help %}{# {% if help_text %}<p class="help">{{ help_text }}</p>{% endif %} #}{% endblock %}
 <script type="text/javascript">
 //<![CDATA[
-	$("#{{html_id}}_text").autocomplete({
+	$("#{{html_id}}").autocomplete({
 		minLength: {{min_length}},
 		source: '{{lookup_url}}',
 		select: function(event, ui) {

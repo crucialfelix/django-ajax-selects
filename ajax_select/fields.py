@@ -214,6 +214,8 @@ class AutoCompleteWidget(forms.TextInput):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
+        lookup = get_lookup(self.channel)
+
         context = {
             'current_name': value,
             'current_id': value,
