@@ -52,7 +52,7 @@
 	});
 	$("#{{ html_id }}").bind('didAddPopup',function(event,id,repr) {
 		ui = { item: { pk: id, desc: repr } }
-		receiveResult(null,ui);
+		receiveResult_{{func_slug}}(null,ui);
 	});
 {% block extra_script %}{% endblock %}
 //]]>
