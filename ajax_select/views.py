@@ -23,7 +23,7 @@ def ajax_lookup(request,channel):
 
     lookup = get_lookup(channel)
 
-    if query:
+    if len(query) >= getattr(lookup, 'min_length', 1):
         instances = lookup.get_query(query,request)
     else:
         instances = []
