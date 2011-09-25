@@ -72,7 +72,7 @@ def make_ajax_field(model,model_fieldname,channel,**kwargs):
     if kwargs.has_key('help_text'):
         help_text = kwargs.pop('help_text')
     else:
-        if isinstance(field.help_text,basestring):
+        if isinstance(field.help_text,basestring) and field.help_text:
             help_text = _(field.help_text)
         else:
             help_text = field.help_text
