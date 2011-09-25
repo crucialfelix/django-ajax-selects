@@ -21,21 +21,20 @@ def ajax_lookup(request,channel):
             return HttpResponse('') # suspicious
         query = request.POST['term']
 
-    lookup_channel = get_lookup(channel)
+    lookup = get_lookup(channel)
 
     if query:
-        instances = lookup_channel.get_query(query,request)
+        instances = lookup.get_query(query,request)
     else:
         instances = []
 
-    results = []
-    for item in instances:
-        itemf = lookup_channel.format_item(item)
-        itemf = itemf.replace("\n","").replace("|","&brvbar;")
-        resultf = lookup_channel.format_result(item)
-        resultf = resultf.replace("\n","").replace("|","&brvbar;")
-        results.append( { 'pk': unicode(item.pk), 'label': resultf, 'desc': itemf } )
-    return HttpResponse(simplejson.dumps(results), mimetype='application/javascript')
+    results = simplejson.dumps([
+        { 'pk': unicode(item.pk), 'label': lookup.format_result(item),
+            'desc': lookup.format_item(item) }
+        for item in instances
+    ])
+
+    return HttpResponse(results, mimetype='application/javascript')
 
 
 def add_popup(request,app_label,model):
