@@ -1,5 +1,5 @@
 """JQuery-Ajax Autocomplete fields for Django Forms"""
-__version__ = "1.1.5"
+__version__ = "1.2"
 __author__ = "crucialfelix"
 __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "http://code.google.com/p/django-ajax-selects/"
@@ -12,33 +12,34 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 
-def make_ajax_form(model,fieldlist,superclass=ModelForm):
-    """ this will create a ModelForm subclass inserting
+def make_ajax_form(model,fieldlist,superclass=ModelForm,for_admin=True):
+    """ this will create a ModelForm subclass with fields:
+            
             AutoCompleteSelectMultipleField (many to many),
             AutoCompleteSelectField (foreign key)
 
         where specified in the fieldlist:
 
-            dict(fieldname='channel',...)
+            {'fieldname':'channel', ... }
 
         usage:
             class YourModelAdmin(Admin):
                 ...
-                form = make_ajax_form(YourModel,dict(contacts='contact',author='contact'))
+                form = make_ajax_form(YourModel,{'contacts':'contact','author':'contact'})
 
             where 'contacts' is a many to many field, specifying to use the lookup channel 'contact'
             and
-            where 'author' is a foreign key field, specifying here to also use the lookup channel 'contact'
-
+                  'author' is a foreign key field, specifying here to also use the lookup channel 'contact'
     """
 
     class TheForm(superclass):
+        
         class Meta:
             pass
         setattr(Meta, 'model', model)
 
     for model_fieldname,channel in fieldlist.iteritems():
-        f = make_ajax_field(model,model_fieldname,channel)
+        f = make_ajax_field(model,model_fieldname,channel,for_admin)
 
         TheForm.declared_fields[model_fieldname] = f
         TheForm.base_fields[model_fieldname] = f
@@ -47,7 +48,7 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm):
     return TheForm
 
 
-def make_ajax_field(model,model_fieldname,channel,**kwargs):
+def make_ajax_field(model,model_fieldname,channel,for_admin = True,**kwargs):
     """ makes an ajax select / multiple select / autocomplete field
         copying the label and help text from the model's db field
 
@@ -69,6 +70,7 @@ def make_ajax_field(model,model_fieldname,channel,**kwargs):
         label = kwargs.pop('label')
     else:
         label = _(capfirst(unicode(field.verbose_name)))
+
     if kwargs.has_key('help_text'):
         help_text = kwargs.pop('help_text')
     else:
@@ -82,6 +84,7 @@ def make_ajax_field(model,model_fieldname,channel,**kwargs):
         required = not field.blank
 
     if isinstance(field,ManyToManyField):
+        kwargs['show_help_text'] = not for_admin
         f = AutoCompleteSelectMultipleField(
             channel,
             required=required,
@@ -106,6 +109,9 @@ def make_ajax_field(model,model_fieldname,channel,**kwargs):
             **kwargs
             )
     return f
+
+
+####  private  ####
 
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """

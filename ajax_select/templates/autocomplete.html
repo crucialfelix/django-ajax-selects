@@ -1,23 +1,26 @@
 {% load i18n %}
+{% include "ajax_select/bootstrap.html" %}
 <input type="text" name="{{name}}" id="{{html_id}}" value="{{current_name}}" {{ extra_attrs }} />
-{% block help %}{# {% if help_text %}<p class="help">{{ help_text }}</p>{% endif %} #}{% endblock %}
-<script type="text/javascript">
-//<![CDATA[
+<script type="text/javascript">//<![CDATA[
+jQuery(document).ready(function($){
+{% block script %}
 	$("#{{html_id}}").autocomplete({
 		minLength: {{min_length}},
 		source: '{{lookup_url}}',
 		select: function(event, ui) {
-			$("#{{html_id}}").val(ui.item.label);
+			$("#{{html_id}}").val(ui.item.value);
 			$("#{{html_id}}").trigger("added");
-
 			return false;
 		}
 	}).data("autocomplete")._renderItem = function(ul, item) {
 			return $("<li></li>")
 				.data("item.autocomplete", item)
-				.append("<a>" + item.label + "</a>")
+				.append("<a>" + item.repr + "</a>")
 				.appendTo(ul);
 		};
 {% block extra_script %}{% endblock %}
+{% endblock %}
+});
 //]]>
 </script>
+{% block help %}{% if help_text %}<p class="help">{{ help_text }}</p>{% endif %}{% endblock %}

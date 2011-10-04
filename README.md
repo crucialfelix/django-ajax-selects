@@ -180,6 +180,13 @@ If you are using AutoCompleteSelectMultiple outside of the admin then pass in `s
 This is because the admin displays the widget's help text and the widget would also.
 But when used outside of the admin you need the help text. This is not the case for `AutoCompleteSelect`.
 
+
+##bootstrap
+
+	If you put add your own jQuery, jQuery.ui and theme in the HEAD then it will not load
+	this jQuery.ui and default theme here.
+
+
 ##License
 
 Dual licensed under the MIT and GPL licenses:

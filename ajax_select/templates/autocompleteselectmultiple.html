@@ -1,13 +1,14 @@
 {% load i18n %}
+{% include "ajax_select/bootstrap.html" %}
 <input type="text" name="{{name}}_text" id="{{html_id}}_text" value="" {{ extra_attrs }} />
 {% if add_link %}
-	<a href="{{ add_link }}" class="add-another" id="add_{{ html_id }}" onclick="return showAddAnotherPopup(this);"> <img src="{{ STATIC_URL }}admin/img/icon_addlink.gif" width="10" height="10" alt="Add Another"></a>
+	<a href="{{ add_link }}" class="add-another addlink" id="add_{{ html_id }}" onclick="return showAddAnotherPopup(this);"> add</a>
 {% endif %}
-{% block help %}{% if help_text %}<p class="help">{{help_text}}</p>{% endif %}{% endblock %}
-<div id="{{html_id}}_on_deck" class="results_on_deck"></div>
 <input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" />
-<script type="text/javascript">
-//<![CDATA[
+<div id="{{html_id}}_on_deck" class="results_on_deck"></div>
+<script type="text/javascript">//<![CDATA[
+jQuery(document).ready(function($){
+{% block script %}
 	function receiveResult_{{func_slug}}(event, ui) {
 		id = ui.item.pk;
 		if( $("#{{html_id}}").val().indexOf( "|"+id+"|" ) == -1) {
@@ -15,11 +16,10 @@
 				$("#{{html_id}}").val('|');
 			}
 			$("#{{html_id}}").val( $("#{{html_id}}").val() + id + "|");
-			addKiller_{{func_slug}}(ui.item.desc,id);
+			addKiller_{{func_slug}}(ui.item.repr,id);
 			$("#{{html_id}}_text").val('');
 			$("#{{html_id}}_on_deck").trigger("added");
 		}
-
 		return false;
 	}
 	$("#{{html_id}}_text").autocomplete({
@@ -29,12 +29,19 @@
 	}).data("autocomplete")._renderItem = function(ul, item) {
 			return $("<li></li>")
 				.data("item.autocomplete", item)
-				.append("<a>" + item.label + "</a>")
+				.append("<a>" + item.repr + "</a>")
 				.appendTo(ul);
 		};
+	$("#{{html_id}}_on_deck").position({
+		my: "right top",
+		at: "right bottom",
+		of: $("#{{html_id}}_text" ),
+		offset: "0 15"
+	});
 	function addKiller_{{func_slug}}(repr,id) {
 		killer_id = "kill_{{ html_id }}" + id
-		kill = "<span class='iconic' id='"+killer_id+"'>X</span>	";
+		kill = "<span class='ui-icon ui-icon-trash' id='"+killer_id+"'>X</span>	";
+		//repr = "<span>" + repr + "</span>";
 		$( "#{{html_id}}_on_deck" ).append("<div id='{{html_id}}_on_deck_" + id +"'>" + kill + repr + " </div>");
 		$("#"+killer_id).click(function(frozen_id) { return function(){
 			kill_{{func_slug}}(frozen_id);
@@ -51,9 +58,13 @@
 		addKiller_{{func_slug}}(its[0],its[1]);
 	});
 	$("#{{ html_id }}").bind('didAddPopup',function(event,id,repr) {
-		ui = { item: { pk: id, desc: repr } }
+		ui = { item: { pk: id, repr: repr } }
 		receiveResult_{{func_slug}}(null,ui);
 	});
 {% block extra_script %}{% endblock %}
+{% endblock %}
+});
 //]]>
 </script>
+{# django admin adds the help text. this is for use outside of the admin #}
+{% block help %}{% if help_text %}<p class="help">{{help_text}}</p>{% endif %}{% endblock %}

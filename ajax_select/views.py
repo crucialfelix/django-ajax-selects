@@ -7,7 +7,8 @@ from django.utils import simplejson
 
 
 def ajax_lookup(request,channel):
-    """ this view supplies results for both foreign keys and many to many fields """
+
+    """ this view supplies results for foreign keys and many to many fields """
 
     # it should come in as GET unless global $.ajaxSetup({type:"POST"}) has been set
     # in which case we'll support POST
@@ -29,27 +30,35 @@ def ajax_lookup(request,channel):
         instances = []
 
     results = simplejson.dumps([
-        { 'pk': unicode(item.pk), 'label': lookup.format_result(item),
-            'desc': lookup.format_item(item) }
-        for item in instances
+        {
+            'pk': unicode(item.pk),
+            'value': lookup.format_result(item), # was label / result
+            'repr': lookup.format_item(item)     # was desc / item
+        } for item in instances
     ])
 
     return HttpResponse(results, mimetype='application/javascript')
 
 
 def add_popup(request,app_label,model):
-    """ present an admin site add view, hijacking the result if its the dismissAddAnotherPopup js and returning didAddPopup """
+    """ this presents the admin site popup add view (when you click the green +)
+
+        make sure that you have added ajax_select.urls to your urls.py:
+            (r'^ajax_select/', include('ajax_select.urls')),
+        this URL is expected in the code below, so it won't work under a different path
+        
+        this view then hijacks the result that the django admin returns
+        and instead of calling django's dismissAddAnontherPopup(win,newId,newRepr) 
+        it calls didAddPopup(win,newId,newRepr) which was added inline with bootstrap.html
+    """
     themodel = models.get_model(app_label, model)
     admin = site._registry[themodel]
 
-    admin.admin_site.root_path = "/ajax_select/" # warning: your URL should be configured here.
-    # as in your root urls.py includes :
-    #    (r'^ajax_select/', include('ajax_select.urls')),
-    # I should be able to auto-figure this out but ...
+    admin.admin_site.root_path = "/ajax_select/" 
 
     response = admin.add_view(request,request.path)
     if request.method == 'POST':
-        if response.content.startswith('<script type="text/javascript">opener.dismissAddAnotherPopup'):
+        if 'opener.dismissAddAnotherPopup' in response.content:
             return HttpResponse( response.content.replace('dismissAddAnotherPopup','didAddPopup' ) )
     return response
 

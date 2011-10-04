@@ -10,9 +10,12 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 
+
+####################################################################################
+
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
-    """  widget to select a model """
+    """  widget to select a model and return it as text """
 
     add_link = None
 
@@ -53,7 +56,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'func_slug': self.html_id.replace("-",""),
                 'add_link' : self.add_link,
                 }
-
+        print context
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
@@ -78,8 +81,9 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
         widget = kwargs.get("widget", False)
+        
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
-            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=kwargs.get('help_text',_('Enter text to search.')))
+            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=kwargs.get('help_text') or _('Enter text to search.'))
         super(AutoCompleteSelectField, self).__init__(max_length=255,*args, **kwargs)
 
     def clean(self, value):
@@ -101,6 +105,8 @@ class AutoCompleteSelectField(forms.fields.CharField):
         _check_can_add(self,user,model)
 
 
+####################################################################################
+
 
 class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
@@ -111,11 +117,12 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
     def __init__(self,
                  channel,
                  help_text='',
-                 show_help_text=False,#admin will also show help. set True if used outside of admin
+                 show_help_text=None,
                  *args, **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
-        self.help_text = help_text
+        
+        self.help_text = help_text or _('Enter text to search.')
         self.show_help_text = show_help_text
 
     def render(self, name, value, attrs=None):
@@ -143,11 +150,12 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             current_repr_json.append( """new Array("%s",%s)""" % (escapejs(repr),obj.pk) )
 
         current_reprs = mark_safe("new Array(%s)" % ",".join(current_repr_json))
+        
         if self.show_help_text:
             help_text = self.help_text
         else:
             help_text = ''
-
+        
         context = {
             'name':name,
             'html_id':self.html_id,
@@ -172,7 +180,6 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
 
 
-
 class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
     """ form field to select multiple models for a ManyToMany db field """
@@ -181,11 +188,34 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
-        help_text = kwargs.get('help_text',_('Enter text to search.'))
+
+        as_default_help = u'Enter text to search.'
+        help_text = kwargs.get('help_text')
+        if not (help_text is None):
+            try:
+                en_help = help_text.translate('en')
+            except AttributeError:
+                pass
+            else:
+                # monkey patch the django default help text to the ajax selects default help text
+                django_default_help = u'Hold down "Control", or "Command" on a Mac, to select more than one.'
+                if django_default_help in en_help:
+                    en_help = en_help.replace(django_default_help,'').strip()
+                    # probably will not show up in translations
+                    if en_help:
+                        help_text = _(en_help)
+                    else:
+                        help_text = _(as_default_help)
+        else:
+            help_text = _(as_default_help)
+
         # admin will also show help text, so by default do not show it in widget
         # if using in a normal form then set to True so the widget shows help
-        show_help_text = kwargs.get('show_help_text',False)
+        show_help_text = kwargs.pop('show_help_text',False)
+        
         kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+        kwargs['help_text'] = help_text
+        
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -195,6 +225,9 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
     def check_can_add(self,user,model):
         _check_can_add(self,user,model)
+
+
+####################################################################################
 
 
 class AutoCompleteWidget(forms.TextInput):
@@ -237,6 +270,7 @@ class AutoCompleteWidget(forms.TextInput):
         return mark_safe(render_to_string(templates, context))
 
 
+
 class AutoCompleteField(forms.CharField):
     """
     Field uses an AutoCompleteWidget to lookup possible completions using a channel and stores raw text (not a foreign key)
@@ -254,8 +288,7 @@ class AutoCompleteField(forms.CharField):
         super(AutoCompleteField, self).__init__(*args, **defaults)
 
 
-
-
+####################################################################################
 
 def _check_can_add(self,user,model):
     """ check if the user can add the model, deferring first to the channel if it implements can_add() \
@@ -270,10 +303,12 @@ def _check_can_add(self,user,model):
     if can_add:
         self.widget.add_link = reverse('add_popup',kwargs={'app_label':model._meta.app_label,'model':model._meta.object_name.lower()})
 
+
 def autoselect_fields_check_can_add(form,model,user):
     """ check the form's fields for any autoselect fields and enable their widgets with + sign add links if permissions allow"""
     for name,form_field in form.declared_fields.iteritems():
         if isinstance(form_field,(AutoCompleteSelectMultipleField,AutoCompleteSelectField)):
             db_field = model._meta.get_field_by_name(name)[0]
             form_field.check_can_add(user,db_field.rel.to)
+
 

@@ -1,0 +1,27 @@
+
+.results_on_deck .ui-icon-trash {
+	float: left;
+	cursor: pointer;
+}
+.results_on_deck {
+	padding: 0.25em 0;
+	margin-bottom: 15px;
+}
+.ui-autocomplete-loading {
+	background: white url('https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/ajax_select/loading-indicator.gif') no-repeat;
+	background-position: right;
+}
+ul.ui-autocomplete {
+	max-width: 320px;
+	margin: 0;
+	padding: 0;
+}
+ul.ui-autocomplete li {
+    list-style-type: none;
+	padding: 0;
+}
+ul.ui-autocomplete li a {
+	display: block;
+	padding: 2px 3px;
+	cursor: pointer;
+}
