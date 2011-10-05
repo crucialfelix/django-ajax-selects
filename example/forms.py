@@ -21,4 +21,5 @@ class ReleaseForm(ModelForm):
     # label  = make_ajax_field(Release,'label','label',for_admin=False)
     # so that it will show the help text in manytomany fields 
 
+    title = make_ajax_field(Release,'title','cliche')
 

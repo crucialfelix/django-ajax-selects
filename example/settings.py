@@ -1,5 +1,45 @@
 # Django settings for example project.
 
+###########################################################################
+
+# ADD THE APP 
+
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.admin',
+    'example',
+    
+    ####################################
+    'ajax_select',  #  <-   add the app
+    ####################################
+)
+
+###########################################################################
+
+# DEFINE THE SEARCH CHANNELS:
+
+AJAX_LOOKUP_CHANNELS = {
+    # simplest way, automatically construct a search channel by passing a dictionary
+    'label' : {'model':'example.label', 'search_field':'name'},
+    
+    # Custom channels are specified with a tuple
+    # channel name : ( module.where_lookup_is, ClassNameOfLookup )
+    'person' : ('example.lookups', 'PersonLookup'),
+    'group' : ('example.lookups', 'GroupLookup'),
+    'song' : ('example.lookups', 'SongLookup'),
+    'cliche' : ('example.lookups','ClicheLookup')
+}
+
+
+
+###########################################################################
+
+#  STANDARD CONFIG SETTINGS ###############################################
+
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -77,36 +117,3 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
-
-
-###########################################################################
-
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'example', # before admin so that templates/admin/base_site.html gets loaded from example
-    'django.contrib.admin',
-    
-    ####################################
-    'ajax_select',  #  <-   add the app
-    ####################################
-)
-
-###########################################################################
-# define the channels:
-
-AJAX_LOOKUP_CHANNELS = {
-    # simplest way
-    'label' : dict(model='example.label', search_field='name'),
-    
-    # Custom channels
-    # channel name : ( module.where_lookup_is, ClassNameOfLookup )
-    'person' : ('example.lookups', 'PersonLookup'),
-    'group' : ('example.lookups', 'GroupLookup'),
-    'song' : ('example.lookups', 'SongLookup'),
-}
-
-###########################################################################
-
