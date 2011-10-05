@@ -29,7 +29,7 @@ admin.site.register(Label,LabelAdmin)
 
 
 
-class GroupAdmin(admin.ModelAdmin):
+class GroupAdmin(AjaxSelectAdmin):
 
     form = make_ajax_form(Group,{'members':'person'})
 
@@ -37,7 +37,7 @@ admin.site.register(Group,GroupAdmin)
 
 
 
-class SongAdmin(admin.ModelAdmin):
+class SongAdmin(AjaxSelectAdmin):
 
     form = make_ajax_form(Song,{'group':'group'})
 

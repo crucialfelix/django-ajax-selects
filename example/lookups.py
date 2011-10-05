@@ -76,10 +76,10 @@ class SongLookup(object):
         return Song.objects.filter(title__icontains=q).select_related('group').order_by('title')
 
     def format_item(self,obj):
-        return "%s<div><i>by %s</i></div>" % (obj.name,obj.group.name)
+        return "%s<div><i>by %s</i></div>" % (obj.title,obj.group.name)
 
     def format_result(self,obj):
-        return obj.name
+        return obj.title
 
     def get_objects(self,ids):
         return Song.objects.filter(id__in=ids)
