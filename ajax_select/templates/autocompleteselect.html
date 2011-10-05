@@ -9,60 +9,12 @@
 <div id="{{html_id}}_on_deck" class="results_on_deck"><div>{{current_result|safe}}</div></div>
 <script type="text/javascript">//<![CDATA[
 jQuery(document).ready(function($){
-{% block script %}
-	function receiveResult_{{func_slug}}(event, ui) {
-		prev = $("#{{html_id}}").val();
-		if(prev) {
-			kill_{{ func_slug }}(prev);
-		}
-		$("#{{html_id}}").val(ui.item.pk);
-		$("#{{html_id}}_text").val('');
-		addKiller_{{ func_slug }}(ui.item.repr, ui.item.pk);
-		$("#{{html_id}}_on_deck").trigger("added");
-		return false;
-	}
-	$("#{{html_id}}_text").autocomplete({
+	$("#{{html_id}}").autocompleteselect({
 		minLength: {{min_length}},
 		source: '{{lookup_url}}',
-		select: receiveResult_{{func_slug}}
-	}).data("autocomplete")._renderItem = function(ul, item) {
-			return $("<li></li>")
-				.data("item.autocomplete", item)
-				.append("<a>" + item.repr + "</a>")
-				.appendTo(ul);
-		};
-	$("#{{html_id}}_on_deck").position({
-		my: "right top",
-		at: "right bottom",
-		of: $("#{{html_id}}_text" ),
-		offset: "0 15"
-	});
-	function addKiller_{{func_slug}}(repr,id) {
-		kill = "<span class='ui-icon ui-icon-trash' id='kill_{{ html_id }}'>X</span>	";
-		if(repr){
-			$( "#{{html_id}}_on_deck" ).empty();
-			$( "#{{html_id}}_on_deck" ).append( "<div>" + kill + repr + "</div>");
-		} else {
-			$( "#{{html_id}}_on_deck > div" ).prepend(kill);
-		}
-		$("#kill_{{ html_id }}").click(function() { return function(){
-			kill_{{func_slug}}();
-			$("#{{html_id}}_on_deck").trigger("killed");
-		}}() );
-	}
-	function kill_{{func_slug}}() {
-		$("#{{html_id}}").val( '' );
-		$( "#{{html_id}}_on_deck" ).children().fadeOut(1.0).remove();
-	}
-	if($("#{{ html_id }}").val()) { // add X for initial value if any
-		addKiller_{{ func_slug }}(null,$("#{{ html_id }}").val());
-	}
-	$("#{{ html_id }}").bind('didAddPopup',function(event,id,repr) {
-		ui = { item: { pk: id, repr: repr } }
-		receiveResult_{{func_slug}}(null,ui);
+		initial:  {{current_repr}}
 	});
 {% block extra_script %}{% endblock %}
-{% endblock %}
 });//]]>
 </script>
 {% block help %}{% if help_text %}<p class="help">{{help_text}}</p>{% endif %}{% endblock %}

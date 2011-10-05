@@ -40,9 +40,10 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 obj = objs[0]
             except IndexError:
                 raise Exception("%s cannot find object:%s" % (lookup, value))
-            current_result = mark_safe(lookup.format_item( obj ) )
+            repr = lookup.format_item(obj)
+            current_repr = mark_safe( """new Array("%s",%s)""" % (escapejs(repr),obj.pk) )
         else:
-            current_result = ''
+            current_repr = 'null'
 
         context = {
                 'name': name,
@@ -50,13 +51,13 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'min_length': getattr(lookup, 'min_length', 1),
                 'lookup_url': reverse('ajax_lookup',kwargs={'channel':self.channel}),
                 'current_id': value,
-                'current_result': current_result,
+                'current_repr': current_repr,
                 'help_text': self.help_text,
                 'extra_attrs': mark_safe(flatatt(final_attrs)),
                 'func_slug': self.html_id.replace("-",""),
                 'add_link' : self.add_link,
                 }
-        print context
+
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
@@ -148,7 +149,6 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         for obj in objects:
             repr = lookup.format_item(obj)
             current_repr_json.append( """new Array("%s",%s)""" % (escapejs(repr),obj.pk) )
-
         current_reprs = mark_safe("new Array(%s)" % ",".join(current_repr_json))
         
         if self.show_help_text:
@@ -163,7 +163,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'lookup_url':reverse('ajax_lookup',kwargs={'channel':self.channel}),
             'current':value,
             'current_ids':current_ids,
-            'current_reprs':current_reprs,
+            'current_reprs': current_reprs,
             'help_text':help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),

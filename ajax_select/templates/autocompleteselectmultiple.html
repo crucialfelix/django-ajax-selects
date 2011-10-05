@@ -8,61 +8,12 @@
 <div id="{{html_id}}_on_deck" class="results_on_deck"></div>
 <script type="text/javascript">//<![CDATA[
 jQuery(document).ready(function($){
-{% block script %}
-	function receiveResult_{{func_slug}}(event, ui) {
-		id = ui.item.pk;
-		if( $("#{{html_id}}").val().indexOf( "|"+id+"|" ) == -1) {
-			if($("#{{html_id}}").val() == '') {
-				$("#{{html_id}}").val('|');
-			}
-			$("#{{html_id}}").val( $("#{{html_id}}").val() + id + "|");
-			addKiller_{{func_slug}}(ui.item.repr,id);
-			$("#{{html_id}}_text").val('');
-			$("#{{html_id}}_on_deck").trigger("added");
-		}
-		return false;
-	}
-	$("#{{html_id}}_text").autocomplete({
+	$("#{{html_id}}").autocompleteselectmultiple({
 		minLength: {{min_length}},
 		source: '{{lookup_url}}',
-		select: receiveResult_{{func_slug}}
-	}).data("autocomplete")._renderItem = function(ul, item) {
-			return $("<li></li>")
-				.data("item.autocomplete", item)
-				.append("<a>" + item.repr + "</a>")
-				.appendTo(ul);
-		};
-	$("#{{html_id}}_on_deck").position({
-		my: "right top",
-		at: "right bottom",
-		of: $("#{{html_id}}_text" ),
-		offset: "0 15"
-	});
-	function addKiller_{{func_slug}}(repr,id) {
-		killer_id = "kill_{{ html_id }}" + id
-		kill = "<span class='ui-icon ui-icon-trash' id='"+killer_id+"'>X</span>	";
-		//repr = "<span>" + repr + "</span>";
-		$( "#{{html_id}}_on_deck" ).append("<div id='{{html_id}}_on_deck_" + id +"'>" + kill + repr + " </div>");
-		$("#"+killer_id).click(function(frozen_id) { return function(){
-			kill_{{func_slug}}(frozen_id);
-			{#  send signal to enclosing p, you may register for this event #}
-			$("#{{html_id}}_on_deck").trigger("killed");
-		}}(id) );
-	}
-	function kill_{{func_slug}}(id) {
-		$("#{{html_id}}").val( $("#{{html_id}}").val().replace( "|" + id + "|", "|" ) );
-		$("#{{html_id}}_on_deck_" + id).fadeOut().remove();
-	}
-	currentRepr = {{current_reprs}};
-	$.each(currentRepr,function(i,its){
-		addKiller_{{func_slug}}(its[0],its[1]);
-	});
-	$("#{{ html_id }}").bind('didAddPopup',function(event,id,repr) {
-		ui = { item: { pk: id, repr: repr } }
-		receiveResult_{{func_slug}}(null,ui);
+		initial:  {{current_reprs}}
 	});
 {% block extra_script %}{% endblock %}
-{% endblock %}
 });
 //]]>
 </script>
