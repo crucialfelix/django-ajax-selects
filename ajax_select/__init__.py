@@ -7,29 +7,65 @@ __homepage__ = "http://code.google.com/p/django-ajax-selects/"
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.contrib.contenttypes.models import ContentType
 from django.forms.models import ModelForm
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 
+class LookupChannel(object):
+
+    """Subclass this, setting model and overiding the methods below to taste"""
+    
+    model = None
+    
+    def get_query(self,q,request):
+        """ return a query set searching for the query string q """
+        kwargs = { "%s__icontains" % search_field : q }
+        return self.model.objects.filter(**kwargs).order_by(search_field)
+
+    def get_result(self,obj):
+        """ The text result of autocompleting the entered query """
+        return unicode(obj)
+
+    def format_match(self,obj):
+        """ (HTML) formatted item for displaying item in the dropdown """
+        return unicode(obj)
+
+    def format_item_display(self,obj):
+        """ (HTML) formatted item for displaying item in the selected deck area """
+        return unicode(obj)
+
+    def get_objects(self,ids):
+        """ Get the currently selected objects when editing an existing model """
+        # return in the original ordering as added to the interface when last edited:
+        ids = [int(id) for id in ids]
+        things = self.model.objects.in_bulk(ids)
+        return [things[aid] for aid in ids if things.has_key(aid)]
+
+    def can_add(self,user,argmodel):
+        """ Check if the user has permission to add 
+            one of these models. This enables the green popup +
+            Default is the standard django permission check
+        """
+        ctype = ContentType.objects.get_for_model(argmodel)
+        return user.has_perm("%s.add_%s" % (ctype.app_label,ctype.model))
+
+
+
+
 def make_ajax_form(model,fieldlist,superclass=ModelForm,for_admin=True):
-    """ this will create a ModelForm subclass with fields:
+    """ Creates a ModelForm subclass with autocomplete fields
             
-            AutoCompleteSelectMultipleField (many to many),
-            AutoCompleteSelectField (foreign key)
-
-        where specified in the fieldlist:
-
-            {'fieldname':'channel', ... }
-
         usage:
             class YourModelAdmin(Admin):
                 ...
                 form = make_ajax_form(YourModel,{'contacts':'contact','author':'contact'})
 
-            where 'contacts' is a many to many field, specifying to use the lookup channel 'contact'
-            and
-                  'author' is a foreign key field, specifying here to also use the lookup channel 'contact'
+        where 
+            'contacts' is a ManyToManyField specifying to use the lookup channel 'contact'
+        and
+            'author' is a ForeignKeyField specifying here to also use the lookup channel 'contact'
     """
 
     class TheForm(superclass):
@@ -49,17 +85,19 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm,for_admin=True):
 
 
 def make_ajax_field(model,model_fieldname,channel,for_admin = True,**kwargs):
-    """ makes an ajax select / multiple select / autocomplete field
-        copying the label and help text from the model's db field
+    """ Makes a single autocomplete field for use in a Form
 
         optional args:
-            help_text - note that django's ManyToMany db field will append
-                'Hold down "Control", or "Command" on a Mac, to select more than one.'
-                to your db field's help text.
-                Therefore you are better off passing it in here
-            label - default is db field's verbose name
-            required - default's to db field's (not) blank
-            """
+            help_text - default is the model field's help_text 
+            label     - default is the model field's verbose name
+            required  - default is the model field's (not) blank
+        
+            for_admin - if creating a form for use outside of the admin then set this False.
+                Django will show help text in the Admin for ManyToMany fields,
+                in which case the help text should not be shown in side the widget itself.
+                But if used outside of the Admin then you need the help text.
+                Set it to True if using a Form outside of the Admin.
+    """
 
     from ajax_select.fields import AutoCompleteField, \
                                    AutoCompleteSelectMultipleField, \
@@ -111,54 +149,57 @@ def make_ajax_field(model,model_fieldname,channel,for_admin = True,**kwargs):
     return f
 
 
-####  private  ####
+####################  private  ##################################################
 
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """
     try:
         lookup_label = settings.AJAX_LOOKUP_CHANNELS[channel]
-    except (KeyError, AttributeError):
+    except AttributeError:
+        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS is not configured")
+    except KeyError:
         raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS not configured correctly for %r" % channel)
 
     if isinstance(lookup_label,dict):
         # 'channel' : dict(model='app.model', search_field='title' )
-        # generate a simple channel dynamically
+        #  generate a simple channel dynamically
         return make_channel( lookup_label['model'], lookup_label['search_field'] )
-    else:
+    else: # a tuple
         # 'channel' : ('app.module','LookupClass')
-        # from app.module load LookupClass and instantiate
+        #  from app.module load LookupClass and instantiate
         lookup_module = __import__( lookup_label[0],{},{},[''])
         lookup_class = getattr(lookup_module,lookup_label[1] )
+
+        # monkeypatch older lookup classes till 1.3
+        if not hasattr(lookup_class,'format_match'):
+            setattr(lookup_class, 'format_match',
+                getattr(lookup_class,'format_item',
+                    lambda self,obj: unicode(obj)))
+        if not hasattr(lookup_class,'format_item_display'):
+            setattr(lookup_class, 'format_item_display',
+                getattr(lookup_class,'format_item', 
+                    lambda self,obj: unicode(obj)))
+        if not hasattr(lookup_class,'get_result'):
+            setattr(lookup_class, 'get_result',
+                getattr(lookup_class,'format_result', 
+                    lambda self,obj: unicode(obj)))
+        
         return lookup_class()
 
 
 def make_channel(app_model,search_field):
     """ used in get_lookup
-        app_model :   app_name.model_name
-        search_field :  the field to search against and to display in search results """
+            app_model :   app_name.model_name
+            search_field :  the field to search against and to display in search results 
+    """
     from django.db import models
     app_label, model_name = app_model.split(".")
-    model = models.get_model(app_label, model_name)
+    themodel = models.get_model(app_label, model_name)
 
-    class AjaxChannel(object):
+    class MadeLookupChannel(LookupChannel):
+        
+        model = themodel
 
-        def get_query(self,q,request):
-            """ return a query set searching for the query string q """
-            kwargs = { "%s__icontains" % search_field : q }
-            return model.objects.filter(**kwargs).order_by(search_field)
-
-        def format_item(self,obj):
-            """ format item for simple list of currently selected items """
-            return unicode(obj)
-
-        def format_result(self,obj):
-            """ format search result for the drop down of search results. may include html """
-            return unicode(obj)
-
-        def get_objects(self,ids):
-            """ get the currently selected objects """
-            return model.objects.filter(pk__in=ids).order_by(search_field)
-
-    return AjaxChannel()
+    return MadeLookupChannel()
 
 

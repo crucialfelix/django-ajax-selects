@@ -2,99 +2,79 @@
 
 from example.models import *
 from django.db.models import Q
+from ajax_select import LookupChannel
 
 
-class PersonLookup(object):
+class PersonLookup(LookupChannel):
+
+    model = Person
 
     def get_query(self,q,request):
         return Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name')
 
-    def format_item(self,obj):
-        """ item can be formatted and is shown in the autocomplete dropdown
-            and after the item is selected and shown below the input """
-        return "%s<div><i>%s</i></div>" % (obj.name,obj.email)
-
-    def format_result(self,obj):
+    def get_result(self,obj):
         u""" result is the simple text that is the completion of what the person typed """
         return obj.name
 
-    def get_objects(self,ids):
-        # simplest, just return them:
-        # return Person.objects.filter(id__in=ids)
-        
-        # return in the original ordering as added to the interface when last edited:
-        ids = [int(id) for id in ids]
-        persons = dict( (a.pk,a) for a in Person.objects.filter(pk__in=ids) )
-        return [persons[aid] for aid in ids if persons.has_key(aid)]
+    def format_match(self,obj):
+        """ (HTML) formatted item for display in the dropdown """
+        return self.format_item_display(obj)
 
-    def can_add(self,user,model):
-        """ could check if user has sufficient privileges. 
-            only those allowed to add will be offered a [+ add] """
-        return True
+    def format_item_display(self,obj):
+        """ (HTML) formatted item for displaying item in the selected deck area """
+        return u"%s<div><i>%s</i></div>" % (obj.name,obj.email)
 
 
-class GroupLookup(object):
+
+class GroupLookup(LookupChannel):
+
+    model = Group
 
     def get_query(self,q,request):
         return Group.objects.filter(name__icontains=q).order_by('name')
 
-    def format_item(self,obj):
-        return "%s<div><i>%s</i></div>" % (obj.name,obj.url)
+    def get_result(self,obj):
+        return unicode(obj)
+        
+    def format_match(self,obj):
+        return self.format_item_display(obj)
 
-    def format_result(self,obj):
-        return obj.name
-
-    def get_objects(self,ids):
-        return Group.objects.filter(id__in=ids)
+    def format_item_display(self,obj):
+        return u"%s<div><i>%s</i></div>" % (obj.name,obj.url)
 
     def can_add(self,user,model):
+        """ customize can_add by allowing anybody to add a Group.
+            the superclass implementation uses django's permissions system to check.
+            only those allowed to add will be offered a [+ add] popup link
+            """
         return True
 
 
-# uses the ez lookup creation method. see settings.py
-# class LabelLookup(object):
+class SongLookup(LookupChannel):
 
-#     def get_query(self,q,request):
-#         return Label.objects.filter(name__icontains=q).order_by('name')
-
-#     def format_item(self,obj):
-#         return "%s<div><i>%s</i></div>" % (obj.name,obj.url)
-
-#     def format_result(self,obj):
-#         return obj.name
-
-#     def get_objects(self,ids):
-#         return Label.objects.filter(id__in=ids)
-
-#     def can_add(self,user,model):
-#         return True
-
-
-class SongLookup(object):
+    model = Song
 
     def get_query(self,q,request):
         return Song.objects.filter(title__icontains=q).select_related('group').order_by('title')
 
-    def format_item(self,obj):
+    def get_result(self,obj):
+        return unicode(obj.title)
+        
+    def format_match(self,obj):
+        return self.format_item_display(obj)
+
+    def format_item_display(self,obj):
         return "%s<div><i>by %s</i></div>" % (obj.title,obj.group.name)
 
-    def format_result(self,obj):
-        return obj.title
-
-    def get_objects(self,ids):
-        return Song.objects.filter(id__in=ids)
-
-    def can_add(self,user,model):
-        return True
 
 
-class ClicheLookup(object):
-    
+class ClicheLookup(LookupChannel):
+
     """ an autocomplete lookup does not need to search models
         though the words here could also be stored in a model and
-        searched as in the lookups above 
+        searched as in the lookups above
         """
-        
+
     words = [
         u"rain cats and dogs",
         u"quick as a cat",
@@ -130,7 +110,6 @@ class ClicheLookup(object):
         u"He was on that like a pack of dogs on a three-legged cat.",
         u"like two tomcats in a gunny sack",
         u"I don't know your from adam's house cat!",
-        u"Crazier than Joe Cunt's cat",
         u"nervous as a long tailed cat in a living room full of rockers",
         u"Busier than a three legged cat in a dry sand box.",
         u"Busier than a one-eyed cat watching two mouse holes.",
@@ -154,9 +133,12 @@ class ClicheLookup(object):
     def get_query(self,q,request):
         return sorted([w for w in self.words if q in w])
 
-    def format_item(self,word):
-        return word
+    def get_result(self,obj):
+        return obj
 
-    def format_result(self,word):
-        return word
+    def format_match(self,obj):
+        return obj
+
+    def format_item_display(self,obj):
+        return obj
 

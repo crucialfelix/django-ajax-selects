@@ -6,7 +6,7 @@ if(typeof _renderItemHTML != 'function') {
 function _renderItemHTML(ul, item) {
 	return $("<li></li>")
 		.data("item.autocomplete", item)
-		.append("<a>" + item.repr + "</a>")
+		.append("<a>" + item.match + "</a>")
 		.appendTo(ul);
 }
 
@@ -90,7 +90,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 		function receiveResult(event, ui) {
 			pk = ui.item.pk;
 			prev = $this.val();
-
+			
 			if (prev.indexOf("|"+pk+"|") == -1) {
 				$this.val((prev ? prev : "|") + pk + "|");
 				addKiller(ui.item.repr, pk);
@@ -141,11 +141,9 @@ $.fn.autocompleteselectmultiple = function(options) {
 };
 })(jQuery);
 
-/* {% comment %}
-	the popup handler
+/* 	the popup handler
 	requires RelatedObjects.js which is part of the django admin js
-	so if using outside of the admin then you would need to include that manually
-{% endcomment %} */
+	so if using outside of the admin then you would need to include that manually */
 	function didAddPopup(win,newId,newRepr) {
 		var name = windowname_to_id(win.name);
 		jQuery("#"+name).trigger('didAddPopup',[html_unescape(newId),html_unescape(newRepr)]);

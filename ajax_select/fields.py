@@ -42,8 +42,8 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 obj = objs[0]
             except IndexError:
                 raise Exception("%s cannot find object:%s" % (lookup, value))
-            repr = lookup.format_item(obj)
-            current_repr = mark_safe( """new Array("%s",%s)""" % (escapejs(repr),obj.pk) )
+            display = lookup.format_item_display(obj)
+            current_repr = mark_safe( """new Array("%s",%s)""" % (escapejs(display),obj.pk) )
         else:
             current_repr = 'null'
 
@@ -150,8 +150,8 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         # text repr of currently selected items
         current_repr_json = []
         for obj in objects:
-            repr = lookup.format_item(obj)
-            current_repr_json.append( """new Array("%s",%s)""" % (escapejs(repr),obj.pk) )
+            display = lookup.format_item_display(obj)
+            current_repr_json.append( """new Array("%s",%s)""" % (escapejs(display),obj.pk) )
         current_reprs = mark_safe("new Array(%s)" % ",".join(current_repr_json))
         
         if self.show_help_text:
@@ -267,7 +267,7 @@ class AutoCompleteWidget(forms.TextInput):
             'lookup_url': reverse('ajax_lookup', args=[self.channel]),
             'name': name,
             'extra_attrs':mark_safe(flatatt(final_attrs)),
-            'func_slug': self.html_id.replace("-","")
+            'func_slug': self.html_id.replace("-",""),
         }
         context.update(bootstrap())
 
@@ -297,17 +297,20 @@ class AutoCompleteField(forms.CharField):
 ####################################################################################
 
 def _check_can_add(self,user,model):
-    """ check if the user can add the model, deferring first to the channel if it implements can_add() \
-        else using django's default perm check. \
-        if it can add, then enable the widget to show the + link """
+    """ check if the user can add the model, deferring first to 
+        the channel if it implements can_add()
+        else using django's default perm check.
+        if it can add, then enable the widget to show the + link 
+    """
     lookup = get_lookup(self.channel)
-    try:
+    if hasattr(lookup,'can_add'):
         can_add = lookup.can_add(user,model)
-    except AttributeError:
+    else:
         ctype = ContentType.objects.get_for_model(model)
         can_add = user.has_perm("%s.add_%s" % (ctype.app_label,ctype.model))
     if can_add:
-        self.widget.add_link = reverse('add_popup',kwargs={'app_label':model._meta.app_label,'model':model._meta.object_name.lower()})
+        self.widget.add_link = reverse('add_popup',
+            kwargs={'app_label':model._meta.app_label,'model':model._meta.object_name.lower()})
 
 
 def autoselect_fields_check_can_add(form,model,user):

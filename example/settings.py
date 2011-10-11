@@ -15,19 +15,20 @@ INSTALLED_APPS = (
     ####################################
 )
 
+
 ###########################################################################
 
 # DEFINE THE SEARCH CHANNELS:
 
 AJAX_LOOKUP_CHANNELS = {
     # simplest way, automatically construct a search channel by passing a dictionary
-    'label' : {'model':'example.label', 'search_field':'name'},
+    'label'  : {'model':'example.label', 'search_field':'name'},
     
     # Custom channels are specified with a tuple
-    # channel name : ( module.where_lookup_is, ClassNameOfLookup )
+    # channel: ( module.where_lookup_is, ClassNameOfLookup )
     'person' : ('example.lookups', 'PersonLookup'),
-    'group' : ('example.lookups', 'GroupLookup'),
-    'song' : ('example.lookups', 'SongLookup'),
+    'group'  : ('example.lookups', 'GroupLookup'),
+    'song'   : ('example.lookups', 'SongLookup'),
     'cliche' : ('example.lookups','ClicheLookup')
 }
 
