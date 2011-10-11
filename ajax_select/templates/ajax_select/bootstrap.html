@@ -1,11 +1,8 @@
-<style type="text/css">
-{% include "ajax_select/ajax_select.css" %}
-</style>
 <script type="text/javascript">//<![CDATA[
 if (typeof jQuery == 'undefined') {
-	try{ // use django admin's 
+	try { // use django admins 
 		jQuery=django.jQuery;
-	} catch(err){
+	} catch(err) {
 		document.write('<script type="text/javascript"  src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"><\/script>');
 	}
 }
@@ -13,6 +10,5 @@ if(!jQuery || (typeof jQuery.ui == 'undefined')) {
 	document.write('<script type="text/javascript"  src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"><\/script>');
 	document.write('<link type="text/css" rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/smoothness/jquery-ui.css" />');
 }
-{% include "ajax_select/ajax_select.js" %}
 //]]>
 </script>

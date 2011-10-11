@@ -9,6 +9,8 @@ from django.template.defaultfilters import escapejs
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+import os
+
 
 
 ####################################################################################
@@ -57,7 +59,8 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'func_slug': self.html_id.replace("-",""),
                 'add_link' : self.add_link,
                 }
-
+        context.update(bootstrap())
+        
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
@@ -169,6 +172,8 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
         }
+        context.update(bootstrap())
+
         return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
 
     def value_from_datadict(self, data, files, name):
@@ -264,6 +269,7 @@ class AutoCompleteWidget(forms.TextInput):
             'extra_attrs':mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-","")
         }
+        context.update(bootstrap())
 
         templates = ('autocomplete_%s.html' % self.channel,
                      'autocomplete.html')
@@ -310,5 +316,24 @@ def autoselect_fields_check_can_add(form,model,user):
         if isinstance(form_field,(AutoCompleteSelectMultipleField,AutoCompleteSelectField)):
             db_field = model._meta.get_field_by_name(name)[0]
             form_field.check_can_add(user,db_field.rel.to)
+
+
+def bootstrap():
+    b = {}
+    b['bootstrap'] = getattr(settings,'AJAX_SELECT_BOOTSTRAP',False)
+    inlines = getattr(settings,'AJAX_SELECT_INLINES',None)
+
+    b['inline'] = ''
+    if inlines == 'inline':
+        directory = os.path.dirname( os.path.realpath(__file__) )
+        f = open(os.path.join(directory,"static","css","ajax_select.css"))
+        css = f.read()
+        f = open(os.path.join(directory,"static","js","ajax_select.js"))
+        js = f.read()
+        b['inline'] = mark_safe(u"""<style type="text/css">%s</style><script type="text/javascript">//<![CDATA[%s//]]></script>""" % (css,js))
+    elif inlines == 'staticfiles':
+        b['inline'] = mark_safe("""<style type="text/css">@import url("%sajax_select/css/ajax_select.css");</style><script type="text/javascript" src="%sajax_select/js/ajax_select.js"></script>""" % (settings.STATIC_URL,settings.STATIC_URL))
+
+    return b
 
 
