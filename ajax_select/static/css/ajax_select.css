@@ -8,7 +8,7 @@
 	margin-bottom: 15px;
 }
 .ui-autocomplete-loading {
-	background:  url('https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/ajax_select/loading-indicator.gif') no-repeat;
+	background:  url('https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif') no-repeat;
 	background-position: right;
 }
 ul.ui-autocomplete {
