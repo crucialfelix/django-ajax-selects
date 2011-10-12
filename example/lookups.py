@@ -1,7 +1,8 @@
 
 
-from example.models import *
 from django.db.models import Q
+from django.utils.html import escape
+from example.models import *
 from ajax_select import LookupChannel
 
 
@@ -22,7 +23,7 @@ class PersonLookup(LookupChannel):
 
     def format_item_display(self,obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
-        return u"%s<div><i>%s</i></div>" % (obj.name,obj.email)
+        return u"%s<div><i>%s</i></div>" % (escape(obj.name),escape(obj.email))
 
 
 
@@ -40,7 +41,7 @@ class GroupLookup(LookupChannel):
         return self.format_item_display(obj)
 
     def format_item_display(self,obj):
-        return u"%s<div><i>%s</i></div>" % (obj.name,obj.url)
+        return u"%s<div><i>%s</i></div>" % (escape(obj.name),escape(obj.url))
 
     def can_add(self,user,model):
         """ customize can_add by allowing anybody to add a Group.
@@ -64,7 +65,7 @@ class SongLookup(LookupChannel):
         return self.format_item_display(obj)
 
     def format_item_display(self,obj):
-        return "%s<div><i>by %s</i></div>" % (obj.title,obj.group.name)
+        return "%s<div><i>by %s</i></div>" % (escape(obj.title),escape(obj.group.name))
 
 
 
@@ -137,8 +138,8 @@ class ClicheLookup(LookupChannel):
         return obj
 
     def format_match(self,obj):
-        return obj
+        return escape(obj)
 
     def format_item_display(self,obj):
-        return obj
+        return escape(obj)
 
