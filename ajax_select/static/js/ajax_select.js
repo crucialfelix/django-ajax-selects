@@ -1,5 +1,6 @@
 
-if(typeof _renderItemHTML != 'function') {
+
+if(typeof jQuery.fn.autocompletehtml != 'function') {
 
 (function($) {
 
