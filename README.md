@@ -111,9 +111,9 @@ Things that can be customized:
 Architecture
 ============
 
-A single view services all of the ajax search requests, delegating the searches to named 'channels'.  Each model that needs to be searched for has a channel defined for it. Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.
+A single view services all of the ajax search requests, delegating the searches to named 'channels'.  Each model that needs to be searched for has a channel defined for it. More than one channel may be defined for a Model to serve different needs such as public vs admin or channels that filter the query by specific categories etc. The channel also has access to the request and the user so it can personalize the query results.  Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.
 
-A simple channel can be specified in settings.py, a more complex one (with custom search, formatting or auth requirements) can be written in a lookups.py file.
+A simple channel can be specified in settings.py, a more complex one (with custom search, formatting, personalization or auth requirements) can be written in a lookups.py file.
 
 There are three model field types with corresponding form fields and widgets:
 
@@ -323,14 +323,15 @@ admin.py
 
 If your application does not otherwise require a custom Form class then you can use the make_ajax_form helper to create the entire form directly in admin.py.  See forms.py below for cases where you wish to make your own Form.
 
-+ model: your model
-+ fieldlist: a dict of {fieldname : channel_name, ... }
-+ superclass: [default ModelForm] Substitute a different superclass for the constructed Form class.
-+ show_m2m_help: [default False]
++ *model*: your model
++ *fieldlist*: a dict of {fieldname : channel_name, ... }
++ *superclass*: [default ModelForm] Substitute a different superclass for the constructed Form class.
++ *show_m2m_help*: [default False]
     Leave blank [False] if using this form in a standard Admin. 
     Set it True for InlineAdmin classes or if making a form for use outside of the Admin.
     See discussion below re: Help Text
 
+######Example
 
     from ajax_select import make_ajax_form
     from ajax_select.admin import AjaxSelectAdmin
@@ -353,13 +354,14 @@ subclass ModelForm just as usual.  You may add ajax fields using the helper or d
 
 A factory function to makes an ajax field + widget.  The helper ensures things are set correctly and simplifies usage and imports thus reducing programmer error.  All kwargs are passed into the Field so it is no less customizable.
 
-+ model:              the model that this ModelForm is for
-+ model_fieldname:    the field on the model that is being edited (ForeignKey, ManyToManyField or CharField)
-+ channel:            the lookup channel to use for searches
-+ show_m2m_help:      [default False]  When using in the admin leave this as False.
++ *model*:              the model that this ModelForm is for
++ *model_fieldname*:    the field on the model that is being edited (ForeignKey, ManyToManyField or CharField)
++ *channel*:            the lookup channel to use for searches
++ *show_m2m_help*:      [default False]  When using in the admin leave this as False.
     When using in AdminInline or outside of the admin then set it to True.
     see Help Text section below.
 
+#####Example
 
     from ajax_select import make_ajax_field
 
@@ -423,7 +425,7 @@ If you are doing your own compress stack then of course you can include whatever
 The display style now uses the jQuery UI theme and actually I find the drop down to be not very charming.  The previous version (1.1x) which used the external jQuery AutoComplete plugin had nicer styling.  I might decide to make the default more like that with alternating color rows and a stronger sense of focused item.  Also the current jQuery one wiggles.
 
 The CSS refers to one image that is served from github (as a CDN):
-!['https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'](https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif)
+!['https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'](https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif) 'https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'
 
 Your own site's CSS could redefine that with a stronger declaration to point to whatever you like.
 
@@ -442,8 +444,6 @@ ajax_select/static/js/ajax_select.js
 ------------------------------------
 
 You probably don't want to mess with this one.  But by using the extra_script block as detailed in templates/ above you can add extra javascript, particularily to respond to event Triggers.
-
-Handlers: On item added or removed
 
 Triggers are a great way to keep code clean and untangled. see: http://docs.jquery.com/Events/trigger
 
