@@ -253,13 +253,14 @@ class AutoCompleteWidget(forms.TextInput):
     def render(self, name, value, attrs=None):
 
         value = value or ''
+        
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
         lookup = get_lookup(self.channel)
 
         context = {
-            'current_name': value,
+            'current_repr': mark_safe("'%s'" % escapejs(value)),
             'current_id': value,
             'help_text': self.help_text,
             'html_id': self.html_id,
