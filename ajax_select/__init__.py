@@ -83,7 +83,7 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm,show_m2m_help=False):
         setattr(Meta, 'model', model)
 
     for model_fieldname,channel in fieldlist.iteritems():
-        f = make_ajax_field(model,model_fieldname,channel,for_admin)
+        f = make_ajax_field(model,model_fieldname,channel,show_m2m_help)
 
         TheForm.declared_fields[model_fieldname] = f
         TheForm.base_fields[model_fieldname] = f
@@ -92,7 +92,7 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm,show_m2m_help=False):
     return TheForm
 
 
-def make_ajax_field(model,model_fieldname,channel,for_admin = True,**kwargs):
+def make_ajax_field(model,model_fieldname,channel,show_m2m_help = False,**kwargs):
     """ Makes a single autocomplete field for use in a Form
 
         optional args:
@@ -100,11 +100,15 @@ def make_ajax_field(model,model_fieldname,channel,for_admin = True,**kwargs):
             label     - default is the model field's verbose name
             required  - default is the model field's (not) blank
         
-            for_admin - if creating a form for use outside of the admin then set this False.
+            show_m2m_help - 
                 Django will show help text in the Admin for ManyToMany fields,
-                in which case the help text should not be shown in side the widget itself.
-                But if used outside of the Admin then you need the help text.
-                Set it to True if using a Form outside of the Admin.
+                in which case the help text should not be shown in side the widget itself
+                or it appears twice.
+                
+                ForeignKey fields do not behave like this.
+                ManyToMany inside of admin inlines do not do this. [so set show_m2m_help=True]
+    
+                But if used outside of the Admin or in an ManyToMany admin inline then you need the help text.
     """
 
     from ajax_select.fields import AutoCompleteField, \
@@ -130,7 +134,7 @@ def make_ajax_field(model,model_fieldname,channel,for_admin = True,**kwargs):
         required = not field.blank
 
     if isinstance(field,ManyToManyField):
-        kwargs['show_help_text'] = not for_admin
+        kwargs['show_help_text'] = show_m2m_help
         f = AutoCompleteSelectMultipleField(
             channel,
             required=required,
@@ -191,7 +195,7 @@ def get_lookup(channel):
             setattr(lookup_class, 'get_result',
                 getattr(lookup_class,'format_result', 
                     lambda self,obj: unicode(obj)))
-        
+
         return lookup_class()
 
 
