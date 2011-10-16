@@ -40,6 +40,21 @@ Features
 Quick Installation
 ==================
 
+Get it
+
+    `pip install django-ajax-selects`
+or
+    `easy_install django-ajax-selects`
+or
+    download or checkout the distribution
+or 
+    install using buildout by adding `django-ajax-selects` to your `eggs`
+
+on fedora:
+    su -c 'yum install django-ajax-selects'
+(note: this version may not be up to date)
+
+
 In settings.py :
 
     # add the app
@@ -83,6 +98,7 @@ In your admin.py:
         pass
     admin.site.register(Person,PersonAdmin)
 
+    # subclass AjaxSelectAdmin
     class LabelAdmin(AjaxSelectAdmin):
         # create an ajax form class using the factory function
         #                     model,fieldlist,   [form superclass]
@@ -343,6 +359,15 @@ If your application does not otherwise require a custom Form class then you can 
         form = make_ajax_form(Label,{'owner':'person'})
     
     admin.site.register(YourModel,YourModelAdmin)
+
+You may use AjaxSelectAdmin as a mixin class and multiple inherit if you have another Admin class that you would like to use.  You may also just add the hook into your own Admin class:
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(YourAdminClass,self).get_form(request,obj,**kwargs)
+        autoselect_fields_check_can_add(form,self.model,request.user)
+        return form
+
+Note that ajax_selects does not need to be in an admin.  Popups will still use an admin view (the registered admin for the model being added), even if the form from where the popup was launched does not.
 
 
 forms.py
