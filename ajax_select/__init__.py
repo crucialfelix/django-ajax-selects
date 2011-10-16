@@ -42,7 +42,10 @@ class LookupChannel(object):
 
     def get_objects(self,ids):
         """ Get the currently selected objects when editing an existing model """
-        # return in the original ordering as added to the interface when last edited:
+        # return in the same order as passed in here
+        # this will be however the related objects Manager returns them
+        # which is not guaranteed to be the same order they were in when you last edited
+        # see OrdredManyToMany.md
         ids = [int(id) for id in ids]
         things = self.model.objects.in_bulk(ids)
         return [things[aid] for aid in ids if things.has_key(aid)]

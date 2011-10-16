@@ -57,6 +57,7 @@ def add_popup(request,app_label,model):
     themodel = models.get_model(app_label, model)
     admin = site._registry[themodel]
 
+    # TODO : should detect where we really are
     admin.admin_site.root_path = "/ajax_select/" 
 
     response = admin.add_view(request,request.path)
