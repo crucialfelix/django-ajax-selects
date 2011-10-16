@@ -6,19 +6,12 @@ if(typeof jQuery.fn.autocompletehtml != 'function') {
 
 function _init(id,$deck,$text,receiveFunction) {
 	$text.autocompletehtml();
-	if(id.indexOf("_set-") == -1) {
+	if($deck.parents(".inline-related").length == 0) {
 		$deck.position({ 
 			my: "right top", 
 			at: "right bottom", 
 			of: $text, 
 			offset: "0 5" 
-		});
-	} else { 
-		$deck.position({
-			my: "left top",
-			at: "left bottom",
-			of: $text,
-			offset: "0 5"
 		});
 	}
 }
