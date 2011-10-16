@@ -12,12 +12,17 @@ selected:
 
 <img src='http://media.crucial-systems.com/posts/selected.png'/>
 
+[Note: screen shots are from the older version. Styling has changed slightly]
+
 1. The user types a search term into the text field
 2. An ajax request is sent to the server. 
 3. The dropdown menu is populated with results. 
 4. User selects by clicking or using arrow keys
 5. Selected result displays in the "deck" area directly below the input field.
 6. User can click trashcan icon to remove a selected item
+
+Features
+========
 
 + Django 1.2+
 + Optional boostrap mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
@@ -134,8 +139,8 @@ settings.py
 
 Defines the available lookup channels.
 
-	channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
-	    This will create a channel automatically
++ channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
+> This will create a channel automatically
 	
 	chanel_name : ( 'app.lookups', 'YourLookup' )
 	    This points to a custom Lookup channel name YourLookup in app/lookups.py
@@ -152,39 +157,41 @@ Defines the available lookup channels.
 
 Sets if it should automatically include jQuery/jQueryUI/theme.  On large formsets this will cause it to check each time but it will only jQuery the first time.
 
- True: [easiest]
-   use jQuery if already present, else use the admin's jQuery else load from google's CDN
-   use jqueryUI if present else load from google's CDN
-   use jqueryUI theme if present else load one from google's CDN
++ True: [easiest]
+    use jQuery if already present, else use the admin's jQuery else load from google's CDN
+    use jqueryUI if present else load from google's CDN
+    use jqueryUI theme if present else load one from google's CDN
 
- False/None/Not set: [default]
-   you should then include jQuery, jqueryUI + theme in your template or js compressor stack
++ False/None/Not set: [default]
+    you should then include jQuery, jqueryUI + theme in your template or js compressor stack
 
 
 #### AJAX_SELECT_INLINES
 
 This controls if and how these:
+
     ajax_select/static/js/ajax_select.js 
     ajax_select/static/css/ajax_select.css 
+
 are included inline in the html with each form field.
 
- 'inline': [easiest]
-   Includes the js and css inline
-   This gets you up and running easily and is fine for small sites.
-   But with many form fields this will be less efficient.
++ 'inline': [easiest]
+    Includes the js and css inline
+    This gets you up and running easily and is fine for small sites.
+    But with many form fields this will be less efficient.
 
- 'staticfiles':
-   @import the css/js from {{STATIC_URL}}/ajax_selects using `django.contrib.staticfiles`
-   Requires staticfiles to be installed and to run its management command to collect files.
-   This still imports the css/js multiple times and is thus inefficient but otherwise harmless.
++ 'staticfiles':
+    @import the css/js from {{STATIC_URL}}/ajax_selects using `django.contrib.staticfiles`
+    Requires staticfiles to be installed and to run its management command to collect files.
+    This still imports the css/js multiple times and is thus inefficient but otherwise harmless.
 
-   When using staticfiles you may implement your own `ajax_select.css` and customize to taste as long
-   as your app is before ajax_select in the INSTALLED_APPS.
+    When using staticfiles you may implement your own `ajax_select.css` and customize to taste as long
+    as your app is before ajax_select in the INSTALLED_APPS.
 
- False/None: [default]
-   Does not inline anything. You should include the css/js files in your compressor stack
-   or include them in the head of the admin/base_site.html template.
-   This is the most efficient but takes the longest to configure.
++ False/None: [default]
+    Does not inline anything. You should include the css/js files in your compressor stack
+    or include them in the head of the admin/base_site.html template.
+    This is the most efficient but takes the longest to configure.
 
 
 urls.py
@@ -320,9 +327,9 @@ If your application does not otherwise require a custom Form class then you can 
 + fieldlist: a dict of {fieldname : channel_name, ... }
 + superclass: [default ModelForm] Substitute a different superclass for the constructed Form class.
 + show_m2m_help: [default False]
-> Leave blank [False] if using this form in a standard Admin. 
-> Set it True for InlineAdmin classes or if making a form for use outside of the Admin.
-> See discussion below re: Help Text
+    Leave blank [False] if using this form in a standard Admin. 
+    Set it True for InlineAdmin classes or if making a form for use outside of the Admin.
+    See discussion below re: Help Text
 
 
     from ajax_select import make_ajax_form
@@ -350,8 +357,8 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
 + model_fieldname:    the field on the model that is being edited (ForeignKey, ManyToManyField or CharField)
 + channel:            the lookup channel to use for searches
 + show_m2m_help:      [default False]  When using in the admin leave this as False.
-> When using in AdminInline or outside of the admin then set it to True.
-> see Help Text section below.
+    When using in AdminInline or outside of the admin then set it to True.
+    see Help Text section below.
 
 
     from ajax_select import make_ajax_field
@@ -398,7 +405,7 @@ Each form field widget is rendered using a template.  You may write a custom tem
     {% block help %}{% endblock %}
 
 <table>
-    <tr><th>form Field</th><th>first template</th><th>default template</th></tr>
+    <tr><th>form Field</th><th>tries this first</th><th>default template</th></tr>
     <tr><td>AutoCompleteField</td><td>templates/autocomplete_{{CHANNELNAME}}.html</td><td>templates/autocomplete.html</td></tr> <tr><td>AutoCompleteSelectField</td><td>templates/autocompleteselect_{{CHANNELNAME}}.html</td><td>templates/autocompleteselect.html</td></tr>
  <tr><td>AutoCompleteSelectMultipleField</td><td>templates/autocompleteselectmultiple_{{CHANNELNAME}}.html</td><td>templates/autocompleteselectmultiple.html</td></tr>
 </table>
@@ -409,13 +416,14 @@ See ajax_select/static/js/ajax_select.js below for the use of jQuery trigger eve
 ajax_select/static/css/ajax_select.css
 --------------------------------------
 
-If you are using `django.contrib.staticfiles` then you can implement `ajax_select.css` and put your app ahead of ajax_select to cause it to be collected by collectfiles the management command.  
+If you are using `django.contrib.staticfiles` then you can implement `ajax_select.css` and put your app ahead of ajax_select to cause it to be collected by the management command `collectfiles`.
+
 If you are doing your own compress stack then of course you can include whatever version you want.
 
 The display style now uses the jQuery UI theme and actually I find the drop down to be not very charming.  The previous version (1.1x) which used the external jQuery AutoComplete plugin had nicer styling.  I might decide to make the default more like that with alternating color rows and a stronger sense of focused item.  Also the current jQuery one wiggles.
 
 The CSS refers to one image that is served from github (as a CDN):
-'https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'
+!['https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'](https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif)
 
 Your own site's CSS could redefine that with a stronger declaration to point to whatever you like.
 
@@ -468,7 +476,7 @@ Extend the template, implement the extra_script block and bind functions that wi
         });
     {% endblock %}
 
-##### auto-complete text select
+##### auto-complete text field:
 
     {% block extra_script %}
         $('#{{ html_id }}').bind('added',function() {
