@@ -8,10 +8,12 @@
 <div id="{{html_id}}_on_deck" class="results_on_deck"></div>
 <script type="text/javascript">//<![CDATA[
 jQuery(document).ready(function($){
-	$("#{{html_id}}").autocompleteselectmultiple({
-		minLength: {{min_length}},
-		source: '{{lookup_url}}',
-		initial:  {{current_reprs}}
+	addAutoComplete("{{html_id}}", function(html_id) {
+		$("#"+html_id).autocompleteselectmultiple({
+			minLength: {{min_length}},
+			source: '{{lookup_url}}',
+			initial: {{current_reprs}}
+		});
 	});
 {% block extra_script %}{% endblock %}
 });

@@ -4,20 +4,18 @@
 <script type="text/javascript">//<![CDATA[
 jQuery(document).ready(function($){
 {% block script %}
-	$("#{{html_id}}").autocomplete({
-		minLength: {{min_length}},
-		source: '{{lookup_url}}',
-		select: function(event, ui) {
-			$("#{{html_id}}").val(ui.item.value);
-			$("#{{html_id}}").trigger("added");
-			return false;
-		}
-	}).data("autocomplete")._renderItem = function(ul, item) {
-			return $("<li></li>")
-				.data("item.autocomplete", item)
-				.append("<a>" + item.repr + "</a>")
-				.appendTo(ul);
-		};
+	addAutoComplete("{{html_id}}", function(html_id) {
+		$("#"+html_id).autocomplete({
+			minLength: {{min_length}},
+			source: '{{lookup_url}}',
+			initial:  {{current_repr}},
+			select: function(event, ui) {
+				$("#"+html_id).val(ui.item.value);
+				$("#"+html_id).trigger("added");
+				return false;
+			}
+		}).autocompletehtml();
+	});
 {% block extra_script %}{% endblock %}
 {% endblock %}
 });

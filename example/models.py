@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Person(models.Model):
-    
+
     """ an actual singular human being """
     name = models.CharField(blank=True, max_length=100)
     email = models.EmailField()
@@ -25,7 +25,7 @@ class Group(models.Model):
 
 
 class Label(models.Model):
-    
+
     """ a record label """
 
     name = models.CharField(max_length=200,unique=True)
@@ -37,9 +37,9 @@ class Label(models.Model):
 
 
 class Song(models.Model):
-    
+
     """ a song """
-    
+
     title = models.CharField(blank=False, max_length=200)
     group = models.ForeignKey(Group)
 
@@ -61,3 +61,14 @@ class Release(models.Model):
     def __unicode__(self):
         return self.title
 
+
+
+class Author(models.Model):
+   name = models.CharField(max_length=100)
+
+class Book(models.Model):
+   author = models.ForeignKey(Author)
+   title = models.CharField(max_length=100)
+   about_group = models.ForeignKey(Group)
+   mentions_persons = models.ManyToManyField(Person)
+   

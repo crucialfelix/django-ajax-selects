@@ -5,7 +5,9 @@
 }
 .results_on_deck {
 	padding: 0.25em 0;
-	margin-bottom: 15px;
+}
+.results_on_deck > div {
+	margin-bottom: 0.5em;
 }
 .ui-autocomplete-loading {
 	background:  url('https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif') no-repeat;

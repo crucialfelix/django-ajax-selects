@@ -55,3 +55,25 @@ admin.site.register(Release,ReleaseAdmin)
 
 
 
+class BookInline(admin.TabularInline):
+
+    model = Book
+    form = make_ajax_form(Book,{'about_group':'group','mentions_persons':'person'},show_m2m_help=True)
+
+    # + check add still not working
+    # no + appearing
+    # def get_formset(self, request, obj=None, **kwargs):
+    #     from ajax_select.fields import autoselect_fields_check_can_add
+    #     fs = super(BookInline,self).get_formset(request,obj,**kwargs)
+    #     autoselect_fields_check_can_add(fs.form,self.model,request.user)
+    #     return fs
+
+class AuthorAdmin(admin.ModelAdmin):
+    inlines = [
+        BookInline,
+    ]
+    
+admin.site.register(Author, AuthorAdmin)
+
+
+

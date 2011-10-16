@@ -9,10 +9,13 @@
 <div id="{{html_id}}_on_deck" class="results_on_deck"><div>{{current_result|safe}}</div></div>
 <script type="text/javascript">//<![CDATA[
 jQuery(document).ready(function($){
-	$("#{{html_id}}").autocompleteselect({
-		minLength: {{min_length}},
-		source: '{{lookup_url}}',
-		initial:  {{current_repr}}
+	addAutoComplete("{{html_id}}", function(html_id) {
+		console.log
+		$("#"+html_id).autocompleteselect({
+			minLength: {{min_length}},
+			source: '{{lookup_url}}',
+			initial:  {{current_repr}}
+		});
 	});
 {% block extra_script %}{% endblock %}
 });//]]>
