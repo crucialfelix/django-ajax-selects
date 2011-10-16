@@ -1,25 +1,101 @@
-It is a fork of Chris Sattinger's django-ajax-selects (http://code.google.com/p/django-ajax-selects/)
 
-Enables editing of `ForeignKey`, `ManyToMany` and simple text fields using the jQuery UI Autocomplete widget.
-django-ajax-selects will work in any normal form in the admin as well.
+Enables editing of `ForeignKey`, `ManyToMany` and `CharField´ using jQuery UI Autocomplete.
 
 User experience
 ===============
 
 selecting:
 
-<img src='http://github.com/millioner/django-ajax-select/blob/master/example/ajax_select_example/static/selecting.png?raw=true'/>
+<img src='http://media.crucial-systems.com/posts/selecting.png'/>
 
 selected:
 
-<img src='http://github.com/millioner/django-ajax-select/blob/master/example/ajax_select_example/static/selected.png?raw=true'/>
+<img src='http://media.crucial-systems.com/posts/selected.png'/>
 
-The user is presented with a text field. They type a search term or a few letters of a name they are looking for,
-an ajax request is sent to the server, a search channel returns possible results.
-Results are displayed as a drop down menu.
-When an item is selected it is added to a display area just below the text field.
+The user types a search term into the text field, an ajax request is sent to the server. The dropdown menu is populated with results. The user selects by clicking or using arrow keys and the selected result displays in the "deck" area directly below the input field.
 
-A single view services all of the ajax search requests, delegating the searches to named 'channels'.
+Rich formatting can be easily defined for the dropdown display and the selected "deck" display.
+Popup to add a new item is supported
+Admin inlines now supported
+Ajax Selects works in the admin and also in public facing forms.
+Templates and CSS are customizable
+JQuery triggers enable you to add javascript to respond when items are added or removed, so other interface elements on the page can be manipulated.
+Boostrap mode allows automatic inclusion of jQueryUI from the googleapis CDN
+Compatible with staticfiles, appmedia, django-compressor etc
+Default security
+
+*Django 1.2+*
+
+
+Architecture
+============
+
+A single view services all of the ajax search requests, delegating the searches to named 'channels'.  Each model that needs to be searched for has a channel defined for it.
+
+A simple channel can be specified in settings.py, a more complex one (with custom search, formatting or auth requirements) can be written in a lookups.py file.
+
+
+Installation
+============
+
+Easiest
+=======
+
+In settings.py :
+
+    # add the app
+    INSTALLED_APPS = (
+                ...,
+                'ajax_select'
+                )
+
+    # define the lookup channels in use on the site
+    AJAX_LOOKUP_CHANNELS = {
+        #   pass a dict with the model and field to search against
+        'person'  : {'model':'example.person', 'search_field':'name'}
+    }
+    # magically include jqueryUI/js/css
+    AJAX_SELECT_BOOTSTRAP = True
+    AJAX_SELECT_INLINES = 'inline'
+
+In your urls.py:
+
+    from django.conf.urls.defaults import *
+
+    from django.contrib import admin
+    from ajax_select import urls as ajax_select_urls
+
+    admin.autodiscover()
+
+    urlpatterns = patterns('',
+        # include the lookup urls
+        (r'^admin/lookups/', include(ajax_select_urls)),
+        (r'^admin/', include(admin.site.urls)),
+    )
+
+In your admin.py:
+
+    from django.contrib import admin
+    from ajax_select import make_ajax_form
+    from ajax_select.admin import AjaxSelectAdmin
+    from example.models import *
+
+    class PersonAdmin(admin.ModelAdmin):
+        pass
+    admin.site.register(Person,PersonAdmin)
+
+    class LabelAdmin(AjaxSelectAdmin):
+        # create an ajax form class using the factory function
+        #                     model,fieldlist,   [form superclass]
+        form = make_ajax_form(Label,{'owner':'person'})
+    admin.site.register(Label,LabelAdmin)
+
+
+Using AJAX_SELECT_BOOTSTRAP and AJAX_SELECT_INLINES you can be up and running in minutes.  This will include redundant css/js for each form field. In most small sites this is not an issue.  If you have very large formsets and your admin site is heavily trafficked or you are using the forms on the public site then you will want to set AJAX_SELECT_INLINES = None [the default] and include the js and css using staticfiles or by adding them to your admin's compressor stack.
+
+
+CUSTOM CHANNELS
+===============
 
 A channel is a simple class that handles the actual searching, defines how you want to treat the query input
 (split first name and last name, which fields to search etc.) and returns id and formatted results back
@@ -29,66 +105,45 @@ For instance the search channel 'contacts' would search for Contact models.
 The class would be named ContactLookup. This channel can be used for both AutoCompleteSelect (foreign key, single item)
 and AutoCompleteSelectMultiple (many-to-many) fields.
 
-Simple search channels can also be automatically generated, you merely specify the model and the field to search against
-(see examples below).
+A channel is generated automatically:
+
+    AJAX_LOOKUP_CHANNELS = {
+        #   pass a dict with the model and field to search against
+        'person'  : {'model':'example.person', 'search_field':'name'}
+    } 
 
 Custom search channels can be written when you need to do a more complex search, check the user's permissions,
 format the results differently or customize the sort order of the results.
 
-
-*Tested with Django 1.3*
-
-Getting started
-===============
-
-In settings.py :
-
-    INSTALLED_APPS = (
-                ...,
-                'ajax_select'
-                )
-
-in your `settings.py` define the channels in use on the site, for example:
-
-    AJAX_LOOKUP_CHANNELS = {
-        # the simplest case, pass a DICT with the model and field to search against :
-        'track': dict(model='music.track', search_field='title'),
-        # this generates a simple channel
-        # specifying the model Track in the music app, and searching against the 'title' field
-
-        # or write a custom search channel and specify that using a TUPLE
-        'contact': ('peoplez.lookups', 'ContactLookup'),
-        # this specifies to look for the class `ContactLookup` in the `peoplez.lookups` module
-    }
-
-Custom search channels can be written when you need to do a more complex search, check the user's permissions
-(if the lookup URL should even be accessible to them, and then to perhaps filter which items they are allowed to see),
-format the results differently or customize the sort order of the results.
-Search channel objects should implement the 4 methods shown in the following example.
-Additionally, they may contain a 'min_length' attribute/property. An AJAX query will be triggered only when at least min_length characters have been typed by the user. It defaults to 1.
 
 _peoplez/lookups.py_
 
     from peoplez.models import Contact
     from django.db.models import Q
     from django.utils.html import escape
+    from ajax_select import LookupChannel
 
-    class ContactLookup(object):
+    class ContactLookup(LookupChannel):
 
         # Minimum number of characters that must be input to trigger the AJAX query.
         # Optional, defaults to 1. 0 is a valid value.
         min_length = 2
 
         def get_query(self,q,request):
-            """ return a query set.  you also have access to request.user if needed """
+            """ return a query set.  you also have access to request.user if you want to for instance search 
+                the current users personal contact list. """
             return Contact.objects.filter(Q(name__istartswith=q) | Q(fname__istartswith=q) | Q(lname__istartswith=q) | Q(email__icontains=q))
 
-        def format_result(self,contact):
-            """ the search results display in the dropdown menu.  may contain html and multiple-lines. """
+        def get_result(self,contact):
+            """ The text result of autocompleting the entered query """
             return escape(u"%s %s %s (%s)" % (contact.fname, contact.lname,contact.name,contact.email))
 
-        def format_item(self,contact):
-            """ the display of a currently selected object in the area below the search box. html is OK """
+        def format_item_display(self,contact):
+            """ (HTML) formatted item for displaying item in the selected deck area """
+            return escape(unicode(contact))
+
+        def format_match(self,contact):
+            """ (HTML) formatted item for displaying item in the selected deck area """
             return escape(unicode(contact))
 
         def get_objects(self,ids):
@@ -146,7 +201,9 @@ in `forms.py` for that app:
         # declare a field and specify the named channel that it uses
         contacts = AutoCompleteSelectMultipleField('contact', required=False)
         author = AutoCompleteSelectField('contact', required=False)
-
+        
+        class Meta:
+            model = Contact
 
 ##Using ajax selects in a `FormSet`
 
@@ -179,6 +236,14 @@ There might be a better way to do this.
 If you are using AutoCompleteSelectMultiple outside of the admin then pass in `show_help_text=True`. 
 This is because the admin displays the widget's help text and the widget would also.
 But when used outside of the admin you need the help text. This is not the case for `AutoCompleteSelect`.
+
+            
+                    Django will append the widget help text: 
+                        'Hold down Command to select more than one'
+                    to your model field's help in a ManyToManyField
+                    AutoCompleteSelectMultipleField monkey patches this to remove and 
+                    replace it with the default help for a
+
 
 
 ##bootstrap

@@ -18,11 +18,15 @@ class LookupChannel(object):
     """Subclass this, setting model and overiding the methods below to taste"""
     
     model = None
+    min_length = 1
     
     def get_query(self,q,request):
-        """ return a query set searching for the query string q """
-        kwargs = { "%s__icontains" % search_field : q }
-        return self.model.objects.filter(**kwargs).order_by(search_field)
+        """ return a query set searching for the query string q 
+            either implement this method yourself or set the search_field
+            in the LookupChannel class definition
+        """
+        kwargs = { "%s__icontains" % self.search_field : q }
+        return self.model.objects.filter(**kwargs).order_by(self.search_field)
 
     def get_result(self,obj):
         """ The text result of autocompleting the entered query """
