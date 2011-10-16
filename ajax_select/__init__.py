@@ -206,7 +206,7 @@ def get_lookup(channel):
         return lookup_class()
 
 
-def make_channel(app_model,search_field):
+def make_channel(app_model,arg_search_field):
     """ used in get_lookup
             app_model :   app_name.model_name
             search_field :  the field to search against and to display in search results 
@@ -214,11 +214,12 @@ def make_channel(app_model,search_field):
     from django.db import models
     app_label, model_name = app_model.split(".")
     themodel = models.get_model(app_label, model_name)
-
+    
     class MadeLookupChannel(LookupChannel):
         
         model = themodel
-
+        search_field = arg_search_field
+        
     return MadeLookupChannel()
 
 
