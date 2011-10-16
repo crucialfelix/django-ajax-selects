@@ -23,6 +23,8 @@ def ajax_lookup(request,channel):
         query = request.POST['term']
 
     lookup = get_lookup(channel)
+    if hasattr(lookup,'check_auth'):
+        lookup.check_auth(request)
 
     if len(query) >= getattr(lookup, 'min_length', 1):
         instances = lookup.get_query(query,request)

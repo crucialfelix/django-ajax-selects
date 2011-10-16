@@ -5,7 +5,7 @@ __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "http://code.google.com/p/django-ajax-selects/"
 
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.contrib.contenttypes.models import ContentType
 from django.forms.models import ModelForm
@@ -51,10 +51,18 @@ class LookupChannel(object):
         ctype = ContentType.objects.get_for_model(argmodel)
         return user.has_perm("%s.add_%s" % (ctype.app_label,ctype.model))
 
+    def check_auth(self,request):
+        """ to ensure that nobody can get your data via json simply by knowing the URL.
+            public facing forms should write a custom LookupChannel to implement as you wish.
+            also you could choose to return HttpResponseForbidden("who are you?")
+            instead of raising PermissionDenied (401 response)
+         """
+        if not request.user.is_staff:
+            raise PermissionDenied
 
 
 
-def make_ajax_form(model,fieldlist,superclass=ModelForm,for_admin=True):
+def make_ajax_form(model,fieldlist,superclass=ModelForm,show_m2m_help=False):
     """ Creates a ModelForm subclass with autocomplete fields
             
         usage:
