@@ -1,11 +1,11 @@
 
-
 if(typeof jQuery.fn.autocompletehtml != 'function') {
 
 (function($) {
 
-function _init(id,$deck,$text,receiveFunction) {
+function _init($deck,$text) {
 	$text.autocompletehtml();
+	// detecting .module.aligned might be better
 	if($deck.parents(".inline-related").length == 0) {
 		$deck.position({ 
 			my: "right top", 
@@ -16,16 +16,19 @@ function _init(id,$deck,$text,receiveFunction) {
 	}
 }
 $.fn.autocompletehtml = function() {
-	this.data("autocomplete")._renderItem = _renderItemHTML;
+	var $text = $(this), sizeul = true;
+	this.data("autocomplete")._renderItem = function _renderItemHTML(ul, item) {
+		if(sizeul) {
+			if(ul.css('max-width')=='none') ul.css('max-width',$text.outerWidth());
+			sizeul = false;
+		}
+		return $("<li></li>")
+			.data("item.autocomplete", item)
+			.append("<a>" + item.match + "</a>")
+			.appendTo(ul);
+	};
 	return this;
 }
-function _renderItemHTML(ul, item) {
-	return $("<li></li>")
-		.data("item.autocomplete", item)
-		.append("<a>" + item.match + "</a>")
-		.appendTo(ul);
-}
-
 $.fn.autocompleteselect = function(options) {
 
 	return this.each(function() {
@@ -69,7 +72,7 @@ $.fn.autocompleteselect = function(options) {
 		
 		options.select = receiveResult;
 		$text.autocomplete(options);
-		_init(id,$deck,$text);
+		_init($deck,$text);
 		
 		if (options.initial) {
 			its = options.initial;
@@ -123,7 +126,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 
 		options.select = receiveResult;
 		$text.autocomplete(options);
-		_init(id,$deck,$text);
+		_init($deck,$text);
 		
 		if (options.initial) {
 			$.each(options.initial, function(i, its) {
@@ -156,7 +159,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 		}
 		callback(html_id);
 	}
-/* 	the popup handler
+/*	the popup handler
 	requires RelatedObjects.js which is part of the django admin js
 	so if using outside of the admin then you would need to include that manually */
 	function didAddPopup(win,newId,newRepr) {

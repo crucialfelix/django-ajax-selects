@@ -14,7 +14,17 @@
 	background-position: right;
 }
 ul.ui-autocomplete {
-	max-width: 320px;
+/*
+this is the dropdown menu.
+    max-width: 320px;
+
+if max-width is not set and you are using django-admin
+  then the dropdown is the width of your whole page body (totally wrong).
+  so set it in your own css to your preferred width of dropdown
+  OR the ajax_select.js will automatically match it to the size of the text field
+  which is what jquery's autocomplete does normally (but django's admin is breaking).
+tldr: it just works. set max-width if you want it wider
+*/
 	margin: 0;
 	padding: 0;
 }
