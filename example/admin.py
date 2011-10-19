@@ -65,7 +65,8 @@ class BookInline(admin.TabularInline):
 
     model = Book
     form = make_ajax_form(Book,{'about_group':'group','mentions_persons':'person'},show_m2m_help=True)
-
+    extra = 2
+    
     # + check add still not working
     # no + appearing
     # def get_formset(self, request, obj=None, **kwargs):
