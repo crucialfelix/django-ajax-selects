@@ -224,6 +224,15 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
+        if value:
+            lookup = get_lookup(self.channel)
+            objs = lookup.get_objects(value)
+            if len(objs) != len(value):
+                # someone else might have deleted it while you were editing
+                # or your channel is faulty
+                # out of the scope of this field to do anything more than tell you it doesn't exist
+                raise forms.ValidationError(u"%s cannot find all objects: %s" % (lookup,value))
+
         if not value and self.required:
             raise forms.ValidationError(self.error_messages['required'])
         return value # a list of IDs from widget value_from_datadict
