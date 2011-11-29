@@ -87,7 +87,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
         widget = kwargs.get("widget", False)
         
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
-            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=kwargs.get('help_text') or _('Enter text to search.'))
+            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=kwargs.get('help_text',_('Enter text to search.')))
         super(AutoCompleteSelectField, self).__init__(max_length=255,*args, **kwargs)
 
     def clean(self, value):
