@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='django-ajax-selects',
-    version='1.2.2',
+    version='1.2.3',
     description='jQuery-powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
     author='crucialfelix',
     author_email='crucialfelix@gmail.com',
