@@ -5,8 +5,8 @@ if(typeof jQuery.fn.autocompletehtml != 'function') {
 
 function _init($deck,$text) {
 	$text.autocompletehtml();
-	// detecting .module.aligned might be better
-	if($deck.parents(".inline-related").length == 0) {
+	if($deck.parents(".module.aligned").length > 0) {
+	    // in django-admin, place deck directly below input
 		$deck.position({ 
 			my: "right top", 
 			at: "right bottom", 
