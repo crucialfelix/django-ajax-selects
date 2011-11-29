@@ -385,6 +385,12 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
 + *show_m2m_help*:      [default False]  When using in the admin leave this as False.
     When using in AdminInline or outside of the admin then set it to True.
     see Help Text section below.
++ *kwargs*:             Additional kwargs are passed on to the form field.
+    Of interest:
+        help_text="Custom help text"
+    or:
+        # do not show any help at all
+        help_text=None
 
 #####Example
 
@@ -395,7 +401,16 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
         class Meta:
             model = Release
 
-        group  = make_ajax_field(Release,'group','group')
+        group  = make_ajax_field(Release,'group','group',help_text=None)
+
+#### Without using the helper
+
+
+    from ajax_select.fields import AutoCompleteSelectField
+    
+    class ReleaseForm(ModelForm):
+        
+        group = AutoCompleteSelectField('group', required=False, help_text=None)
 
 
 #### Using ajax selects in a `FormSet`
