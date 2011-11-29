@@ -10,6 +10,8 @@ ln -s ../ajax_select/ ./ajax_select
 # create sqllite database
 ./manage.py syncdb
 
-echo "type 'deactivate' to close the virtualenv"
-echo "type 'source AJAXSELECTS/bin/activate' to reactivate it"
+echo "type 'source AJAXSELECTS/bin/activate' to activate the virtualenv"
+echo "then run: ./manage.py runserver"
+echo "and visit http://127.0.0.1:8000/admin/"
+echo "type 'deactivate' to close the virtualenv or just close the shell"
 
