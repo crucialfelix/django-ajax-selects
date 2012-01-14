@@ -335,17 +335,16 @@ Also you could choose to return HttpResponseForbidden("who are you?") instead of
 admin.py
 --------
 
-#### make_ajax_form(model,fieldlist,superclass=ModelForm,show_m2m_help=False)
+#### make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False)
 
 If your application does not otherwise require a custom Form class then you can use the make_ajax_form helper to create the entire form directly in admin.py.  See forms.py below for cases where you wish to make your own Form.
 
 + *model*: your model
 + *fieldlist*: a dict of {fieldname : channel_name, ... }
 + *superclass*: [default ModelForm] Substitute a different superclass for the constructed Form class.
-+ *show_m2m_help*: [default False]
++ *show_help_text*: [default False]
     Leave blank [False] if using this form in a standard Admin. 
     Set it True for InlineAdmin classes or if making a form for use outside of the Admin.
-    See discussion below re: Help Text
 
 ######Example
 
@@ -375,16 +374,15 @@ forms.py
 
 subclass ModelForm just as usual.  You may add ajax fields using the helper or directly.  
 
-#### make_ajax_field(model,model_fieldname,channel,show_m2m_help = False,**kwargs)
+#### make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwargs)
 
 A factory function to makes an ajax field + widget.  The helper ensures things are set correctly and simplifies usage and imports thus reducing programmer error.  All kwargs are passed into the Field so it is no less customizable.
 
 + *model*:              the model that this ModelForm is for
 + *model_fieldname*:    the field on the model that is being edited (ForeignKey, ManyToManyField or CharField)
 + *channel*:            the lookup channel to use for searches
-+ *show_m2m_help*:      [default False]  When using in the admin leave this as False.
-    When using in AdminInline or outside of the admin then set it to True.
-    see Help Text section below.
++ *show_help_text*:      [default False]  Whether to show the help text inside the widget itself.
+                        When using in AdminInline or outside of the admin then set it to True.
 + *kwargs*:             Additional kwargs are passed on to the form field.
     Of interest:
         help_text="Custom help text"
