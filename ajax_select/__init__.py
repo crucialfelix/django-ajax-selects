@@ -69,7 +69,7 @@ class LookupChannel(object):
 
 
 
-def make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False):
+def make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False,**kwargs):
     """ Creates a ModelForm subclass with autocomplete fields
             
         usage:
@@ -82,7 +82,10 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False):
         and
             'author' is a ForeignKeyField specifying here to also use the lookup channel 'contact'
     """
-
+    # will support previous arg name for several versions before deprecating
+    if 'show_m2m_help' in kwargs:
+        show_help_text = kwargs.pop('show_m2m_help')
+        
     class TheForm(superclass):
         
         class Meta:
@@ -112,6 +115,9 @@ def make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwarg
                 Django will show help text below the widget, but not for ManyToMany inside of admin inlines
                 This setting will show the help text inside the widget itself.
     """
+    # will support previous arg name for several versions before deprecating
+    if 'show_m2m_help' in kwargs:
+        show_help_text = kwargs.pop('show_m2m_help')
 
     from ajax_select.fields import AutoCompleteField, \
                                    AutoCompleteSelectMultipleField, \
