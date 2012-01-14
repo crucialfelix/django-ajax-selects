@@ -21,7 +21,7 @@ def search_form(request):
     dd = {}
     if 'q' in request.GET:
         dd['entered'] = request.GET.get('q')
-    initial = {'q':"this is an initial value"}
+    initial = {'q':"\"This is an initial value,\" said O'Leary."}
     form = SearchForm(initial=initial)
     dd['form'] = form
     return render_to_response('search_form.html',dd,context_instance=RequestContext(request))

@@ -273,7 +273,7 @@ class AutoCompleteWidget(forms.TextInput):
         else:
             help_text = ''
         context = {
-            'current_repr': mark_safe("'%s'" % escapejs(value)),
+            'current_repr': value,
             'current_id': value,
             'help_text': help_text,
             'html_id': self.html_id,
