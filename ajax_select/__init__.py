@@ -69,7 +69,7 @@ class LookupChannel(object):
 
 
 
-def make_ajax_form(model,fieldlist,superclass=ModelForm,show_m2m_help=False):
+def make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False):
     """ Creates a ModelForm subclass with autocomplete fields
             
         usage:
@@ -90,7 +90,7 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm,show_m2m_help=False):
         setattr(Meta, 'model', model)
 
     for model_fieldname,channel in fieldlist.iteritems():
-        f = make_ajax_field(model,model_fieldname,channel,show_m2m_help)
+        f = make_ajax_field(model,model_fieldname,channel,show_help_text)
 
         TheForm.declared_fields[model_fieldname] = f
         TheForm.base_fields[model_fieldname] = f
@@ -99,23 +99,18 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm,show_m2m_help=False):
     return TheForm
 
 
-def make_ajax_field(model,model_fieldname,channel,show_m2m_help = False,**kwargs):
+def make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwargs):
     """ Makes a single autocomplete field for use in a Form
 
         optional args:
-            help_text - default is the model field's help_text 
-            label     - default is the model field's verbose name
-            required  - default is the model field's (not) blank
+            help_text - default is the model db field's help_text. 
+                None will disable all help text
+            label     - default is the model db field's verbose name
+            required  - default is the model db field's (not) blank
         
-            show_m2m_help - 
-                Django will show help text in the Admin for ManyToMany fields,
-                in which case the help text should not be shown in side the widget itself
-                or it appears twice.
-                
-                ForeignKey fields do not behave like this.
-                ManyToMany inside of admin inlines do not do this. [so set show_m2m_help=True]
-    
-                But if used outside of the Admin or in an ManyToMany admin inline then you need the help text.
+            show_help_text - 
+                Django will show help text below the widget, but not for ManyToMany inside of admin inlines
+                This setting will show the help text inside the widget itself.
     """
 
     from ajax_select.fields import AutoCompleteField, \
@@ -140,8 +135,8 @@ def make_ajax_field(model,model_fieldname,channel,show_m2m_help = False,**kwargs
     else:
         required = not field.blank
 
+    kwargs['show_help_text'] = show_help_text
     if isinstance(field,ManyToManyField):
-        kwargs['show_help_text'] = show_m2m_help
         f = AutoCompleteSelectMultipleField(
             channel,
             required=required,

@@ -24,10 +24,12 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
     def __init__(self,
                  channel,
                  help_text='',
+                 show_help_text=False,
                  *args, **kw):
         super(forms.widgets.TextInput, self).__init__(*args, **kw)
         self.channel = channel
         self.help_text = help_text
+        self.show_help_text = show_help_text
 
     def render(self, name, value, attrs=None):
 
@@ -47,6 +49,11 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         else:
             current_repr = 'null'
 
+        if self.show_help_text:
+            help_text = self.help_text
+        else:
+            help_text = ''
+
         context = {
                 'name': name,
                 'html_id' : self.html_id,
@@ -54,7 +61,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'lookup_url': reverse('ajax_lookup',kwargs={'channel':self.channel}),
                 'current_id': value,
                 'current_repr': current_repr,
-                'help_text': self.help_text,
+                'help_text': help_text,
                 'extra_attrs': mark_safe(flatatt(final_attrs)),
                 'func_slug': self.html_id.replace("-",""),
                 'add_link' : self.add_link,
@@ -87,7 +94,9 @@ class AutoCompleteSelectField(forms.fields.CharField):
         widget = kwargs.get("widget", False)
         
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
-            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=kwargs.get('help_text',_('Enter text to search.')))
+            help_text = kwargs.get('help_text',_('Enter text to search.'))
+            show_help_text = kwargs.pop('show_help_text',False)
+            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
         super(AutoCompleteSelectField, self).__init__(max_length=255,*args, **kwargs)
 
     def clean(self, value):
@@ -121,7 +130,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
     def __init__(self,
                  channel,
                  help_text='',
-                 show_help_text=None,
+                 show_help_text=False,
                  *args, **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
@@ -247,7 +256,8 @@ class AutoCompleteWidget(forms.TextInput):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
         self.help_text = kwargs.pop('help_text', '')
-
+        self.show_help_text = kwargs.pop('show_help_text',False)
+        
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
@@ -258,11 +268,14 @@ class AutoCompleteWidget(forms.TextInput):
         self.html_id = final_attrs.pop('id', name)
 
         lookup = get_lookup(self.channel)
-
+        if self.show_help_text:
+            help_text = self.help_text
+        else:
+            help_text = ''
         context = {
             'current_repr': mark_safe("'%s'" % escapejs(value)),
             'current_id': value,
-            'help_text': self.help_text,
+            'help_text': help_text,
             'html_id': self.html_id,
             'min_length': getattr(lookup, 'min_length', 1),
             'lookup_url': reverse('ajax_lookup', args=[self.channel]),
@@ -287,7 +300,11 @@ class AutoCompleteField(forms.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
 
-        widget = AutoCompleteWidget(channel,help_text=kwargs.get('help_text', _('Enter text to search.')))
+        widget_kwargs = dict(help_text=kwargs.get('help_text', _('Enter text to search.')))
+        widget_kwargs['show_help_text'] = kwargs.pop('show_help_text',False)
+        if 'attrs' in kwargs:
+            widget_kwargs['attrs'] = kwargs.pop('attrs')
+        widget = AutoCompleteWidget(channel,**widget_kwargs)
 
         defaults = {'max_length': 255,'widget': widget}
         defaults.update(kwargs)
