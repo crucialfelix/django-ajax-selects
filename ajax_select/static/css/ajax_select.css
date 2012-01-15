@@ -6,6 +6,10 @@
 .results_on_deck {
 	padding: 0.25em 0;
 }
+form .aligned .results_on_deck {
+    padding-left: 38px;
+    margin-left: 7em;
+}
 .results_on_deck > div {
 	margin-bottom: 0.5em;
 }

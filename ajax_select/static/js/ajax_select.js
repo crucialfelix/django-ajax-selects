@@ -3,18 +3,6 @@ if(typeof jQuery.fn.autocompletehtml != 'function') {
 
 (function($) {
 
-function _init($deck,$text) {
-	$text.autocompletehtml();
-	if($deck.parents(".module.aligned").length > 0) {
-	    // in django-admin, place deck directly below input
-		$deck.position({ 
-			my: "right top", 
-			at: "right bottom", 
-			of: $text, 
-			offset: "0 5" 
-		});
-	}
-}
 $.fn.autocompletehtml = function() {
 	var $text = $(this), sizeul = true;
 	this.data("autocomplete")._renderItem = function _renderItemHTML(ul, item) {
@@ -72,7 +60,7 @@ $.fn.autocompleteselect = function(options) {
 		
 		options.select = receiveResult;
 		$text.autocomplete(options);
-		_init($deck,$text);
+		$text.autocompletehtml();
 		
 		if (options.initial) {
 			its = options.initial;
@@ -126,7 +114,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 
 		options.select = receiveResult;
 		$text.autocomplete(options);
-		_init($deck,$text);
+		$text.autocompletehtml();
 		
 		if (options.initial) {
 			$.each(options.initial, function(i, its) {
