@@ -133,12 +133,31 @@ window.addAutoComplete = function (prefix_id, callback ) { /*(html_id)*/
 	/* detects inline forms and converts the html_id if needed */
 	var prefix = 0;
 	var html_id = prefix_id;
-	if(html_id.indexOf("__prefix__") != -1) {
+	if (html_id.indexOf("__prefix__") != -1) {
+	    // If our html_id contain __prefix__, it means one of these 2 things:
+	    // 1) There isn't any element to apply the callback to, because we
+	    //    don't have any "real" inline formset yet - The only one we got is
+	    //    the "empty" one django clones when adding one.
+	    //    In that case, we just need to bail.
+	    //
+	    // OR
+	    //
+	    // 2) There was a dynamic formset added, however the html_id doesn't point
+	    //    to it yet, because it was statically set in the template.
+	    //    In that case, we need to find that element, "fix" html_id, and call
+	    //    the callback.
+	
 		// Some dirty loop to find the appropriate element to apply the callback to
 		while ($('#'+html_id).length) {
 			html_id = prefix_id.replace(/__prefix__/, prefix++);
 		}
-		html_id = prefix_id.replace(/__prefix__/, prefix-2);
+		var found_prefix = prefix - 2;
+		if (found_prefix < 0) {
+		    // No element was found at all. The inline simply didn't have any
+		    // formset yet.
+		    return;
+		}
+		html_id = prefix_id.replace(/__prefix__/, found_prefix);
 		// Ignore the first call to this function, the one that is triggered when
 		// page is loaded just because the "empty" form is there.
 		if ($("#"+html_id+", #"+html_id+"_text").hasClass("ui-autocomplete-input"))
