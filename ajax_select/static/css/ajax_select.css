@@ -1,4 +1,3 @@
-
 .results_on_deck .ui-icon-trash {
 	float: left;
 	cursor: pointer;
@@ -32,6 +31,7 @@ tldr: it just works. set max-width if you want it wider
 */
 	margin: 0;
 	padding: 0;
+	position: absolute;
 }
 ul.ui-autocomplete li {
     list-style-type: none;
