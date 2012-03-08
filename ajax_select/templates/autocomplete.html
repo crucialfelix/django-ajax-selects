@@ -5,8 +5,8 @@ jQuery(document).ready(function($){
 {% block script %}
 	addAutoComplete("{{html_id}}", function(html_id) {
 		$("#"+html_id).autocomplete({
+			{% if extra_autocomplete_options %}{{ extra_autocomplete_options|safe }},{% endif %}
 			minLength: {{min_length}},
-			autoFocus: {{ auto_focus }},
 			source: '{{lookup_url}}',
 			initial:  '{{current_repr|escapejs}}',
 			select: function(event, ui) {

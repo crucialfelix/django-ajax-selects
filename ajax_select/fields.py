@@ -58,12 +58,12 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'name': name,
                 'html_id' : self.html_id,
                 'min_length': getattr(lookup, 'min_length', 1),
-                'auto_focus': 'true' if getattr(lookup, 'auto_focus', True) else 'false',
                 'lookup_url': reverse('ajax_lookup',kwargs={'channel':self.channel}),
                 'current_id': value,
                 'current_repr': current_repr,
                 'help_text': help_text,
                 'extra_attrs': mark_safe(flatatt(final_attrs)),
+                'extra_autocomplete_options': getattr(lookup, 'extra_autocomplete_options', ''),
                 'func_slug': self.html_id.replace("-",""),
                 'add_link' : self.add_link,
                 }
@@ -173,13 +173,13 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'name':name,
             'html_id':self.html_id,
             'min_length': getattr(lookup, 'min_length', 1),
-            'auto_focus': 'true' if getattr(lookup, 'auto_focus', True) else 'false',
             'lookup_url':reverse('ajax_lookup',kwargs={'channel':self.channel}),
             'current':value,
             'current_ids':current_ids,
             'current_reprs': current_reprs,
             'help_text':help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
+            'extra_autocomplete_options': getattr(lookup, 'extra_autocomplete_options', ''),
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
         }
@@ -280,10 +280,10 @@ class AutoCompleteWidget(forms.TextInput):
             'help_text': help_text,
             'html_id': self.html_id,
             'min_length': getattr(lookup, 'min_length', 1),
-            'auto_focus': 'true' if getattr(lookup, 'auto_focus', True) else 'false',
             'lookup_url': reverse('ajax_lookup', args=[self.channel]),
             'name': name,
             'extra_attrs':mark_safe(flatatt(final_attrs)),
+            'extra_autocomplete_options': getattr(lookup, 'extra_autocomplete_options', ''),
             'func_slug': self.html_id.replace("-",""),
         }
         context.update(bootstrap())
@@ -359,5 +359,3 @@ def bootstrap():
         b['inline'] = mark_safe("""<style type="text/css">@import url("%sajax_select/css/ajax_select.css");</style><script type="text/javascript" src="%sajax_select/js/ajax_select.js"></script>""" % (settings.STATIC_URL,settings.STATIC_URL))
 
     return b
-
-
