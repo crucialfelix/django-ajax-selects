@@ -11,6 +11,7 @@ jQuery(document).ready(function($){
 	addAutoComplete("{{html_id}}", function(html_id) {
 		$("#"+html_id).autocompleteselect({
 			minLength: {{min_length}},
+			autoFocus: {{ auto_focus }},
 			source: '{{lookup_url}}',
 			initial:  {{current_repr}}
 		});

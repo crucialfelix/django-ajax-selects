@@ -19,6 +19,7 @@ class LookupChannel(object):
     
     model = None
     min_length = 1
+    auto_focus = True
     
     def get_query(self,q,request):
         """ return a query set searching for the query string q 

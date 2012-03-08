@@ -6,6 +6,7 @@ jQuery(document).ready(function($){
 	addAutoComplete("{{html_id}}", function(html_id) {
 		$("#"+html_id).autocomplete({
 			minLength: {{min_length}},
+			autoFocus: {{ auto_focus }},
 			source: '{{lookup_url}}',
 			initial:  '{{current_repr|escapejs}}',
 			select: function(event, ui) {
