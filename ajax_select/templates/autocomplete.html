@@ -6,7 +6,9 @@ jQuery(document).ready(function($){
 	addAutoComplete("{{html_id}}", function(html_id) {
 		$("#"+html_id).autocomplete({
 			minLength: {{min_length}},
-			source: '{{lookup_url}}',
+			source: function(request, response) {
+                            $.getJSON('{{lookup_url}}', {{query_modifiers}}, response);
+                        },
 			initial:  '{{current_repr|escapejs}}',
 			select: function(event, ui) {
 				$("#"+html_id).val(ui.item.value);

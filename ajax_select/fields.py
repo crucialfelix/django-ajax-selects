@@ -25,12 +25,17 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  channel,
                  help_text='',
                  show_help_text=False,
+                 query_modifiers = {},
                  *args, **kw):
         super(forms.widgets.TextInput, self).__init__(*args, **kw)
         self.channel = channel
         self.help_text = help_text
         self.show_help_text = show_help_text
-
+        self.query_modifiers = ['term : request.term']
+        for k, v in query_modifiers.items():
+            self.query_modifiers.append("%s : '%s'" % (escapejs(k), escapejs(v)))
+        self.query_modifiers = '{%s}' % u', '.join(self.query_modifiers)
+        
     def render(self, name, value, attrs=None):
 
         value = value or ''
@@ -65,6 +70,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'extra_attrs': mark_safe(flatatt(final_attrs)),
                 'func_slug': self.html_id.replace("-",""),
                 'add_link' : self.add_link,
+                'query_modifiers' : mark_safe(self.query_modifiers)
                 }
         context.update(bootstrap())
         
@@ -96,7 +102,9 @@ class AutoCompleteSelectField(forms.fields.CharField):
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
             help_text = kwargs.get('help_text',_('Enter text to search.'))
             show_help_text = kwargs.pop('show_help_text',False)
-            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+            query_modifiers = kwargs.pop('query_modifiers', {})
+
+            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel, help_text=help_text, show_help_text=show_help_text, query_modifiers = query_modifiers)
         super(AutoCompleteSelectField, self).__init__(max_length=255,*args, **kwargs)
 
     def clean(self, value):
@@ -131,12 +139,16 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
                  channel,
                  help_text='',
                  show_help_text=False,
+                 query_modifiers = {},
                  *args, **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
-        
         self.help_text = help_text or _('Enter text to search.')
         self.show_help_text = show_help_text
+        self.query_modifiers = ['term : request.term']
+        for k, v in query_modifiers.items():
+            self.query_modifiers.append("%s : '%s'" % (escapejs(k), escapejs(v)))
+        self.query_modifiers = '{%s}' % u', '.join(self.query_modifiers)
 
     def render(self, name, value, attrs=None):
 
@@ -180,6 +192,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
+            'query_modifiers' : mark_safe(self.query_modifiers)
         }
         context.update(bootstrap())
 
@@ -226,8 +239,9 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         # admin will also show help text, so by default do not show it in widget
         # if using in a normal form then set to True so the widget shows help
         show_help_text = kwargs.pop('show_help_text',False)
-        
-        kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+        query_modifiers = kwargs.pop('query_modifiers', {})
+
+        kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel, help_text=help_text, show_help_text=show_help_text, query_modifiers=query_modifiers)
         kwargs['help_text'] = help_text
         
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
@@ -257,6 +271,11 @@ class AutoCompleteWidget(forms.TextInput):
         self.channel = channel
         self.help_text = kwargs.pop('help_text', '')
         self.show_help_text = kwargs.pop('show_help_text',False)
+        self.query_modifiers = ['term : request.term']
+        query_modifiers = kwargs.pop('query_modifiers',{})
+        for k, v in query_modifiers.items():
+            self.query_modifiers.append("%s : '%s'" % (escapejs(k), escapejs(v)))
+        self.query_modifiers = '{%s}' % u', '.join(self.query_modifiers)
         
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
@@ -282,6 +301,7 @@ class AutoCompleteWidget(forms.TextInput):
             'name': name,
             'extra_attrs':mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
+            'query_modifiers' : mark_safe(self.query_modifiers)
         }
         context.update(bootstrap())
 
@@ -302,6 +322,8 @@ class AutoCompleteField(forms.CharField):
 
         widget_kwargs = dict(help_text=kwargs.get('help_text', _('Enter text to search.')))
         widget_kwargs['show_help_text'] = kwargs.pop('show_help_text',False)
+        widget_kwargs['query_modifiers'] = kwargs.pop('query_modifiers', {})
+        
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
         widget = AutoCompleteWidget(channel,**widget_kwargs)
