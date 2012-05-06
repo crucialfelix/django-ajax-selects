@@ -127,7 +127,10 @@ def make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwarg
     if kwargs.has_key('label'):
         label = kwargs.pop('label')
     else:
-        label = _(capfirst(unicode(field.verbose_name)))
+        if type(field.verbose_name) == str:
+            label = _(capfirst(unicode(field.verbose_name.decode('utf-8'))))
+        else:
+            label = _(capfirst(unicode(field.verbose_name)))
 
     if kwargs.has_key('help_text'):
         help_text = kwargs.pop('help_text')
