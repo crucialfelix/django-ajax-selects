@@ -185,7 +185,7 @@ def get_lookup(channel):
         #  generate a simple channel dynamically
         return make_channel( lookup_label['model'], lookup_label['search_field'] )
     else: # a tuple
-        # 'channel' : ('app.module','LookupClass')
+        # 'channel' : ('app.module','LookupClass')  or ('app.module', 'LookupClass', 'search_field')
         #  from app.module load LookupClass and instantiate
         lookup_module = __import__( lookup_label[0],{},{},[''])
         lookup_class = getattr(lookup_module,lookup_label[1] )
@@ -203,8 +203,11 @@ def get_lookup(channel):
             setattr(lookup_class, 'get_result',
                 getattr(lookup_class,'format_result', 
                     lambda self,obj: unicode(obj)))
-
-        return lookup_class()
+        
+        custom_channel = lookup_class()
+        if len(lookup_label) == 3:      #if search_field param is provided, use it
+            custom_channel.search_field = lookup_label[2]
+        return custom_channel
 
 
 def make_channel(app_model,arg_search_field):
