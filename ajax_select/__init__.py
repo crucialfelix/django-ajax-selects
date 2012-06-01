@@ -171,6 +171,15 @@ def make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwarg
 
 ####################  private  ##################################################
 
+def get_model_from_string(app_model_str):
+    """
+       app_model_str :   app_name.model_name
+    """
+    from django.db import models
+    app_label, model_name = app_model_str.split(".")
+    return models.get_model(app_label, model_name)
+
+
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """
     try:
@@ -205,7 +214,15 @@ def get_lookup(channel):
                     lambda self,obj: unicode(obj)))
         
         if len(lookup_label) == 3:  #initialize channel with custom params if provided
-            return lookup_class(**lookup_label[2])
+            kwargs = lookup_label[2].copy()
+            app_model = kwargs.pop('model',None)
+            
+            #if 'model' param is specified, take care of model parsing so 
+            #custom channel doesn't have to
+            if app_model:
+                return lookup_class(model=get_model_from_string(app_model), **kwargs)
+            else:
+                return lookup_class(**kwargs)
         else:
             return lookup_class()
 
@@ -215,13 +232,9 @@ def make_channel(app_model,arg_search_field):
             app_model :   app_name.model_name
             search_field :  the field to search against and to display in search results 
     """
-    from django.db import models
-    app_label, model_name = app_model.split(".")
-    themodel = models.get_model(app_label, model_name)
-    
     class MadeLookupChannel(LookupChannel):
         
-        model = themodel
+        model = get_model_from_string(app_model)
         search_field = arg_search_field
         
     return MadeLookupChannel()
