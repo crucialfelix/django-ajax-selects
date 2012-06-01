@@ -155,10 +155,10 @@ settings.py
 
 Defines the available lookup channels.
 
-+ channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
++ channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' } 
 > This will create a channel automatically
 	
-+chanel_name : ( 'app.lookups', 'YourLookup', {'opt1':val1,'opt2':val2} )
++ chanel_name : ( 'app.lookups', 'YourLookup', {'opt1':val1, 'opt2':val2} ) 
 > This points to a custom Lookup channel name YourLookup in app/lookups.py. The third parameter is optional. Use it to pass custom data to your derived lookup channel. If 'model' is a field in this dictionary, it uses the same 'app.modelname' format as automatic channels. ajax_select will parse this string, retrieve the actual model and pass it to the derived channel's __init__ method.
 
     AJAX_LOOKUP_CHANNELS = {
