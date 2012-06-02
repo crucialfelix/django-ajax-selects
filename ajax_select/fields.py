@@ -227,7 +227,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         # if using in a normal form then set to True so the widget shows help
         show_help_text = kwargs.pop('show_help_text',False)
         
-        kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+        # if user did not specify own widget, use ajax_select default
+        kwargs['widget'] = kwargs.get('widget', AutoCompleteSelectMultipleWidget(channel=channel,help_text=help_text,show_help_text=show_help_text))
         kwargs['help_text'] = help_text
         
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
