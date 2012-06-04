@@ -63,6 +63,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'current_repr': current_repr,
                 'help_text': help_text,
                 'extra_attrs': mark_safe(flatatt(final_attrs)),
+                'extra_autocomplete_options': getattr(lookup, 'extra_autocomplete_options', ''),
                 'func_slug': self.html_id.replace("-",""),
                 'add_link' : self.add_link,
                 }
@@ -178,6 +179,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'current_reprs': current_reprs,
             'help_text':help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
+            'extra_autocomplete_options': getattr(lookup, 'extra_autocomplete_options', ''),
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
         }
@@ -281,6 +283,7 @@ class AutoCompleteWidget(forms.TextInput):
             'lookup_url': reverse('ajax_lookup', args=[self.channel]),
             'name': name,
             'extra_attrs':mark_safe(flatatt(final_attrs)),
+            'extra_autocomplete_options': getattr(lookup, 'extra_autocomplete_options', ''),
             'func_slug': self.html_id.replace("-",""),
         }
         context.update(bootstrap())
@@ -356,5 +359,3 @@ def bootstrap():
         b['inline'] = mark_safe("""<style type="text/css">@import url("%sajax_select/css/ajax_select.css");</style><script type="text/javascript" src="%sajax_select/js/ajax_select.js"></script>""" % (settings.STATIC_URL,settings.STATIC_URL))
 
     return b
-
-

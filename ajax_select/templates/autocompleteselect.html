@@ -10,6 +10,7 @@
 jQuery(document).ready(function($){
 	addAutoComplete("{{html_id}}", function(html_id) {
 		$("#"+html_id).autocompleteselect({
+			{% if extra_autocomplete_options %}{{ extra_autocomplete_options|safe }},{% endif %}
 			minLength: {{min_length}},
 			source: '{{lookup_url}}',
 			initial:  {{current_repr}}

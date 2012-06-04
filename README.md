@@ -277,6 +277,11 @@ Minimum query length to return a result.  Large datasets can choke if they searc
 Better to demand at least 2 or 3 characters.
 This param is also used in jQuery's UI when filtering results from its own cache.
 
+###### auto_focus [boolean, default=True]
+
+When this option is enabled you can leave the input field after seeing the
+dropdown and the first item will be selected.
+
 ###### search_field [property, optional]
 
 Name of the field for the query to search with icontains.  This is used only in the default get_query implementation.
