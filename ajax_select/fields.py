@@ -10,6 +10,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 import os
+import urllib
 
 
 
@@ -25,11 +26,15 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  channel,
                  help_text='',
                  show_help_text=False,
+                 extra_context=None,
+                 extra_params_url=None,
                  *args, **kw):
         super(forms.widgets.TextInput, self).__init__(*args, **kw)
         self.channel = channel
         self.help_text = help_text
         self.show_help_text = show_help_text
+        self.extra_context = extra_context or {}
+        self.extra_params_url = extra_params_url or {}
 
     def render(self, name, value, attrs=None):
 
@@ -54,11 +59,16 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         else:
             help_text = ''
 
+        lookup_url = reverse('ajax_lookup',kwargs={'channel':self.channel})
+        lookup_params = urllib.urlencode(self.extra_params_url)
+        if lookup_params:
+            lookup_url += '?%s' % lookup_params
+
         context = {
                 'name': name,
                 'html_id' : self.html_id,
                 'min_length': getattr(lookup, 'min_length', 1),
-                'lookup_url': reverse('ajax_lookup',kwargs={'channel':self.channel}),
+                'lookup_url': lookup_url,
                 'current_id': value,
                 'current_repr': current_repr,
                 'help_text': help_text,
@@ -67,7 +77,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'add_link' : self.add_link,
                 }
         context.update(bootstrap())
-        
+        context.update(self.extra_context)
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
@@ -96,7 +106,13 @@ class AutoCompleteSelectField(forms.fields.CharField):
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
             help_text = kwargs.get('help_text',_('Enter text to search.'))
             show_help_text = kwargs.pop('show_help_text',False)
-            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+            extra_context = kwargs.pop('extra_context', {})
+            extra_params_url = kwargs.pop('extra_params_url', {})
+            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,
+                                                        help_text=help_text,
+                                                        show_help_text=show_help_text,
+                                                        extra_context=extra_context,
+                                                        extra_params_url=extra_params_url)
         super(AutoCompleteSelectField, self).__init__(max_length=255,*args, **kwargs)
 
     def clean(self, value):
@@ -131,12 +147,15 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
                  channel,
                  help_text='',
                  show_help_text=False,
+                 extra_context=None,
+                 extra_params_url=None,
                  *args, **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
-        
         self.help_text = help_text or _('Enter text to search.')
         self.show_help_text = show_help_text
+        self.extra_context = extra_context or {}
+        self.extra_params_url = extra_params_url or {}
 
     def render(self, name, value, attrs=None):
 
@@ -167,12 +186,16 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             help_text = self.help_text
         else:
             help_text = ''
-        
+
+        lookup_url = reverse('ajax_lookup',kwargs={'channel':self.channel})
+        lookup_params = urllib.urlencode(self.extra_params_url)
+        if lookup_params:
+            lookup_url += '?%s' % lookup_params
         context = {
             'name':name,
             'html_id':self.html_id,
             'min_length': getattr(lookup, 'min_length', 1),
-            'lookup_url':reverse('ajax_lookup',kwargs={'channel':self.channel}),
+            'lookup_url': lookup_url,
             'current':value,
             'current_ids':current_ids,
             'current_reprs': current_reprs,
@@ -182,6 +205,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'add_link' : self.add_link,
         }
         context.update(bootstrap())
+        context.update(self.extra_context)
 
         return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
 
@@ -205,6 +229,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
         as_default_help = u'Enter text to search.'
         help_text = kwargs.get('help_text')
+        extra_context = kwargs.pop('extra_context', {})
+        extra_params_url = kwargs.pop('extra_params_url', {})
         if not (help_text is None):
             try:
                 en_help = help_text.translate('en')
@@ -227,7 +253,11 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         # if using in a normal form then set to True so the widget shows help
         show_help_text = kwargs.pop('show_help_text',False)
         
-        kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+        kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel, 
+                                                            help_text=help_text,
+                                                            show_help_text=show_help_text,
+                                                            extra_context=extra_context,
+                                                            extra_params_url=extra_params_url)
         kwargs['help_text'] = help_text
         
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
@@ -257,7 +287,10 @@ class AutoCompleteWidget(forms.TextInput):
         self.channel = channel
         self.help_text = kwargs.pop('help_text', '')
         self.show_help_text = kwargs.pop('show_help_text',False)
-        
+        self.help_text = kwargs.pop('help_text', '')
+        self.show_help_text = kwargs.pop('show_help_text',False)
+        self.extra_context = kwargs.pop('extra_context',{})
+        self.extra_params_url = kwargs.pop('extra_params_url',{})
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
@@ -272,19 +305,25 @@ class AutoCompleteWidget(forms.TextInput):
             help_text = self.help_text
         else:
             help_text = ''
+
+        lookup_url = reverse('ajax_lookup',kwargs={'channel':self.channel})
+        lookup_params = urllib.urlencode(self.extra_params_url)
+        if lookup_params:
+            lookup_url += '?%s' % lookup_params
+
         context = {
             'current_repr': value,
             'current_id': value,
             'help_text': help_text,
             'html_id': self.html_id,
             'min_length': getattr(lookup, 'min_length', 1),
-            'lookup_url': reverse('ajax_lookup', args=[self.channel]),
+            'lookup_url': lookup_url,
             'name': name,
             'extra_attrs':mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
         }
         context.update(bootstrap())
-
+        context.update(self.extra_context)
         templates = ('autocomplete_%s.html' % self.channel,
                      'autocomplete.html')
         return mark_safe(render_to_string(templates, context))
@@ -302,6 +341,9 @@ class AutoCompleteField(forms.CharField):
 
         widget_kwargs = dict(help_text=kwargs.get('help_text', _('Enter text to search.')))
         widget_kwargs['show_help_text'] = kwargs.pop('show_help_text',False)
+        widget_kwargs['extra_context'] = kwargs.pop('extra_context',{})
+        widget_kwargs['extra_params_url'] = kwargs.pop('extra_params_url',{})
+
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
         widget = AutoCompleteWidget(channel,**widget_kwargs)
