@@ -287,7 +287,10 @@ class AutoCompleteWidget(forms.TextInput):
         self.channel = channel
         self.help_text = kwargs.pop('help_text', '')
         self.show_help_text = kwargs.pop('show_help_text',False)
-        
+        self.help_text = kwargs.pop('help_text', '')
+        self.show_help_text = kwargs.pop('show_help_text',False)
+        self.extra_context = kwargs.pop('extra_context',{})
+        self.extra_params_url = kwargs.pop('extra_params_url',{})
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
@@ -302,19 +305,25 @@ class AutoCompleteWidget(forms.TextInput):
             help_text = self.help_text
         else:
             help_text = ''
+
+        lookup_url = reverse('ajax_lookup',kwargs={'channel':self.channel})
+        lookup_params = urllib.urlencode(self.extra_params_url)
+        if lookup_params:
+            lookup_url += '?%s' % lookup_params
+
         context = {
             'current_repr': value,
             'current_id': value,
             'help_text': help_text,
             'html_id': self.html_id,
             'min_length': getattr(lookup, 'min_length', 1),
-            'lookup_url': reverse('ajax_lookup', args=[self.channel]),
+            'lookup_url': lookup_url,
             'name': name,
             'extra_attrs':mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
         }
         context.update(bootstrap())
-
+        context.update(self.extra_context)
         templates = ('autocomplete_%s.html' % self.channel,
                      'autocomplete.html')
         return mark_safe(render_to_string(templates, context))
@@ -332,6 +341,9 @@ class AutoCompleteField(forms.CharField):
 
         widget_kwargs = dict(help_text=kwargs.get('help_text', _('Enter text to search.')))
         widget_kwargs['show_help_text'] = kwargs.pop('show_help_text',False)
+        widget_kwargs['extra_context'] = kwargs.pop('extra_context',{})
+        widget_kwargs['extra_params_url'] = kwargs.pop('extra_params_url',{})
+
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
         widget = AutoCompleteWidget(channel,**widget_kwargs)
