@@ -106,8 +106,8 @@ class AutoCompleteSelectField(forms.fields.CharField):
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
             help_text = kwargs.get('help_text',_('Enter text to search.'))
             show_help_text = kwargs.pop('show_help_text',False)
-            extra_context = kwargs.pop('extra_context', None)
-            extra_params_url = kwargs.pop('extra_params_url', None)
+            extra_context = kwargs.pop('extra_context', {})
+            extra_params_url = kwargs.pop('extra_params_url', {})
             kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,
                                                         help_text=help_text,
                                                         show_help_text=show_help_text,
@@ -229,8 +229,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
         as_default_help = u'Enter text to search.'
         help_text = kwargs.get('help_text')
-        extra_context = kwargs.pop('extra_context', None)
-        extra_params_url = kwargs.pop('extra_params_url', None)
+        extra_context = kwargs.pop('extra_context', {})
+        extra_params_url = kwargs.pop('extra_params_url', {})
         if not (help_text is None):
             try:
                 en_help = help_text.translate('en')
