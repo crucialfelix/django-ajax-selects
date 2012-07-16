@@ -26,11 +26,15 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  channel,
                  help_text='',
                  show_help_text=False,
+                 extra_context=None,
+                 extra_params_url=None,
                  *args, **kw):
         super(forms.widgets.TextInput, self).__init__(*args, **kw)
         self.channel = channel
         self.help_text = help_text
         self.show_help_text = show_help_text
+        self.extra_context = extra_context or {}
+        self.extra_params_url = extra_params_url or {}
 
     def render(self, name, value, attrs=None):
 
@@ -55,11 +59,16 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         else:
             help_text = ''
 
+        lookup_url = reverse('ajax_lookup',kwargs={'channel':self.channel})
+        lookup_params = urllib.urlencode(self.extra_params_url)
+        if lookup_params:
+            lookup_url += '?%s' % lookup_params
+
         context = {
                 'name': name,
                 'html_id' : self.html_id,
                 'min_length': getattr(lookup, 'min_length', 1),
-                'lookup_url': reverse('ajax_lookup',kwargs={'channel':self.channel}),
+                'lookup_url': lookup_url,
                 'current_id': value,
                 'current_repr': current_repr,
                 'help_text': help_text,
@@ -68,7 +77,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 'add_link' : self.add_link,
                 }
         context.update(bootstrap())
-        
+        context.update(self.extra_context)
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
@@ -97,7 +106,13 @@ class AutoCompleteSelectField(forms.fields.CharField):
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
             help_text = kwargs.get('help_text',_('Enter text to search.'))
             show_help_text = kwargs.pop('show_help_text',False)
-            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+            extra_context = kwargs.pop('extra_context', None)
+            extra_params_url = kwargs.pop('extra_params_url', None)
+            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,
+                                                        help_text=help_text,
+                                                        show_help_text=show_help_text,
+                                                        extra_context=extra_context,
+                                                        extra_params_url=extra_params_url)
         super(AutoCompleteSelectField, self).__init__(max_length=255,*args, **kwargs)
 
     def clean(self, value):
