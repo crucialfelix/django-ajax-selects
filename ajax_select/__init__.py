@@ -18,6 +18,7 @@ class LookupChannel(object):
     """Subclass this, setting model and overiding the methods below to taste"""
     
     model = None
+    plugin_options = {}
     min_length = 1
     
     def get_query(self,q,request):

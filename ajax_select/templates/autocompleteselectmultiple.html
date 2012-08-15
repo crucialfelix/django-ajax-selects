@@ -8,11 +8,7 @@
 <script type="text/javascript">//<![CDATA[
 jQuery(document).ready(function($){
 	addAutoComplete("{{html_id}}", function(html_id) {
-		$("#"+html_id).autocompleteselectmultiple({
-			minLength: {{min_length}},
-			source: '{{lookup_url}}',
-			initial: {{current_reprs}}
-		});
+		$("#"+html_id).autocompleteselectmultiple({{plugin_options}});
 	});
 {% block extra_script %}{% endblock %}
 });
