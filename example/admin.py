@@ -10,18 +10,18 @@ from example.models import *
 class PersonAdmin(admin.ModelAdmin):
 
     pass
-    
+
 admin.site.register(Person,PersonAdmin)
 
 
 
 class LabelAdmin(AjaxSelectAdmin):
-    """ to get + popup buttons, subclass AjaxSelectAdmin 
-        
+    """ to get + popup buttons, subclass AjaxSelectAdmin
+
         multi-inheritance is also possible if you have an Admin class you want to inherit from:
-    
+
         class PersonAdmin(YourAdminSuperclass,AjaxSelectAdmin):
-        
+
         this acts as a MixIn to add the relevant methods
     """
     # this shows a ForeignKey field
@@ -29,7 +29,7 @@ class LabelAdmin(AjaxSelectAdmin):
     # create an ajax form class using the factory function
     #                     model,fieldlist,   [form superclass]
     form = make_ajax_form(Label,{'owner':'person'})
-    
+
 admin.site.register(Label,LabelAdmin)
 
 
@@ -66,7 +66,7 @@ class BookInline(admin.TabularInline):
     model = Book
     form = make_ajax_form(Book,{'about_group':'group','mentions_persons':'person'},show_help_text=True)
     extra = 2
-    
+
     # + check add still not working
     # no + appearing
     # def get_formset(self, request, obj=None, **kwargs):
@@ -79,7 +79,7 @@ class AuthorAdmin(admin.ModelAdmin):
     inlines = [
         BookInline,
     ]
-    
+
 admin.site.register(Author, AuthorAdmin)
 
 

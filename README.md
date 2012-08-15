@@ -15,8 +15,8 @@ selected:
 [Note: screen shots are from the older version. Styling has changed slightly]
 
 1. The user types a search term into the text field
-2. An ajax request is sent to the server. 
-3. The dropdown menu is populated with results. 
+2. An ajax request is sent to the server.
+3. The dropdown menu is populated with results.
 4. User selects by clicking or using arrow keys
 5. Selected result displays in the "deck" area directly below the input field.
 6. User can click trashcan icon to remove a selected item
@@ -47,7 +47,7 @@ or
     `easy_install django-ajax-selects`
 or
     download or checkout the distribution
-or 
+or
     install using buildout by adding `django-ajax-selects` to your `eggs`
 
 on fedora:
@@ -157,18 +157,18 @@ Defines the available lookup channels.
 
 + channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
 > This will create a channel automatically
-	
+
 	chanel_name : ( 'app.lookups', 'YourLookup' )
 	    This points to a custom Lookup channel name YourLookup in app/lookups.py
 
 	AJAX_LOOKUP_CHANNELS = {
         #   channel : dict with settings to create a channel
         'person'  : {'model':'example.person', 'search_field':'name'},
-        
+
         # channel: ( module.where_lookup_is, ClassNameOfLookup )
         'song'   : ('example.lookups', 'SongLookup'),
     }
-    
+
 #### AJAX_SELECT_BOOTSTRAP
 
 Sets if it should automatically include jQuery/jQueryUI/theme.  On large formsets this will cause it to check each time but it will only jQuery the first time.
@@ -186,8 +186,8 @@ Sets if it should automatically include jQuery/jQueryUI/theme.  On large formset
 
 This controls if and how these:
 
-    ajax_select/static/js/ajax_select.js 
-    ajax_select/static/css/ajax_select.css 
+    ajax_select/static/js/ajax_select.js
+    ajax_select/static/css/ajax_select.css
 
 are included inline in the html with each form field.
 
@@ -297,7 +297,7 @@ This param is also used in jQuery's UI when filtering results from its own cache
 
 Name of the field for the query to search with icontains.  This is used only in the default get_query implementation.
 Usually better to just implement your own get_query
-    
+
 ######  get_query(self,q,request)
 
 return a query set searching for the query string q, ordering as appropriate.
@@ -359,7 +359,7 @@ If your application does not otherwise require a custom Form class then you can 
 + *fieldlist*: a dict of {fieldname : channel_name, ... }
 + *superclass*: [default ModelForm] Substitute a different superclass for the constructed Form class.
 + *show_help_text*: [default False]
-    Leave blank [False] if using this form in a standard Admin. 
+    Leave blank [False] if using this form in a standard Admin.
     Set it True for InlineAdmin classes or if making a form for use outside of the Admin.
 
 ######Example
@@ -367,12 +367,12 @@ If your application does not otherwise require a custom Form class then you can 
     from ajax_select import make_ajax_form
     from ajax_select.admin import AjaxSelectAdmin
     from yourapp.models import YourModel
-    
+
     class YourModelAdmin(AjaxSelectAdmin):
         # create an ajax form class using the factory function
         #                     model,fieldlist,   [form superclass]
         form = make_ajax_form(Label,{'owner':'person'})
-    
+
     admin.site.register(YourModel,YourModelAdmin)
 
 You may use AjaxSelectAdmin as a mixin class and multiple inherit if you have another Admin class that you would like to use.  You may also just add the hook into your own Admin class:
@@ -388,7 +388,7 @@ Note that ajax_selects does not need to be in an admin.  Popups will still use a
 forms.py
 --------
 
-subclass ModelForm just as usual.  You may add ajax fields using the helper or directly.  
+subclass ModelForm just as usual.  You may add ajax fields using the helper or directly.
 
 #### make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwargs)
 
@@ -424,9 +424,9 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
 
 
     from ajax_select.fields import AutoCompleteSelectField
-    
+
     class ReleaseForm(ModelForm):
-        
+
         group = AutoCompleteSelectField('group', required=False, help_text=None)
 
 #### Setting plugin options
@@ -465,7 +465,7 @@ There is possibly a better way to do this, but here is an initial example:
 templates/
 ----------
 
-Each form field widget is rendered using a template.  You may write a custom template per channel and extend the base template in order to implement these blocks: 
+Each form field widget is rendered using a template.  You may write a custom template per channel and extend the base template in order to implement these blocks:
 
     {% block extra_script %}{% endblock %}
     {% block help %}{% endblock %}
@@ -549,7 +549,7 @@ Extend the template, implement the extra_script block and bind functions that wi
         });
     {% endblock %}
 
-There is no remove as there is no kill/delete button in a simple auto-complete. 
+There is no remove as there is no kill/delete button in a simple auto-complete.
 The user may clear the text themselves but there is no javascript involved. Its just a text field.
 
 

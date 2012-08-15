@@ -69,7 +69,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'add_link': self.add_link,
         }
         context.update(bootstrap())
-        
+
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
@@ -94,7 +94,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
         widget = kwargs.get("widget", False)
-        
+
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
             widget_kwargs = dict(
                 channel=channel,
@@ -141,7 +141,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
                  *args, **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
-        
+
         self.help_text = help_text or _('Enter text to search.')
         self.show_help_text = show_help_text
         self.plugin_options = plugin_options
@@ -173,7 +173,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             help_text = self.help_text
         else:
             help_text = ''
-        
+
         context = {
             'name':name,
             'html_id':self.html_id,
@@ -237,7 +237,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         }
         kwargs['widget'] = AutoCompleteSelectMultipleWidget(**widget_kwargs)
         kwargs['help_text'] = help_text
-        
+
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -326,10 +326,10 @@ class AutoCompleteField(forms.CharField):
 ####################################################################################
 
 def _check_can_add(self,user,model):
-    """ check if the user can add the model, deferring first to 
+    """ check if the user can add the model, deferring first to
         the channel if it implements can_add()
         else using django's default perm check.
-        if it can add, then enable the widget to show the + link 
+        if it can add, then enable the widget to show the + link
     """
     lookup = get_lookup(self.channel)
     if hasattr(lookup,'can_add'):

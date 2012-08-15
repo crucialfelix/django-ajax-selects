@@ -71,4 +71,4 @@ class Book(models.Model):
    title = models.CharField(max_length=100)
    about_group = models.ForeignKey(Group)
    mentions_persons = models.ManyToManyField(Person)
-   
+

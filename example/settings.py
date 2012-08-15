@@ -9,7 +9,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'example',
-    
+
     ####################################
     'ajax_select',  #  <-   add the app
     ####################################
@@ -23,7 +23,7 @@ INSTALLED_APPS = (
 AJAX_LOOKUP_CHANNELS = {
     # simplest way, automatically construct a search channel by passing a dictionary
     'label'  : {'model':'example.label', 'search_field':'name'},
-    
+
     # Custom channels are specified with a tuple
     # channel: ( module.where_lookup_is, ClassNameOfLookup )
     'person' : ('example.lookups', 'PersonLookup'),

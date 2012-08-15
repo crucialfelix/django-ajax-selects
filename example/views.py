@@ -15,9 +15,9 @@ class SearchForm(forms.Form):
             label="Favorite Cliché",
             attrs={'size': 100}
             )
-    
+
 def search_form(request):
-    
+
     dd = {}
     if 'q' in request.GET:
         dd['entered'] = request.GET.get('q')
@@ -25,4 +25,3 @@ def search_form(request):
     form = SearchForm(initial=initial)
     dd['form'] = form
     return render_to_response('search_form.html',dd,context_instance=RequestContext(request))
-    

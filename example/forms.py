@@ -13,10 +13,10 @@ class ReleaseForm(ModelForm):
 
     #           args:  this model, fieldname on this model, lookup_channel_name
     group  = make_ajax_field(Release,'group','group')
-    
+
     # no help text at all
     label  = make_ajax_field(Release,'label','label',help_text="Search for label by name")
-    
+
     # any extra kwargs are passed onto the field, so you may pass a custom help_text here
     songs = make_ajax_field(Release,'songs','song',help_text=u"Search for song by title")
 

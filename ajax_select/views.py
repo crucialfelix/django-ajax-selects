@@ -49,16 +49,16 @@ def add_popup(request,app_label,model):
         make sure that you have added ajax_select.urls to your urls.py:
             (r'^ajax_select/', include('ajax_select.urls')),
         this URL is expected in the code below, so it won't work under a different path
-        
+
         this view then hijacks the result that the django admin returns
-        and instead of calling django's dismissAddAnontherPopup(win,newId,newRepr) 
+        and instead of calling django's dismissAddAnontherPopup(win,newId,newRepr)
         it calls didAddPopup(win,newId,newRepr) which was added inline with bootstrap.html
     """
     themodel = models.get_model(app_label, model)
     admin = site._registry[themodel]
 
     # TODO : should detect where we really are
-    admin.admin_site.root_path = "/ajax_select/" 
+    admin.admin_site.root_path = "/ajax_select/"
 
     response = admin.add_view(request,request.path)
     if request.method == 'POST':
