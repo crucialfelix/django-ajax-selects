@@ -271,7 +271,23 @@ Those old lookup channels will still work and the previous methods will be used.
 
 The model class this channel searches
 
+###### plugin_options [property, default={}]
+
+Set any options for the jQuery plugin. This includes:
+
++ minLength
++ autoFocus
++ disabled
++ position
++ source - setting this would overide the normal ajax URL. could be used to add URL query params
+
+See http://docs.jquery.com/UI/Autocomplete#options
+
+The field or widget may also specify plugin_options that will overwrite those specified by the channel.
+
 ###### min_length [property, default=1]
+
+This is a jQuery plugin option.  It is preferred to set this in the plugin_options dict, but this older style attribute will still be honored.
 
 Minimum query length to return a result.  Large datasets can choke if they search too often with small queries.
 Better to demand at least 2 or 3 characters.
@@ -390,6 +406,9 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
         # do not show any help at all
         help_text=None
 
+    plugin_options - directly specify jQuery plugin options.  see Lookup plugin_options above
+
+
 #####Example
 
     from ajax_select import make_ajax_field
@@ -410,6 +429,13 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
         
         group = AutoCompleteSelectField('group', required=False, help_text=None)
 
+#### Setting plugin options
+
+    from ajax_select.fields import AutoCompleteSelectField
+
+    class ReleaseForm(ModelForm):
+
+        group = AutoCompleteSelectField('group', required=False, help_text=None,plugin_options = {'autoFocus':True,'minLength':4})
 
 #### Using ajax selects in a `FormSet`
 
