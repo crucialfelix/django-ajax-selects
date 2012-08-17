@@ -130,7 +130,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 };
 })(jQuery);
 
-	function addAutoComplete(prefix_id, callback/*(html_id)*/) {
+	window.addAutoComplete = function addAutoComplete(prefix_id, callback/*(html_id)*/) {
 		/* detects inline forms and converts the html_id if needed */
 		var prefix = 0;
 		var html_id = prefix_id;
@@ -150,7 +150,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 /*	the popup handler
 	requires RelatedObjects.js which is part of the django admin js
 	so if using outside of the admin then you would need to include that manually */
-	function didAddPopup(win,newId,newRepr) {
+	window.didAddPopup =  function didAddPopup(win,newId,newRepr) {
 		var name = windowname_to_id(win.name);
 		jQuery("#"+name).trigger('didAddPopup',[html_unescape(newId),html_unescape(newRepr)]);
 		win.close();
