@@ -62,7 +62,6 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         context = {
             'name': name,
             'html_id': self.html_id,
-            'plugin_options': plugin_options(lookup,self.channel,self.plugin_options,initial),
             'current_id': value,
             'current_repr': current_repr,
             'help_text': help_text,
@@ -70,6 +69,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'func_slug': self.html_id.replace("-",""),
             'add_link': self.add_link,
         }
+        context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
@@ -180,14 +180,15 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         context = {
             'name':name,
             'html_id':self.html_id,
-            'plugin_options':plugin_options(lookup,self.channel,self.plugin_options,initial),
             'current':value,
             'current_ids':current_ids,
+            'current_reprs':mark_safe(simplejson.dumps(initial)),
             'help_text':help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
         }
+        context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
         return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
@@ -302,11 +303,11 @@ class AutoCompleteWidget(forms.TextInput):
             'current_id': initial,
             'help_text': help_text,
             'html_id': self.html_id,
-            'plugin_options': plugin_options(lookup,self.channel,self.plugin_options,initial),
             'name': name,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
         }
+        context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
         templates = ('autocomplete_%s.html' % self.channel,
@@ -374,10 +375,17 @@ def plugin_options(channel,channel_name,widget_plugin_options,initial):
     po.update(widget_plugin_options)
     if not po.get('min_length'):
         # backward compatibility: honor the channel's min_length attribute
+        # will deprecate that some day and prefer to use plugin_options
         po['min_length'] = getattr(channel, 'min_length', 1)
     if not po.get('source'):
         po['source'] = reverse('ajax_lookup',kwargs={'channel':channel_name})
-    return mark_safe(simplejson.dumps(po))
+    return {
+        'plugin_options': mark_safe(simplejson.dumps(po)),
+        # continue to support any custom templates that still expect these
+        'lookup_url': po['source'],
+        'min_length': po['min_length']
+        }
+
 
 def bootstrap():
     b = {}
