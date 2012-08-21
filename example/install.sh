@@ -2,7 +2,7 @@
 # creates a virtualenv and installs a django here
 virtualenv AJAXSELECTS
 source AJAXSELECTS/bin/activate
-easy_install django
+pip install django
 
 # put ajax selects in the path
 ln -s ../ajax_select/ ./ajax_select
