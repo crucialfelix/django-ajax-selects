@@ -125,46 +125,28 @@ def make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwarg
                                    AutoCompleteSelectField
 
     field = model._meta.get_field(model_fieldname)
-    if kwargs.has_key('label'):
-        label = kwargs.pop('label')
-    else:
-        label = _(capfirst(unicode(field.verbose_name)))
+    if not kwargs.has_key('label'):
+        kwargs['label'] = _(capfirst(unicode(field.verbose_name)))
 
-    if kwargs.has_key('help_text'):
-        help_text = kwargs.pop('help_text')
-    else:
-        if isinstance(field.help_text,basestring) and field.help_text:
-            help_text = _(field.help_text)
-        else:
-            help_text = field.help_text
-    if kwargs.has_key('required'):
-        required = kwargs.pop('required')
-    else:
-        required = not field.blank
+    if not kwargs.has_key('help_text') and field.help_text:
+        kwargs['help_text'] = field.help_text
+    if not kwargs.has_key('required'):
+        kwargs['required'] = not field.blank
 
     kwargs['show_help_text'] = show_help_text
     if isinstance(field,ManyToManyField):
         f = AutoCompleteSelectMultipleField(
             channel,
-            required=required,
-            help_text=help_text,
-            label=label,
             **kwargs
             )
     elif isinstance(field,ForeignKey):
         f = AutoCompleteSelectField(
             channel,
-            required=required,
-            help_text=help_text,
-            label=label,
             **kwargs
             )
     else:
         f = AutoCompleteField(
             channel,
-            required=required,
-            help_text=help_text,
-            label=label,
             **kwargs
             )
     return f
