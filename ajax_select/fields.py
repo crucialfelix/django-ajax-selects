@@ -9,10 +9,12 @@ from django.template.defaultfilters import escapejs
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+from django.conf import settings
 from django.utils import simplejson
 import os
 
 
+as_default_help = u'Enter text to search.'
 
 ####################################################################################
 
@@ -24,8 +26,8 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     def __init__(self,
                  channel,
-                 help_text='',
-                 show_help_text=False,
+                 help_text = u'',
+                 show_help_text = True,
                  plugin_options = {},
                  *args, **kwargs):
         self.plugin_options = plugin_options
@@ -55,7 +57,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = ''
+            help_text = u''
 
         context = {
             'name': name,
@@ -97,9 +99,9 @@ class AutoCompleteSelectField(forms.fields.CharField):
 
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
             widget_kwargs = dict(
-                channel=channel,
-                help_text = kwargs.get('help_text',_('Enter text to search.')),
-                show_help_text = kwargs.pop('show_help_text',False),
+                channel = channel,
+                help_text = kwargs.get('help_text',_(as_default_help)),
+                show_help_text = kwargs.pop('show_help_text',True),
                 plugin_options = kwargs.pop('plugin_options',{})
             )
             kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
@@ -136,13 +138,13 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
     def __init__(self,
                  channel,
                  help_text='',
-                 show_help_text=False,
+                 show_help_text=True,
                  plugin_options = {},
                  *args, **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
 
-        self.help_text = help_text or _('Enter text to search.')
+        self.help_text = help_text
         self.show_help_text = show_help_text
         self.plugin_options = plugin_options
 
@@ -169,10 +171,11 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         for obj in objects:
             display = lookup.format_item_display(obj)
             initial.append([display,obj.pk])
+
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = ''
+            help_text = u''
 
         context = {
             'name':name,
@@ -207,32 +210,44 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
 
-        as_default_help = u'Enter text to search.'
         help_text = kwargs.get('help_text')
+        show_help_text = kwargs.pop('show_help_text',False)
+
         if not (help_text is None):
-            try:
-                en_help = help_text.translate('en')
-            except AttributeError:
-                pass
-            else:
-                # monkey patch the django default help text to the ajax selects default help text
-                django_default_help = u'Hold down "Control", or "Command" on a Mac, to select more than one.'
-                if django_default_help in en_help:
-                    en_help = en_help.replace(django_default_help,'').strip()
+            # '' will cause translation to fail
+            # should be u''
+            if type(help_text) == str:
+                help_text = unicode(help_text)
+            # django admin appends "Hold down "Control",..." to the help text
+            # regardless of which widget is used. so even when you specify an explicit help text it appends this other default text onto the end.
+            # This monkey patches the help text to remove that
+            if help_text != u'':
+                if type(help_text) != unicode:
+                    # ideally this could check request.LANGUAGE_CODE
+                    translated = help_text.translate(settings.LANGUAGE_CODE)
+                else:
+                    translated = help_text
+                django_default_help = _(u'Hold down "Control", or "Command" on a Mac, to select more than one.').translate(settings.LANGUAGE_CODE)
+                if django_default_help in translated:
+                    cleaned_help = translated.replace(django_default_help,'').strip()
                     # probably will not show up in translations
-                    if en_help:
-                        help_text = _(en_help)
+                    if cleaned_help:
+                        help_text = cleaned_help
                     else:
-                        help_text = _(as_default_help)
+                        help_text = u""
+                        show_help_text = False
         else:
             help_text = _(as_default_help)
 
-        # admin will also show help text, so by default do not show it in widget
-        # if using in a normal form then set to True so the widget shows help
+        # django admin will also show help text outside of the display
+        # area of the widget.  this results in duplicated help.
+        # it should just let the widget do the rendering
+        # so by default do not show it in widget
+        # if using in a normal form then set to True when creating the field
         widget_kwargs = {
             'channel': channel,
             'help_text': help_text,
-            'show_help_text': kwargs.pop('show_help_text',False),
+            'show_help_text': show_help_text,
             'plugin_options': kwargs.pop('plugin_options',{})
         }
         kwargs['widget'] = AutoCompleteSelectMultipleWidget(**widget_kwargs)
@@ -264,7 +279,7 @@ class AutoCompleteWidget(forms.TextInput):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
         self.help_text = kwargs.pop('help_text', '')
-        self.show_help_text = kwargs.pop('show_help_text',False)
+        self.show_help_text = kwargs.pop('show_help_text',True)
         self.plugin_options = kwargs.pop('plugin_options',{})
 
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
@@ -280,7 +295,8 @@ class AutoCompleteWidget(forms.TextInput):
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = ''
+            help_text = u''
+
         context = {
             'current_repr': initial,
             'current_id': initial,
@@ -309,8 +325,8 @@ class AutoCompleteField(forms.CharField):
         self.channel = channel
 
         widget_kwargs = dict(
-            help_text = kwargs.get('help_text', _('Enter text to search.')),
-            show_help_text = kwargs.pop('show_help_text',False),
+            help_text = kwargs.get('help_text', _(as_default_help)),
+            show_help_text = kwargs.pop('show_help_text',True),
             plugin_options = kwargs.pop('plugin_options',{})
         )
         if 'attrs' in kwargs:
