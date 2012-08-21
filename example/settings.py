@@ -128,12 +128,6 @@ STATIC_URL = '/media/'
 SECRET_KEY = '=9fhrrwrazha6r_m)r#+in*@n@i322ubzy4r+zz%wz$+y(=qpb'
 
 
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-)
-
 ROOT_URLCONF = 'example.urls'
 
 TEMPLATE_DIRS = (
