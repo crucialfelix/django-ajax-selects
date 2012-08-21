@@ -22,7 +22,7 @@ $.fn.autocompleteselect = function(options) {
 	return this.each(function() {
 		var id = this.id;
 		var $this = $(this);
-	
+
 		var $text = $("#"+id+"_text");
 		var $deck = $("#"+id+"_on_deck");
 
@@ -57,11 +57,11 @@ $.fn.autocompleteselect = function(options) {
 			$this.val('');
 			$deck.children().fadeOut(1.0).remove();
 		}
-		
+
 		options.select = receiveResult;
 		$text.autocomplete(options);
 		$text.autocompletehtml();
-		
+
 		if (options.initial) {
 			its = options.initial;
 			addKiller(its[0], its[1]);
@@ -85,7 +85,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 		function receiveResult(event, ui) {
 			pk = ui.item.pk;
 			prev = $this.val();
-			
+
 			if (prev.indexOf("|"+pk+"|") == -1) {
 				$this.val((prev ? prev : "|") + pk + "|");
 				addKiller(ui.item.repr, pk);
@@ -115,7 +115,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 		options.select = receiveResult;
 		$text.autocomplete(options);
 		$text.autocompletehtml();
-		
+
 		if (options.initial) {
 			$.each(options.initial, function(i, its) {
 				addKiller(its[0], its[1]);
