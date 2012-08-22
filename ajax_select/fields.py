@@ -9,9 +9,12 @@ from django.template.defaultfilters import escapejs
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+from django.conf import settings
+from django.utils import simplejson
 import os
 
 
+as_default_help = u'Enter text to search.'
 
 ####################################################################################
 
@@ -23,10 +26,12 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     def __init__(self,
                  channel,
-                 help_text='',
-                 show_help_text=False,
-                 *args, **kw):
-        super(forms.widgets.TextInput, self).__init__(*args, **kw)
+                 help_text = u'',
+                 show_help_text = True,
+                 plugin_options = {},
+                 *args, **kwargs):
+        self.plugin_options = plugin_options
+        super(forms.widgets.TextInput, self).__init__(*args, **kwargs)
         self.channel = channel
         self.help_text = help_text
         self.show_help_text = show_help_text
@@ -37,6 +42,8 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
+        current_repr = ''
+        initial = None
         lookup = get_lookup(self.channel)
         if value:
             objs = lookup.get_objects([value])
@@ -44,30 +51,27 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 obj = objs[0]
             except IndexError:
                 raise Exception("%s cannot find object:%s" % (lookup, value))
-            display = lookup.format_item_display(obj)
-            current_repr = mark_safe( """new Array("%s",%s)""" % (escapejs(display),obj.pk) )
-        else:
-            current_repr = 'null'
+            current_repr = lookup.format_item_display(obj)
+            initial = [current_repr,obj.pk]
 
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = ''
+            help_text = u''
 
         context = {
-                'name': name,
-                'html_id' : self.html_id,
-                'min_length': getattr(lookup, 'min_length', 1),
-                'lookup_url': reverse('ajax_lookup',kwargs={'channel':self.channel}),
-                'current_id': value,
-                'current_repr': current_repr,
-                'help_text': help_text,
-                'extra_attrs': mark_safe(flatatt(final_attrs)),
-                'func_slug': self.html_id.replace("-",""),
-                'add_link' : self.add_link,
-                }
+            'name': name,
+            'html_id': self.html_id,
+            'current_id': value,
+            'current_repr': current_repr,
+            'help_text': help_text,
+            'extra_attrs': mark_safe(flatatt(final_attrs)),
+            'func_slug': self.html_id.replace("-",""),
+            'add_link': self.add_link,
+        }
+        context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
-        
+
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
@@ -92,11 +96,15 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
         widget = kwargs.get("widget", False)
-        
+
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
-            help_text = kwargs.get('help_text',_('Enter text to search.'))
-            show_help_text = kwargs.pop('show_help_text',False)
-            kwargs["widget"] = AutoCompleteSelectWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+            widget_kwargs = dict(
+                channel = channel,
+                help_text = kwargs.get('help_text',_(as_default_help)),
+                show_help_text = kwargs.pop('show_help_text',True),
+                plugin_options = kwargs.pop('plugin_options',{})
+            )
+            kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
         super(AutoCompleteSelectField, self).__init__(max_length=255,*args, **kwargs)
 
     def clean(self, value):
@@ -130,13 +138,15 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
     def __init__(self,
                  channel,
                  help_text='',
-                 show_help_text=False,
+                 show_help_text=True,
+                 plugin_options = {},
                  *args, **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
-        
-        self.help_text = help_text or _('Enter text to search.')
+
+        self.help_text = help_text
         self.show_help_text = show_help_text
+        self.plugin_options = plugin_options
 
     def render(self, name, value, attrs=None):
 
@@ -157,30 +167,28 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         objects = lookup.get_objects(value)
 
         # text repr of currently selected items
-        current_repr_json = []
+        initial = []
         for obj in objects:
             display = lookup.format_item_display(obj)
-            current_repr_json.append( """new Array("%s",%s)""" % (escapejs(display),obj.pk) )
-        current_reprs = mark_safe("new Array(%s)" % ",".join(current_repr_json))
-        
+            initial.append([display,obj.pk])
+
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = ''
-        
+            help_text = u''
+
         context = {
             'name':name,
             'html_id':self.html_id,
-            'min_length': getattr(lookup, 'min_length', 1),
-            'lookup_url':reverse('ajax_lookup',kwargs={'channel':self.channel}),
             'current':value,
             'current_ids':current_ids,
-            'current_reprs': current_reprs,
+            'current_reprs':mark_safe(simplejson.dumps(initial)),
             'help_text':help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
             'add_link' : self.add_link,
         }
+        context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
         return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
@@ -203,33 +211,49 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
 
-        as_default_help = u'Enter text to search.'
         help_text = kwargs.get('help_text')
+        show_help_text = kwargs.pop('show_help_text',False)
+
         if not (help_text is None):
-            try:
-                en_help = help_text.translate('en')
-            except AttributeError:
-                pass
-            else:
-                # monkey patch the django default help text to the ajax selects default help text
-                django_default_help = u'Hold down "Control", or "Command" on a Mac, to select more than one.'
-                if django_default_help in en_help:
-                    en_help = en_help.replace(django_default_help,'').strip()
+            # '' will cause translation to fail
+            # should be u''
+            if type(help_text) == str:
+                help_text = unicode(help_text)
+            # django admin appends "Hold down "Control",..." to the help text
+            # regardless of which widget is used. so even when you specify an explicit help text it appends this other default text onto the end.
+            # This monkey patches the help text to remove that
+            if help_text != u'':
+                if type(help_text) != unicode:
+                    # ideally this could check request.LANGUAGE_CODE
+                    translated = help_text.translate(settings.LANGUAGE_CODE)
+                else:
+                    translated = help_text
+                django_default_help = _(u'Hold down "Control", or "Command" on a Mac, to select more than one.').translate(settings.LANGUAGE_CODE)
+                if django_default_help in translated:
+                    cleaned_help = translated.replace(django_default_help,'').strip()
                     # probably will not show up in translations
-                    if en_help:
-                        help_text = _(en_help)
+                    if cleaned_help:
+                        help_text = cleaned_help
                     else:
-                        help_text = _(as_default_help)
+                        help_text = u""
+                        show_help_text = False
         else:
             help_text = _(as_default_help)
 
-        # admin will also show help text, so by default do not show it in widget
-        # if using in a normal form then set to True so the widget shows help
-        show_help_text = kwargs.pop('show_help_text',False)
-        
-        kwargs['widget'] = AutoCompleteSelectMultipleWidget(channel=channel,help_text=help_text,show_help_text=show_help_text)
+        # django admin will also show help text outside of the display
+        # area of the widget.  this results in duplicated help.
+        # it should just let the widget do the rendering
+        # so by default do not show it in widget
+        # if using in a normal form then set to True when creating the field
+        widget_kwargs = {
+            'channel': channel,
+            'help_text': help_text,
+            'show_help_text': show_help_text,
+            'plugin_options': kwargs.pop('plugin_options',{})
+        }
+        kwargs['widget'] = AutoCompleteSelectMultipleWidget(**widget_kwargs)
         kwargs['help_text'] = help_text
-        
+
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -256,14 +280,15 @@ class AutoCompleteWidget(forms.TextInput):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
         self.help_text = kwargs.pop('help_text', '')
-        self.show_help_text = kwargs.pop('show_help_text',False)
-        
+        self.show_help_text = kwargs.pop('show_help_text',True)
+        self.plugin_options = kwargs.pop('plugin_options',{})
+
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
 
-        value = value or ''
-        
+        initial = value or ''
+
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
@@ -271,18 +296,18 @@ class AutoCompleteWidget(forms.TextInput):
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = ''
+            help_text = u''
+
         context = {
-            'current_repr': value,
-            'current_id': value,
+            'current_repr': initial,
+            'current_id': initial,
             'help_text': help_text,
             'html_id': self.html_id,
-            'min_length': getattr(lookup, 'min_length', 1),
-            'lookup_url': reverse('ajax_lookup', args=[self.channel]),
             'name': name,
-            'extra_attrs':mark_safe(flatatt(final_attrs)),
+            'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
         }
+        context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
         templates = ('autocomplete_%s.html' % self.channel,
@@ -300,8 +325,11 @@ class AutoCompleteField(forms.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
 
-        widget_kwargs = dict(help_text=kwargs.get('help_text', _('Enter text to search.')))
-        widget_kwargs['show_help_text'] = kwargs.pop('show_help_text',False)
+        widget_kwargs = dict(
+            help_text = kwargs.get('help_text', _(as_default_help)),
+            show_help_text = kwargs.pop('show_help_text',True),
+            plugin_options = kwargs.pop('plugin_options',{})
+        )
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
         widget = AutoCompleteWidget(channel,**widget_kwargs)
@@ -315,10 +343,10 @@ class AutoCompleteField(forms.CharField):
 ####################################################################################
 
 def _check_can_add(self,user,model):
-    """ check if the user can add the model, deferring first to 
+    """ check if the user can add the model, deferring first to
         the channel if it implements can_add()
         else using django's default perm check.
-        if it can add, then enable the widget to show the + link 
+        if it can add, then enable the widget to show the + link
     """
     lookup = get_lookup(self.channel)
     if hasattr(lookup,'can_add'):
@@ -337,6 +365,26 @@ def autoselect_fields_check_can_add(form,model,user):
         if isinstance(form_field,(AutoCompleteSelectMultipleField,AutoCompleteSelectField)):
             db_field = model._meta.get_field_by_name(name)[0]
             form_field.check_can_add(user,db_field.rel.to)
+
+def plugin_options(channel,channel_name,widget_plugin_options,initial):
+    """ Make a JSON dumped dict of all options for the jquery ui plugin itself """
+    po = {}
+    if initial:
+        po['initial'] = initial
+    po.update(getattr(channel,'plugin_options',{}))
+    po.update(widget_plugin_options)
+    if not po.get('min_length'):
+        # backward compatibility: honor the channel's min_length attribute
+        # will deprecate that some day and prefer to use plugin_options
+        po['min_length'] = getattr(channel, 'min_length', 1)
+    if not po.get('source'):
+        po['source'] = reverse('ajax_lookup',kwargs={'channel':channel_name})
+    return {
+        'plugin_options': mark_safe(simplejson.dumps(po)),
+        # continue to support any custom templates that still expect these
+        'lookup_url': po['source'],
+        'min_length': po['min_length']
+        }
 
 
 def bootstrap():

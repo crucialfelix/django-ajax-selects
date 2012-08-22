@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup
 
 setup(name='django-ajax-selects',
-    version='1.2.4',
+    version='1.2.5',
     description='jQuery-powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
     author='crucialfelix',
     author_email='crucialfelix@gmail.com',
-    url='http://code.google.com/p/django-ajax-selects/',
+    url='https://github.com/crucialfelix/django-ajax-selects/',
     packages=['ajax_select', ],
     package_data={'ajax_select': ['*.py','*.txt','static/css/*','static/images/*','static/js/*','templates/*.html', 'templates/ajax_select/*.html']},
     classifiers = [
@@ -26,8 +31,8 @@ setup(name='django-ajax-selects',
 Enables editing of `ForeignKey`, `ManyToManyField` and `CharField` using jQuery UI AutoComplete.
 
 1. The user types a search term into the text field
-2. An ajax request is sent to the server. 
-3. The dropdown menu is populated with results. 
+2. An ajax request is sent to the server.
+3. The dropdown menu is populated with results.
 4. User selects by clicking or using arrow keys
 5. Selected result displays in the "deck" area directly below the input field.
 6. User can click trashcan icon to remove a selected item

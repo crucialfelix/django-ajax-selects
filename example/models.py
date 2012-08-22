@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 
 from django.db import models
 
@@ -54,7 +55,7 @@ class Release(models.Model):
     title = models.CharField(max_length=100)
     catalog = models.CharField(blank=True, max_length=100)
 
-    group = models.ForeignKey(Group,blank=True,null=True)
+    group = models.ForeignKey(Group,blank=True,null=True,verbose_name=u"Русский текст")
     label = models.ForeignKey(Label,blank=False,null=False)
     songs = models.ManyToManyField(Song,blank=True)
 
@@ -71,4 +72,4 @@ class Book(models.Model):
    title = models.CharField(max_length=100)
    about_group = models.ForeignKey(Group)
    mentions_persons = models.ManyToManyField(Person)
-   
+

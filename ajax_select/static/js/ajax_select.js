@@ -22,7 +22,7 @@ $.fn.autocompleteselect = function(options) {
 	return this.each(function() {
 		var id = this.id;
 		var $this = $(this);
-	
+
 		var $text = $("#"+id+"_text");
 		var $deck = $("#"+id+"_on_deck");
 
@@ -57,11 +57,11 @@ $.fn.autocompleteselect = function(options) {
 			$this.val('');
 			$deck.children().fadeOut(1.0).remove();
 		}
-		
+
 		options.select = receiveResult;
 		$text.autocomplete(options);
 		$text.autocompletehtml();
-		
+
 		if (options.initial) {
 			its = options.initial;
 			addKiller(its[0], its[1]);
@@ -85,7 +85,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 		function receiveResult(event, ui) {
 			pk = ui.item.pk;
 			prev = $this.val();
-			
+
 			if (prev.indexOf("|"+pk+"|") == -1) {
 				$this.val((prev ? prev : "|") + pk + "|");
 				addKiller(ui.item.repr, pk);
@@ -115,7 +115,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 		options.select = receiveResult;
 		$text.autocomplete(options);
 		$text.autocompletehtml();
-		
+
 		if (options.initial) {
 			$.each(options.initial, function(i, its) {
 				addKiller(its[0], its[1]);
@@ -128,31 +128,33 @@ $.fn.autocompleteselectmultiple = function(options) {
 		});
 	});
 };
-})(jQuery);
 
-	function addAutoComplete(prefix_id, callback/*(html_id)*/) {
-		/* detects inline forms and converts the html_id if needed */
-		var prefix = 0;
-		var html_id = prefix_id;
-		if(html_id.indexOf("__prefix__") != -1) {
-			// Some dirty loop to find the appropriate element to apply the callback to
-			while (jQuery('#'+html_id).length) {
-				html_id = prefix_id.replace(/__prefix__/, prefix++);
-			}
-			html_id = prefix_id.replace(/__prefix__/, prefix-2);
-			// Ignore the first call to this function, the one that is triggered when
-			// page is loaded just because the "empty" form is there.
-			if (jQuery("#"+html_id+", #"+html_id+"_text").hasClass("ui-autocomplete-input"))
-				return;
+window.addAutoComplete = function (prefix_id, callback ) { /*(html_id)*/
+	/* detects inline forms and converts the html_id if needed */
+	var prefix = 0;
+	var html_id = prefix_id;
+	if(html_id.indexOf("__prefix__") != -1) {
+		// Some dirty loop to find the appropriate element to apply the callback to
+		while ($('#'+html_id).length) {
+			html_id = prefix_id.replace(/__prefix__/, prefix++);
 		}
-		callback(html_id);
+		html_id = prefix_id.replace(/__prefix__/, prefix-2);
+		// Ignore the first call to this function, the one that is triggered when
+		// page is loaded just because the "empty" form is there.
+		if ($("#"+html_id+", #"+html_id+"_text").hasClass("ui-autocomplete-input"))
+			return;
 	}
+	callback(html_id);
+}
 /*	the popup handler
 	requires RelatedObjects.js which is part of the django admin js
 	so if using outside of the admin then you would need to include that manually */
-	function didAddPopup(win,newId,newRepr) {
-		var name = windowname_to_id(win.name);
-		jQuery("#"+name).trigger('didAddPopup',[html_unescape(newId),html_unescape(newRepr)]);
-		win.close();
-	}
+window.didAddPopup = function (win,newId,newRepr) {
+	var name = windowname_to_id(win.name);
+	$("#"+name).trigger('didAddPopup',[html_unescape(newId),html_unescape(newRepr)]);
+	win.close();
+}
+
+})(jQuery);
+
 }

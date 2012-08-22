@@ -1,5 +1,4 @@
 
-
 from django.db.models import Q
 from django.utils.html import escape
 from example.models import *
@@ -36,7 +35,7 @@ class GroupLookup(LookupChannel):
 
     def get_result(self,obj):
         return unicode(obj)
-        
+
     def format_match(self,obj):
         return self.format_item_display(obj)
 
@@ -60,7 +59,7 @@ class SongLookup(LookupChannel):
 
     def get_result(self,obj):
         return unicode(obj.title)
-        
+
     def format_match(self,obj):
         return self.format_item_display(obj)
 
