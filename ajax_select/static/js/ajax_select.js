@@ -12,7 +12,7 @@ $.fn.autocompletehtml = function() {
 		}
 		return $("<li></li>")
 			.data("item.autocomplete", item)
-			.append("<a>" + item.match + "</a>")
+			.append("<a>" + item.label + "</a>")
 			.appendTo(ul);
 	};
 	return this;
