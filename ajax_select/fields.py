@@ -361,10 +361,10 @@ def _check_can_add(self,user,model):
 
 def autoselect_fields_check_can_add(form,model,user):
     """ check the form's fields for any autoselect fields and enable their widgets with + sign add links if permissions allow"""
-    for name,form_field in form.declared_fields.iteritems():
-        if isinstance(form_field,(AutoCompleteSelectMultipleField,AutoCompleteSelectField)):
+    for name in form.declared_fields.keys():
+        if isinstance(form.fields[name],(AutoCompleteSelectMultipleField,AutoCompleteSelectField)):
             db_field = model._meta.get_field_by_name(name)[0]
-            form_field.check_can_add(user,db_field.rel.to)
+            form.fields[name].check_can_add(user,db_field.rel.to)
 
 def plugin_options(channel,channel_name,widget_plugin_options,initial):
     """ Make a JSON dumped dict of all options for the jquery ui plugin itself """
