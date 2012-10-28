@@ -117,6 +117,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 		$text.autocompletehtml();
 
 		if (options.initial) {
+			$deck.empty();
 			$.each(options.initial, function(i, its) {
 				addKiller(its[0], its[1]);
 			});
