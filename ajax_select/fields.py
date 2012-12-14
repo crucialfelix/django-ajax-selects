@@ -31,6 +31,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  plugin_options = {},
                  *args, **kwargs):
         self.plugin_options = plugin_options
+        self.add_link = plugin_options.get('add_link')
         super(forms.widgets.TextInput, self).__init__(*args, **kwargs)
         self.channel = channel
         self.help_text = help_text
@@ -282,6 +283,7 @@ class AutoCompleteWidget(forms.TextInput):
         self.help_text = kwargs.pop('help_text', '')
         self.show_help_text = kwargs.pop('show_help_text',True)
         self.plugin_options = kwargs.pop('plugin_options',{})
+        self.add_link = kwargs.pop('add_link', '')
 
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
