@@ -156,12 +156,7 @@ def make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwarg
 
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """
-    try:
-        lookup_label = settings.AJAX_LOOKUP_CHANNELS[channel]
-    except AttributeError:
-        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS is not configured")
-    except KeyError:
-        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS not configured correctly for %r" % channel)
+    lookup_label = channel['lookup_channel']
 
     if isinstance(lookup_label,dict):
         # 'channel' : dict(model='app.model', search_field='title' )

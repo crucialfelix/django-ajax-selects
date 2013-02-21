@@ -1,3 +1,6 @@
+import os
+import cPickle
+import base64
 
 from ajax_select import get_lookup
 from django import forms
@@ -11,7 +14,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.utils import simplejson
-import os
 
 
 as_default_help = u'Enter text to search.'
@@ -31,6 +33,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  plugin_options = {},
                  *args, **kwargs):
         self.plugin_options = plugin_options
+        self.add_link = self.plugin_options.get('add_link')
         super(forms.widgets.TextInput, self).__init__(*args, **kwargs)
         self.channel = channel
         self.help_text = help_text
@@ -44,7 +47,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
         current_repr = ''
         initial = None
-        lookup = get_lookup(self.channel)
+        lookup = get_lookup(self.plugin_options)
         if value:
             objs = lookup.get_objects([value])
             try:
@@ -86,9 +89,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         return '%s_text' % id_
 
 
-
 class AutoCompleteSelectField(forms.fields.CharField):
-
     """  form field to select a model for a ForeignKey db field """
 
     channel = None
@@ -109,7 +110,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
 
     def clean(self, value):
         if value:
-            lookup = get_lookup(self.channel)
+            lookup = get_lookup(self.plugin_options)
             objs = lookup.get_objects( [ value] )
             if len(objs) != 1:
                 # someone else might have deleted it while you were editing
@@ -156,7 +157,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
-        lookup = get_lookup(self.channel)
+        lookup = get_lookup(self.plugin_options)
 
         # eg. value = [3002L, 1194L]
         if value:
@@ -282,7 +283,7 @@ class AutoCompleteWidget(forms.TextInput):
         self.help_text = kwargs.pop('help_text', '')
         self.show_help_text = kwargs.pop('show_help_text',True)
         self.plugin_options = kwargs.pop('plugin_options',{})
-
+        self.add_link = self.plugin_options.get('add_link')
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
@@ -292,7 +293,7 @@ class AutoCompleteWidget(forms.TextInput):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
-        lookup = get_lookup(self.channel)
+        lookup = get_lookup(self.plugin_options)
         if self.show_help_text:
             help_text = self.help_text
         else:
@@ -324,7 +325,6 @@ class AutoCompleteField(forms.CharField):
 
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
-
         widget_kwargs = dict(
             help_text = kwargs.get('help_text', _(as_default_help)),
             show_help_text = kwargs.pop('show_help_text',True),
@@ -332,7 +332,7 @@ class AutoCompleteField(forms.CharField):
         )
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
-        widget = AutoCompleteWidget(channel,**widget_kwargs)
+        widget = AutoCompleteWidget(channel, **widget_kwargs)
 
         defaults = {'max_length': 255,'widget': widget}
         defaults.update(kwargs)
@@ -348,7 +348,7 @@ def _check_can_add(self,user,model):
         else using django's default perm check.
         if it can add, then enable the widget to show the + link
     """
-    lookup = get_lookup(self.channel)
+    lookup = get_lookup(self.plugin_options)
     if hasattr(lookup,'can_add'):
         can_add = lookup.can_add(user,model)
     else:
@@ -378,7 +378,9 @@ def plugin_options(channel,channel_name,widget_plugin_options,initial):
         # will deprecate that some day and prefer to use plugin_options
         po['min_length'] = getattr(channel, 'min_length', 1)
     if not po.get('source'):
-        po['source'] = reverse('ajax_lookup',kwargs={'channel':channel_name})
+        channel = cPickle.dumps(widget_plugin_options)
+        channel = base64.b64encode(channel)
+        po['source'] = reverse('ajax_lookup',kwargs={'channel': channel})
     return {
         'plugin_options': mark_safe(simplejson.dumps(po)),
         # continue to support any custom templates that still expect these
