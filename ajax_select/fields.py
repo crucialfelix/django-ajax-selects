@@ -1,5 +1,5 @@
-
 from ajax_select import get_lookup
+import django
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -401,7 +401,7 @@ def bootstrap():
         js = f.read()
         b['inline'] = mark_safe(u"""<style type="text/css">%s</style><script type="text/javascript">//<![CDATA[%s//]]></script>""" % (css,js))
     elif inlines == 'staticfiles':
-        b['inline'] = mark_safe("""<style type="text/css">@import url("%sajax_select/css/ajax_select.css");</style><script type="text/javascript" src="%sajax_select/js/ajax_select.js"></script>""" % (settings.STATIC_URL,settings.STATIC_URL))
+        b['inline'] = mark_safe("""<style type="text/css">@import url("%scss/ajax_select.css");</style><script type="text/javascript" src="%sjs/ajax_select.js"></script>""" % (settings.STATIC_URL,settings.STATIC_URL))
 
     return b
 
