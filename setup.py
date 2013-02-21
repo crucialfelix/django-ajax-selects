@@ -7,12 +7,12 @@ except ImportError:
     use_setuptools()
     from setuptools import setup
 
-setup(name='django-ajax-selects',
-    version='1.2.5',
+setup(name='bob-ajax-selects',
+    version='1.3.0',
     description='jQuery-powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
-    author='crucialfelix',
-    author_email='crucialfelix@gmail.com',
-    url='https://github.com/crucialfelix/django-ajax-selects/',
+    author='Kamil Warguła, crucialfelix',
+    author_email='kwargula@gmail.com crucialfelix@gmail.com',
+    url='https://github.com/quamilek/bob-ajax-selects/',
     packages=['ajax_select', ],
     package_data={'ajax_select': ['*.py','*.txt','static/css/*','static/images/*','static/js/*','templates/*.html', 'templates/ajax_select/*.html']},
     classifiers = [
