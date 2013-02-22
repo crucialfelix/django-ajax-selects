@@ -44,10 +44,9 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         value = value or ''
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
-
         current_repr = ''
         initial = None
-        lookup = get_lookup(self.plugin_options)
+        lookup = get_lookup(self.channel)
         if value:
             objs = lookup.get_objects([value])
             try:
@@ -75,7 +74,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
-        return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
+        return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel[1], 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
 
@@ -97,7 +96,6 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
         widget = kwargs.get("widget", False)
-
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
             widget_kwargs = dict(
                 channel = channel,
@@ -110,7 +108,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
 
     def clean(self, value):
         if value:
-            lookup = get_lookup(self.plugin_options)
+            lookup = get_lookup(self.channel)
             objs = lookup.get_objects( [ value] )
             if len(objs) != 1:
                 # someone else might have deleted it while you were editing
@@ -157,7 +155,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
-        lookup = get_lookup(self.plugin_options)
+        lookup = get_lookup(self.channel)
 
         # eg. value = [3002L, 1194L]
         if value:
@@ -192,7 +190,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
-        return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
+        return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel[1], 'autocompleteselectmultiple.html'),context))
 
     def value_from_datadict(self, data, files, name):
         # eg. u'members': [u'|229|4688|190|']
@@ -292,8 +290,7 @@ class AutoCompleteWidget(forms.TextInput):
 
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
-
-        lookup = get_lookup(self.plugin_options)
+        lookup = get_lookup(self.channel)
         if self.show_help_text:
             help_text = self.help_text
         else:
@@ -311,7 +308,7 @@ class AutoCompleteWidget(forms.TextInput):
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
-        templates = ('autocomplete_%s.html' % self.channel,
+        templates = ('autocomplete_%s.html' % self.channel[1],
                      'autocomplete.html')
         return mark_safe(render_to_string(templates, context))
 
@@ -348,7 +345,7 @@ def _check_can_add(self,user,model):
         else using django's default perm check.
         if it can add, then enable the widget to show the + link
     """
-    lookup = get_lookup(self.plugin_options)
+    lookup = get_lookup(self.channel)
     if hasattr(lookup,'can_add'):
         can_add = lookup.can_add(user,model)
     else:
@@ -378,7 +375,7 @@ def plugin_options(channel,channel_name,widget_plugin_options,initial):
         # will deprecate that some day and prefer to use plugin_options
         po['min_length'] = getattr(channel, 'min_length', 1)
     if not po.get('source'):
-        channel = cPickle.dumps(widget_plugin_options)
+        channel = cPickle.dumps(channel_name)
         channel = base64.b64encode(channel)
         po['source'] = reverse('ajax_lookup',kwargs={'channel': channel})
     return {

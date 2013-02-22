@@ -156,8 +156,7 @@ def make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwarg
 
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """
-    lookup_label = channel['lookup_channel']
-
+    lookup_label = channel
     if isinstance(lookup_label,dict):
         # 'channel' : dict(model='app.model', search_field='title' )
         #  generate a simple channel dynamically

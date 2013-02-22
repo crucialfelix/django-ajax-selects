@@ -145,17 +145,12 @@ See the example app for a full working admin site with many variations and comme
 
 #### AJAX_LOOKUP_CHANNELS
 
-You must add in `plugin_options` dict a key in definition channel, example:
+You must add a dict with definition channel, example:
 
 `lookup_channel = ('example.lookups', 'SongLookup'),`
 
 ```
- test_fied = AutoCompleteSelectField(
-        'test_model',
-        plugin_options=dict(
-            lookup_channel = ('example.lookups', 'SongLookup'),
-        )
-    )
+ test_fied = AutoCompleteSelectField(lookup_channel)
 ```
 
 `{'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }`
