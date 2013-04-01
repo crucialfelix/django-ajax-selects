@@ -5,22 +5,35 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.forms.util import flatatt
-from django.template.defaultfilters import escapejs
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from django.conf import settings
 from django.utils import simplejson
 import os
 
 
 as_default_help = u'Enter text to search.'
 
+
+def _media(self):
+    # unless AJAX_SELECT_BOOTSTRAP == False
+    # then load jquery and jquery ui + default css
+    # where needed
+    js = ('ajax_select/js/bootstrap.js', 'ajax_select/js/ajax_select.js')
+    try:
+        if settings.AJAX_SELECT_BOOTSTRAP == False:
+            js = ('ajax_select/js/ajax_select.js',)
+    except AttributeError:
+        pass
+    return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
+
 ####################################################################################
 
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     """  widget to select a model and return it as text """
+
+    media = property(_media)
 
     add_link = None
 
@@ -132,6 +145,8 @@ class AutoCompleteSelectField(forms.fields.CharField):
 class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
     """ widget to select multiple models """
+
+    media = property(_media)
 
     add_link = None
 
@@ -269,10 +284,14 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
 
 class AutoCompleteWidget(forms.TextInput):
+
     """
     Widget to select a search result and enter the result as raw text in the text input field.
     the user may also simply enter text and ignore any auto complete suggestions.
     """
+
+    media = property(_media)
+
     channel = None
     help_text = ''
     html_id = ''
