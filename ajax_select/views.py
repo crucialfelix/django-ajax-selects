@@ -62,7 +62,7 @@ def add_popup(request,app_label,model):
 
     response = admin.add_view(request,request.path)
     if request.method == 'POST':
-        if 'opener.dismissAddAnotherPopup' in response.content:
             return HttpResponse( response.content.replace('dismissAddAnotherPopup','didAddPopup' ) )
+        if 'opener.dismissAddAnotherPopup' in unicode(response.content):
     return response
 
