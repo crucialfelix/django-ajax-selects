@@ -395,9 +395,9 @@ def bootstrap():
     b['inline'] = ''
     if inlines == 'inline':
         directory = os.path.dirname( os.path.realpath(__file__) )
-        f = open(os.path.join(directory,"static","css","ajax_select.css"))
+        f = open(os.path.join(directory,"static","ajax_select","css","ajax_select.css"))
         css = f.read()
-        f = open(os.path.join(directory,"static","js","ajax_select.js"))
+        f = open(os.path.join(directory,"static","ajax_select","js","ajax_select.js"))
         js = f.read()
         b['inline'] = mark_safe(u"""<style type="text/css">%s</style><script type="text/javascript">//<![CDATA[%s//]]></script>""" % (css,js))
     elif inlines == 'staticfiles':
