@@ -1,3 +1,4 @@
+{% load url from future %}
 <html>
 
 <body>
@@ -6,7 +7,7 @@
 		<p>You entered: <blockquote>{{ entered }}</blockquote></p>
 	{% endif %}
 	
-	<form action="{% url search_form %}" method="GET">
+	<form action="{% url 'search_form' %}" method="GET">
 	<table>
 	{{ form }}
 	<tr>

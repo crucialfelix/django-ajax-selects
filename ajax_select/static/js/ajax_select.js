@@ -5,7 +5,7 @@ if(typeof jQuery.fn.autocompletehtml != 'function') {
 
 $.fn.autocompletehtml = function() {
 	var $text = $(this), sizeul = true;
-	this.data("autocomplete")._renderItem = function _renderItemHTML(ul, item) {
+	this.data("ui-autocomplete")._renderItem = function _renderItemHTML(ul, item) {
 		if(sizeul) {
 			if(ul.css('max-width')=='none') ul.css('max-width',$text.outerWidth());
 			sizeul = false;
@@ -22,39 +22,56 @@ $.fn.autocompleteselect = function(options) {
 	return this.each(function() {
 		var id = this.id;
 		var $this = $(this);
+		var name = $(this).attr("name")
 
-		var $text = $("#"+id+"_text");
-		var $deck = $("#"+id+"_on_deck");
+		var $text = $("<input type='text' value='' class='ui-autocomplete-input' autocomplete='off' role='textbox' aria-autocomplete='list' aria-haspopup='true' />")
+		var $input = $('<input type="hidden"/>')
+		var $deck = $('<div class="results_on_deck"></div>')
+
+		$this
+			.removeAttr("id")
+			.removeAttr("name")
+
+		$text
+			.attr("id", id+"_text")
+			.attr("name", name+"_text")
+
+		$input
+			.attr("id", id)
+			.attr("name", name)
+
+		$this
+			.prepend($input)
+			.prepend($deck)
+			.prepend($text)
 
 		function receiveResult(event, ui) {
-			if ($this.val()) {
+			if ($input.val()) {
 				kill();
 			}
-			$this.val(ui.item.pk);
+			$input.val(ui.item.pk);
 			$text.val('');
 			addKiller(ui.item.repr);
-			$deck.trigger("added");
+			$text.trigger("added", [ui.item.pk,ui.item.repr]);
 
 			return false;
 		}
 
 		function addKiller(repr,pk) {
-			killer_id = "kill_" + pk + id;
-			killButton = '<span class="ui-icon ui-icon-trash" id="'+killer_id+'">X</span> ';
-			if (repr) {
-				$deck.empty();
-				$deck.append("<div>" + killButton + repr + "</div>");
-			} else {
-				$("#"+id+"_on_deck > div").prepend(killButton);
-			}
-			$("#" + killer_id).click(function() {
+			killButton = $('<span class="ui-icon ui-icon-trash">X</span> ');
+			$("<div></div>")
+				.attr("id", id+'_on_deck_'+pk)
+				.append(killButton)
+				.append(repr)
+				.appendTo($deck)
+			killButton.click(function() {
 				kill();
-				$deck.trigger("killed");
+				$text.trigger("killed", [pk,repr]);
 			});
 		}
 
 		function kill() {
-			$this.val('');
+			$input.val('');
 			$deck.children().fadeOut(1.0).remove();
 		}
 
@@ -64,6 +81,7 @@ $.fn.autocompleteselect = function(options) {
 
 		if (options.initial) {
 			its = options.initial;
+			$input.attr("value", its[1])
 			addKiller(its[0], its[1]);
 		}
 
@@ -79,36 +97,59 @@ $.fn.autocompleteselectmultiple = function(options) {
 		var id = this.id;
 
 		var $this = $(this);
-		var $text = $("#"+id+"_text");
-		var $deck = $("#"+id+"_on_deck");
+		var name = $(this).attr("name")
+
+		var $text = $("<input type='text' value='' class='ui-autocomplete-input' autocomplete='off' role='textbox' aria-autocomplete='list' aria-haspopup='true' />")
+		var $input = $('<input type="hidden"/>')
+		var $deck = $('<div class="results_on_deck"></div>')
+
+		$this
+			.removeAttr("id")
+			.removeAttr("name")
+
+		$text
+			.attr("id", id+"_text")
+			.attr("name", name+"_text")
+
+		$input
+			.attr("id", id)
+			.attr("name", name)
+
+		$this
+			.prepend($input)
+			.prepend($deck)
+			.prepend($text)
+
 
 		function receiveResult(event, ui) {
 			pk = ui.item.pk;
-			prev = $this.val();
+			prev = $input.val();
 
 			if (prev.indexOf("|"+pk+"|") == -1) {
-				$this.val((prev ? prev : "|") + pk + "|");
+				$input.val((prev ? prev : "|") + pk + "|");
 				addKiller(ui.item.repr, pk);
 				$text.val('');
-				$deck.trigger("added");
+				$text.trigger("added",  [pk,ui.item.repr]);
 			}
 
 			return false;
 		}
 
 		function addKiller(repr, pk) {
-			killer_id = "kill_" + pk + id;
-			killButton = '<span class="ui-icon ui-icon-trash" id="'+killer_id+'">X</span> ';
-			$deck.append('<div id="'+id+'_on_deck_'+pk+'">' + killButton + repr + ' </div>');
-
-			$("#"+killer_id).click(function() {
+			var killButton = $('<span class="ui-icon ui-icon-trash">X</span> ');
+			$("<div></div>")
+				.attr("id", id+'_on_deck_'+pk)
+				.append(killButton)
+				.append(repr)
+				.appendTo($deck)
+			killButton.click(function() {
 				kill(pk);
-				$deck.trigger("killed");
+				$text.trigger("killed", [pk,repr]);
 			});
 		}
 
 		function kill(pk) {
-			$this.val($this.val().replace("|" + pk + "|", "|"));
+			$input.val($this.val().replace("|" + pk + "|", "|"));
 			$("#"+id+"_on_deck_"+pk).fadeOut().remove();
 		}
 
@@ -117,6 +158,12 @@ $.fn.autocompleteselectmultiple = function(options) {
 		$text.autocompletehtml();
 
 		if (options.initial) {
+			if (options.initial.length > 0) {
+				var value = $.map(options.initial, function(its){ return its[1] });
+				$input.attr("value", "|" + value.join("|") + "|")
+			} else {
+				$input.attr("value", "|")
+			}
 			$.each(options.initial, function(i, its) {
 				addKiller(its[0], its[1]);
 			});
