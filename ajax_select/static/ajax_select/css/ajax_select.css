@@ -13,7 +13,7 @@ form .aligned .results_on_deck {
 	margin-bottom: 0.5em;
 }
 .ui-autocomplete-loading {
-	background:  url('https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif') no-repeat;
+	background:  url('../images/loading-indicator.gif') no-repeat;
     background-origin: content-box;
 	background-position: right;
 }
