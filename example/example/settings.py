@@ -8,10 +8,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'django.contrib.staticfiles',
     'example',
 
     ####################################
-    'ajax_select',  #  <-   add the app
+    'ajax_select',  # <-   add the app
     ####################################
 )
 
@@ -54,7 +55,7 @@ AJAX_SELECT_INLINES = 'inline'
 #   but otherwise harmless
 # False/None: [default]
 #   does not inline anything. include the css/js files in your compressor stack
-#   or include them in the head of the admin/base_site.html template
+#   or include them in the head of the admin/base_example.html template
 #   this is the most efficient but takes the longest to configure
 
 # when using staticfiles you may implement your own ajax_select.css and customize to taste
