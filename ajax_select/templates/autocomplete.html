@@ -1,4 +1,3 @@
-{% if bootstrap %}{% include "ajax_select/bootstrap.html" %}{% endif %}
 <input type="text" name="{{name}}" id="{{html_id}}" value="{{current_repr}}" autocomplete="off" {{ extra_attrs }} />
 <script type="text/javascript">//<![CDATA[
 jQuery(document).ready(function($){
@@ -18,4 +17,3 @@ jQuery(document).ready(function($){
 //]]>
 </script>
 {% block help %}{% if help_text %}<p class="help">{{ help_text }}</p>{% endif %}{% endblock %}
-{{ inline }}
