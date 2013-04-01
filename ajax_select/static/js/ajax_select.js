@@ -22,28 +22,28 @@ $.fn.autocompleteselect = function(options) {
 	return this.each(function() {
 		var id = this.id;
 		var $this = $(this);
-                var name = $(this).attr("name")
+		var name = $(this).attr("name")
 
 		var $text = $("<input type='text' value='' class='ui-autocomplete-input' autocomplete='off' role='textbox' aria-autocomplete='list' aria-haspopup='true' />")
 		var $input = $('<input type="hidden"/>')
 		var $deck = $('<div class="results_on_deck"></div>')
 
-                $this
-                    .removeAttr("id")
-                    .removeAttr("name")
+		$this
+			.removeAttr("id")
+			.removeAttr("name")
 
-                $text
-                    .attr("id", id+"_text")
-                    .attr("name", name+"_text")
+		$text
+			.attr("id", id+"_text")
+			.attr("name", name+"_text")
 
-                $input
-                    .attr("id", id)
-                    .attr("name", name)
+		$input
+			.attr("id", id)
+			.attr("name", name)
 
-                $this
-                    .prepend($input)
-                    .prepend($deck)
-                    .prepend($text)
+		$this
+			.prepend($input)
+			.prepend($deck)
+			.prepend($text)
 
 		function receiveResult(event, ui) {
 			if ($input.val()) {
@@ -59,11 +59,11 @@ $.fn.autocompleteselect = function(options) {
 
 		function addKiller(repr,pk) {
 			killButton = $('<span class="ui-icon ui-icon-trash">X</span> ');
-                        $("<div></div>")
-                            .attr("id", id+'_on_deck_'+pk)
-                            .append(killButton)
-                            .append(repr)
-                            .appendTo($deck)
+			$("<div></div>")
+				.attr("id", id+'_on_deck_'+pk)
+				.append(killButton)
+				.append(repr)
+				.appendTo($deck)
 			killButton.click(function() {
 				kill();
 				$text.trigger("killed", [pk,repr]);
@@ -81,7 +81,7 @@ $.fn.autocompleteselect = function(options) {
 
 		if (options.initial) {
 			its = options.initial;
-                        $input.attr("value", its[1])
+			$input.attr("value", its[1])
 			addKiller(its[0], its[1]);
 		}
 
@@ -97,28 +97,28 @@ $.fn.autocompleteselectmultiple = function(options) {
 		var id = this.id;
 
 		var $this = $(this);
-                var name = $(this).attr("name")
+		var name = $(this).attr("name")
 
 		var $text = $("<input type='text' value='' class='ui-autocomplete-input' autocomplete='off' role='textbox' aria-autocomplete='list' aria-haspopup='true' />")
 		var $input = $('<input type="hidden"/>')
 		var $deck = $('<div class="results_on_deck"></div>')
 
-                $this
-                    .removeAttr("id")
-                    .removeAttr("name")
+		$this
+			.removeAttr("id")
+			.removeAttr("name")
 
-                $text
-                    .attr("id", id+"_text")
-                    .attr("name", name+"_text")
+		$text
+			.attr("id", id+"_text")
+			.attr("name", name+"_text")
 
-                $input
-                    .attr("id", id)
-                    .attr("name", name)
+		$input
+			.attr("id", id)
+			.attr("name", name)
 
-                $this
-                    .prepend($input)
-                    .prepend($deck)
-                    .prepend($text)
+		$this
+			.prepend($input)
+			.prepend($deck)
+			.prepend($text)
 
 
 		function receiveResult(event, ui) {
@@ -137,11 +137,11 @@ $.fn.autocompleteselectmultiple = function(options) {
 
 		function addKiller(repr, pk) {
 			var killButton = $('<span class="ui-icon ui-icon-trash">X</span> ');
-                        $("<div></div>")
-                            .attr("id", id+'_on_deck_'+pk)
-                            .append(killButton)
-                            .append(repr)
-                            .appendTo($deck)
+			$("<div></div>")
+				.attr("id", id+'_on_deck_'+pk)
+				.append(killButton)
+				.append(repr)
+				.appendTo($deck)
 			killButton.click(function() {
 				kill(pk);
 				$text.trigger("killed", [pk,repr]);
@@ -158,12 +158,12 @@ $.fn.autocompleteselectmultiple = function(options) {
 		$text.autocompletehtml();
 
 		if (options.initial) {
-                        if (options.initial.length > 0) {
-                            var value = $.map(options.initial, function(its){ return its[1] });
-                            $input.attr("value", "|" + value.join("|") + "|")
-                        } else {
-                            $input.attr("value", "|")
-                        }
+			if (options.initial.length > 0) {
+				var value = $.map(options.initial, function(its){ return its[1] });
+				$input.attr("value", "|" + value.join("|") + "|")
+			} else {
+				$input.attr("value", "|")
+			}
 			$.each(options.initial, function(i, its) {
 				addKiller(its[0], its[1]);
 			});
