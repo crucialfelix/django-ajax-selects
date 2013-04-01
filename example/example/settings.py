@@ -30,36 +30,18 @@ AJAX_LOOKUP_CHANNELS = {
     'person' : ('example.lookups', 'PersonLookup'),
     'group'  : ('example.lookups', 'GroupLookup'),
     'song'   : ('example.lookups', 'SongLookup'),
-    'cliche' : ('example.lookups','ClicheLookup')
+    'cliche' : ('example.lookups', 'ClicheLookup')
 }
 
 
-AJAX_SELECT_BOOTSTRAP = True
-# True: [easiest]
-#   use the admin's jQuery if present else load from jquery's CDN
-#   use jqueryUI if present else load from jquery's CDN
-#   use jqueryUI theme if present else load one from jquery's CDN
-# False/None/Not set: [default]
-#   you should include jQuery, jqueryUI + theme in your template
+# By default will use window.jQuery
+# or Django Admin's jQuery
+# or load one from google ajax apis
+# then load jquery-ui and a default css
+# Set this to False if for some reason you want to supply your own
+# window.jQuery and jQuery UI
 
-
-AJAX_SELECT_INLINES = 'inline'
-# 'inline': [easiest]
-#   includes the js and css inline
-#   this gets you up and running easily
-#   but on large admin pages or with higher traffic it will be a bit wasteful.
-# 'staticfiles':
-#   @import the css/js from {{STATIC_URL}}/ajax_selects using django's staticfiles app
-#   requires staticfiles to be installed and to run its management command to collect files
-#   this still includes the css/js multiple times and is thus inefficient
-#   but otherwise harmless
-# False/None: [default]
-#   does not inline anything. include the css/js files in your compressor stack
-#   or include them in the head of the admin/base_example.html template
-#   this is the most efficient but takes the longest to configure
-
-# when using staticfiles you may implement your own ajax_select.css and customize to taste
-
+# AJAX_SELECT_BOOTSTRAP = False
 
 
 ###########################################################################
@@ -123,7 +105,7 @@ MEDIA_URL = ''
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-STATIC_URL = '/media/'
+STATIC_URL = '/static/'
 
 # Make this unique, and don't share it with nobody.
 SECRET_KEY = '=9fhrrwrazha6r_m)r#+in*@n@i322ubzy4r+zz%wz$+y(=qpb'

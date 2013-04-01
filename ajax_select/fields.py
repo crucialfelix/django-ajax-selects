@@ -5,22 +5,35 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.forms.util import flatatt
-from django.template.defaultfilters import escapejs
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from django.conf import settings
 from django.utils import simplejson
 import os
 
 
 as_default_help = u'Enter text to search.'
 
+
+def _media(self):
+    # unless AJAX_SELECT_BOOTSTRAP == False
+    # then load jquery and jquery ui + default css
+    # where needed
+    js = ('ajax_select/js/bootstrap.js', 'ajax_select/js/ajax_select.js')
+    try:
+        if settings.AJAX_SELECT_BOOTSTRAP == False:
+            js = ('ajax_select/js/ajax_select.js',)
+    except AttributeError:
+        pass
+    return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
+
 ####################################################################################
 
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     """  widget to select a model and return it as text """
+
+    media = property(_media)
 
     add_link = None
 
@@ -70,7 +83,6 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'add_link': self.add_link,
         }
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
-        context.update(bootstrap())
 
         return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
 
@@ -133,6 +145,8 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
     """ widget to select multiple models """
 
+    media = property(_media)
+
     add_link = None
 
     def __init__(self,
@@ -189,7 +203,6 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'add_link' : self.add_link,
         }
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
-        context.update(bootstrap())
 
         return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
 
@@ -269,10 +282,14 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
 
 class AutoCompleteWidget(forms.TextInput):
+
     """
     Widget to select a search result and enter the result as raw text in the text input field.
     the user may also simply enter text and ignore any auto complete suggestions.
     """
+
+    media = property(_media)
+
     channel = None
     help_text = ''
     html_id = ''
@@ -308,7 +325,6 @@ class AutoCompleteWidget(forms.TextInput):
             'func_slug': self.html_id.replace("-",""),
         }
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
-        context.update(bootstrap())
 
         templates = ('autocomplete_%s.html' % self.channel,
                      'autocomplete.html')
@@ -385,24 +401,4 @@ def plugin_options(channel,channel_name,widget_plugin_options,initial):
         'lookup_url': po['source'],
         'min_length': po['min_length']
         }
-
-
-def bootstrap():
-    b = {}
-    b['bootstrap'] = getattr(settings,'AJAX_SELECT_BOOTSTRAP',False)
-    inlines = getattr(settings,'AJAX_SELECT_INLINES',None)
-
-    b['inline'] = ''
-    if inlines == 'inline':
-        directory = os.path.dirname( os.path.realpath(__file__) )
-        f = open(os.path.join(directory,"static","ajax_select","css","ajax_select.css"))
-        css = f.read()
-        f = open(os.path.join(directory,"static","ajax_select","js","ajax_select.js"))
-        js = f.read()
-        b['inline'] = mark_safe(u"""<style type="text/css">%s</style><script type="text/javascript">//<![CDATA[%s//]]></script>""" % (css,js))
-    elif inlines == 'staticfiles':
-        b['inline'] = mark_safe("""<style type="text/css">@import url("%sajax_select/css/ajax_select.css");</style><script type="text/javascript" src="%sajax_select/js/ajax_select.js"></script>""" % (settings.STATIC_URL,settings.STATIC_URL))
-
-    return b
-
 

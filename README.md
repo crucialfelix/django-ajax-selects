@@ -60,17 +60,18 @@ In settings.py :
     # add the app
     INSTALLED_APPS = (
                 ...,
+                'django.contrib.staticfiles',
                 'ajax_select'
                 )
 
     # define the lookup channels in use on the site
     AJAX_LOOKUP_CHANNELS = {
-        #   pass a dict with the model and the field to search against
-        'person'  : {'model':'example.person', 'search_field':'name'}
+        #  simple: search Person.objects.filter(name__icontains=q)
+        'person'  : {'model':'example.person', 'search_field':'name'},
+        # define a custom lookup channel
+        'song'   : ('example.lookups', 'SongLookup')
     }
-    # magically include jqueryUI/js/css
-    AJAX_SELECT_BOOTSTRAP = True
-    AJAX_SELECT_INLINES = 'inline'
+
 
 In your urls.py:
 
@@ -98,30 +99,37 @@ In your admin.py:
         pass
     admin.site.register(Person,PersonAdmin)
 
-    # subclass AjaxSelectAdmin
-    class LabelAdmin(AjaxSelectAdmin):
+    class SongAdmin(AjaxSelectAdmin):
         # create an ajax form class using the factory function
         #                     model,fieldlist,   [form superclass]
         form = make_ajax_form(Label,{'owner':'person'})
     admin.site.register(Label,LabelAdmin)
 
+example/lookups.py:
 
-This setup will give most people the ajax powered editing they need by bootstrapping in JS/CSS and implementing default security and simple ajax lookup channels.
+    from ajax_select import LookupChannel
+
+    class SongLookup(LookupChannel):
+
+        model = Song
+
+        def get_query(self,q,request):
+            return Song.objects.filter(title__icontains=q).order_by('title')
+
 
 NOT SO QUICK INSTALLATION
 =========================
 
 Things that can be customized:
 
-+ how and from where jQuery, jQueryUI, jQueryUI theme are loaded
-+ whether to include js/css inline or for better performance via staticfiles or django-compress etc.
 + define custom `LookupChannel` classes to customize:
     + HTML formatting for the drop down results and the item-selected display
     + custom search queries, ordering, user specific filtered results
     + custom channel security (default is staff only)
-+ customizing the CSS
-+ each channel could define its own template to change display or add extra javascript
-+ custom javascript can respond to jQuery triggers when items are selected or removed
++ each channel can define its own template to add controls or javascript
++ JS can respond to jQuery triggers when items are selected or removed
++ custom CSS
++ how and from where jQuery, jQueryUI, jQueryUI theme are loaded
 
 
 Architecture
@@ -171,43 +179,25 @@ Defines the available lookup channels.
 
 #### AJAX_SELECT_BOOTSTRAP
 
-Sets if it should automatically include jQuery/jQueryUI/theme.  On large formsets this will cause it to check each time but it will only jQuery the first time.
+By default it will include bootstrap.js in the widget media in order to locate a jQuery and a jQuery-UI
 
-+ True: [easiest]
-    use jQuery if already present, else use the admin's jQuery else load from google's CDN
-    use jqueryUI if present else load from google's CDN
-    use jqueryUI theme if present else load one from google's CDN
+First one wins:
 
-+ False/None/Not set: [default]
-    you should then include jQuery, jqueryUI + theme in your template or js compressor stack
+*  window.jQuery - if you included jQuery on the page
+*  django.jQuery - if you are on an admin page
+*  load from ajax.googleapis com CDN
 
+Likewise for jQuery-UI:
 
-#### AJAX_SELECT_INLINES
+* window.jQuery.ui
+* load from ajax.googleapis.com with default smoothness theme
 
-This controls if and how these:
+If you want your own theme then load it afterwards to override or:
 
-    ajax_select/static/js/ajax_select.js
-    ajax_select/static/css/ajax_select.css
+    AJAX_SELECT_BOOTSTRAP = False
 
-are included inline in the html with each form field.
+and load your own jquery, jquery ui and theme.
 
-+ 'inline': [easiest]
-    Includes the js and css inline
-    This gets you up and running easily and is fine for small sites.
-    But with many form fields this will be less efficient.
-
-+ 'staticfiles':
-    @import the css/js from {{STATIC_URL}}/ajax_selects using `django.contrib.staticfiles`
-    Requires staticfiles to be installed and to run its management command to collect files.
-    This still imports the css/js multiple times and is thus inefficient but otherwise harmless.
-
-    When using staticfiles you may implement your own `ajax_select.css` and customize to taste as long
-    as your app is before ajax_select in the INSTALLED_APPS.
-
-+ False/None: [default]
-    Does not inline anything. You should include the css/js files in your compressor stack
-    or include them in the head of the admin/base_site.html template.
-    This is the most efficient but takes the longest to configure.
 
 
 urls.py
@@ -487,11 +477,6 @@ If you are using `django.contrib.staticfiles` then you can implement `ajax_selec
 If you are doing your own compress stack then of course you can include whatever version you want.
 
 The display style now uses the jQuery UI theme and actually I find the drop down to be not very charming.  The previous version (1.1x) which used the external jQuery AutoComplete plugin had nicer styling.  I might decide to make the default more like that with alternating color rows and a stronger sense of focused item.  Also the current jQuery one wiggles.
-
-The CSS refers to one image that is served from github (as a CDN):
-!['https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'](https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif) 'https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'
-
-Your own site's CSS could redefine that with a stronger declaration to point to whatever you like.
 
 The trashcan icon comes from the jQueryUI theme by the css classes:
 
