@@ -7,7 +7,7 @@ from example.models import *
 
 
 
-class PersonAdmin(admin.ModelAdmin):
+class PersonAdmin(AjaxSelectAdmin):
 
     pass
 
@@ -75,7 +75,7 @@ class BookInline(admin.TabularInline):
     #     autoselect_fields_check_can_add(fs.form,self.model,request.user)
     #     return fs
 
-class AuthorAdmin(admin.ModelAdmin):
+class AuthorAdmin(AjaxSelectAdmin):
     inlines = [
         BookInline,
     ]
