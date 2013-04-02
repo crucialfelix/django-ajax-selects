@@ -10,7 +10,8 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.contrib.contenttypes.models import ContentType
 from django.forms.models import ModelForm
 from django.utils.text import capfirst
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.html import escape
+from django.utils.translation import ugettext_lazy as _
 
 
 class LookupChannel(object):
@@ -31,15 +32,15 @@ class LookupChannel(object):
 
     def get_result(self,obj):
         """ The text result of autocompleting the entered query """
-        return unicode(obj)
+        return escape(unicode(obj))
 
     def format_match(self,obj):
         """ (HTML) formatted item for displaying item in the dropdown """
-        return unicode(obj)
+        return escape(unicode(obj))
 
     def format_item_display(self,obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
-        return unicode(obj)
+        return escape(unicode(obj))
 
     def get_objects(self,ids):
         """ Get the currently selected objects when editing an existing model """
