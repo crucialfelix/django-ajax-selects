@@ -17,8 +17,8 @@ class Group(models.Model):
 
     """ a music group """
 
-    name = models.CharField(max_length=200,unique=True)
-    members = models.ManyToManyField(Person,blank=True,help_text="Enter text to search for and add each member of the group.")
+    name = models.CharField(max_length=200, unique=True)
+    members = models.ManyToManyField(Person, blank=True, help_text="Enter text to search for and add each member of the group.")
     url = models.URLField(blank=True)
 
     def __unicode__(self):
@@ -29,8 +29,8 @@ class Label(models.Model):
 
     """ a record label """
 
-    name = models.CharField(max_length=200,unique=True)
-    owner = models.ForeignKey(Person,blank=True,null=True)
+    name = models.CharField(max_length=200, unique=True)
+    owner = models.ForeignKey(Person, blank=True, null=True)
     url = models.URLField(blank=True)
 
     def __unicode__(self):
@@ -55,21 +55,21 @@ class Release(models.Model):
     title = models.CharField(max_length=100)
     catalog = models.CharField(blank=True, max_length=100)
 
-    group = models.ForeignKey(Group,blank=True,null=True,verbose_name=u"Русский текст")
-    label = models.ForeignKey(Label,blank=False,null=False)
-    songs = models.ManyToManyField(Song,blank=True)
+    group = models.ForeignKey(Group, blank=True, null=True, verbose_name=u"Русский текст (group)")
+    label = models.ForeignKey(Label, blank=False, null=False)
+    songs = models.ManyToManyField(Song, blank=True)
 
     def __unicode__(self):
         return self.title
 
 
-
 class Author(models.Model):
-   name = models.CharField(max_length=100)
+
+    name = models.CharField(max_length=100)
+
 
 class Book(models.Model):
-   author = models.ForeignKey(Author)
-   title = models.CharField(max_length=100)
-   about_group = models.ForeignKey(Group)
-   mentions_persons = models.ManyToManyField(Person)
-
+    author = models.ForeignKey(Author)
+    title = models.CharField(max_length=100)
+    about_group = models.ForeignKey(Group)
+    mentions_persons = models.ManyToManyField(Person)
