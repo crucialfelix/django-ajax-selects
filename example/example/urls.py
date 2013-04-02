@@ -1,4 +1,7 @@
-from django.conf.urls.defaults import patterns, include, url
+try:
+    from django.conf.urls import *
+except:
+    from django.conf.urls.defaults import *
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
