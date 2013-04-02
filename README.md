@@ -14,9 +14,9 @@ selected:
 
 [Note: screen shots are from the older version. Styling has changed slightly]
 
-1. The user types a search term into the text field
-2. An ajax request is sent to the server.
-3. The dropdown menu is populated with results.
+1. User types a few characters
+2. Ajax request sent to the server
+3. The dropdown menu shows choices
 4. User selects by clicking or using arrow keys
 5. Selected result displays in the "deck" area directly below the input field.
 6. User can click trashcan icon to remove a selected item
@@ -24,15 +24,13 @@ selected:
 Features
 ========
 
-+ Django 1.2+
-+ Optional boostrap mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
-+ Compatible with staticfiles, appmedia, django-compressor etc
-+ Popup to add a new item is supported
-+ Admin inlines now supported
-+ Ajax Selects works in the admin and also in public facing forms.
-+ Rich formatting can be easily defined for the dropdown display and the selected "deck" display.
-+ Templates and CSS are fully customizable
-+ JQuery triggers enable you to add javascript to respond when items are added or removed, so other interface elements on the page can react
++ Works in any form including the Django Admin
++ Popup to add a new item
++ Admin inlines
++ Compatible with widget/form media, staticfiles, asset compressors etc.
++ Automatically Loads jQuery UI  mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
++ Customize HTML, CSS and JS
++ JQuery triggers allow you to customize interface behavior to respond when items are added or removed
 + Default (but customizable) security prevents griefers from pilfering your data via JSON requests
 
 
@@ -44,15 +42,7 @@ Get it
 
     `pip install django-ajax-selects`
 or
-    `easy_install django-ajax-selects`
-or
     download or checkout the distribution
-or
-    install using buildout by adding `django-ajax-selects` to your `eggs`
-
-on fedora:
-    su -c 'yum install django-ajax-selects'
-(note: this version may not be up to date)
 
 
 In settings.py :
@@ -135,9 +125,13 @@ Things that can be customized:
 Architecture
 ============
 
-A single view services all of the ajax search requests, delegating the searches to named 'channels'.  Each model that needs to be searched for has a channel defined for it. More than one channel may be defined for a Model to serve different needs such as public vs admin or channels that filter the query by specific categories etc. The channel also has access to the request and the user so it can personalize the query results.  Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.
+A single view services all of the ajax search requests, delegating the searches to named 'channels'.
 
 A simple channel can be specified in settings.py, a more complex one (with custom search, formatting, personalization or auth requirements) can be written in a lookups.py file.
+
+Each model that needs to be searched for has a channel defined for it. More than one channel may be defined for a Model to serve different needs such as public vs admin or channels that filter the query by specific categories etc. The channel also has access to the request and the user so it can personalize the query results.  Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.
+
+
 
 There are three model field types with corresponding form fields and widgets:
 
@@ -166,10 +160,10 @@ Defines the available lookup channels.
 + channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
 > This will create a channel automatically
 
-	chanel_name : ( 'app.lookups', 'YourLookup' )
-	    This points to a custom Lookup channel name YourLookup in app/lookups.py
+    chanel_name : ( 'app.lookups', 'YourLookup' )
+        This points to a custom Lookup channel name YourLookup in app/lookups.py
 
-	AJAX_LOOKUP_CHANNELS = {
+    AJAX_LOOKUP_CHANNELS = {
         #   channel : dict with settings to create a channel
         'person'  : {'model':'example.person', 'search_field':'name'},
 
@@ -536,13 +530,6 @@ Extend the template, implement the extra_script block and bind functions that wi
 
 There is no remove as there is no kill/delete button in a simple auto-complete.
 The user may clear the text themselves but there is no javascript involved. Its just a text field.
-
-
-Planned Improvements
---------------------
-
-TODO: + pop ups are not working in AdminInlines yet
-
 
 
 Contributors
