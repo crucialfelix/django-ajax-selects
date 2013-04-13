@@ -9,6 +9,7 @@ from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.contrib.contenttypes.models import ContentType
 from django.forms.models import ModelForm
+from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _, ugettext
 
@@ -35,11 +36,11 @@ class LookupChannel(object):
 
     def format_match(self,obj):
         """ (HTML) formatted item for displaying item in the dropdown """
-        return unicode(obj)
+        return escape(unicode(obj))
 
     def format_item_display(self,obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
-        return unicode(obj)
+        return escape(unicode(obj))
 
     def get_objects(self,ids):
         """ Get the currently selected objects when editing an existing model """
@@ -177,11 +178,11 @@ def get_lookup(channel):
         if not hasattr(lookup_class,'format_match'):
             setattr(lookup_class, 'format_match',
                 getattr(lookup_class,'format_item',
-                    lambda self,obj: unicode(obj)))
+                    lambda self,obj: escape(unicode(obj))))
         if not hasattr(lookup_class,'format_item_display'):
             setattr(lookup_class, 'format_item_display',
                 getattr(lookup_class,'format_item',
-                    lambda self,obj: unicode(obj)))
+                    lambda self,obj: escape(unicode(obj))))
         if not hasattr(lookup_class,'get_result'):
             setattr(lookup_class, 'get_result',
                 getattr(lookup_class,'format_result',
