@@ -1,11 +1,15 @@
-
 if(typeof jQuery.fn.autocompletehtml != 'function') {
 
 (function($) {
 
 $.fn.autocompletehtml = function() {
 	var $text = $(this), sizeul = true;
-	this.data("autocomplete")._renderItem = function _renderItemHTML(ul, item) {
+        var autoComplete = this.data("ui-autocomplete");
+        if (typeof(autoComplete) == "undefined") {
+                autoComplete = this.data("autocomplete");
+        }
+	
+	autoComplete._renderItem = function _renderItemHTML(ul, item) {
 		if(sizeul) {
 			if(ul.css('max-width')=='none') ul.css('max-width',$text.outerWidth());
 			sizeul = false;
