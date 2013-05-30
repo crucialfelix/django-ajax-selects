@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 
 from django.contrib import admin
 from ajax_select import urls as ajax_select_urls

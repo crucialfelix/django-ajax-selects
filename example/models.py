@@ -19,7 +19,7 @@ class Group(models.Model):
 
     name = models.CharField(max_length=200,unique=True)
     members = models.ManyToManyField(Person,blank=True,help_text="Enter text to search for and add each member of the group.")
-    url = models.URLField(blank=True, verify_exists=False)
+    url = models.URLField(blank=True)
 
     def __unicode__(self):
         return self.name
@@ -31,7 +31,7 @@ class Label(models.Model):
 
     name = models.CharField(max_length=200,unique=True)
     owner = models.ForeignKey(Person,blank=True,null=True)
-    url = models.URLField(blank=True, verify_exists=False)
+    url = models.URLField(blank=True)
 
     def __unicode__(self):
         return self.name
