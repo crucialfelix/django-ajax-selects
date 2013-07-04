@@ -61,6 +61,12 @@ def add_popup(request,app_label,model):
     admin.admin_site.root_path = "/ajax_select/"
 
     response = admin.add_view(request,request.path)
+
+    # Django 1.4 would like the response to be rendered
+    if hasattr(response, 'is_rendered'):
+        if response.is_rendered is False:
+            response.render()
+
     if request.method == 'POST':
         if 'opener.dismissAddAnotherPopup' in response.content:
             return HttpResponse( response.content.replace('dismissAddAnotherPopup','didAddPopup' ) )
