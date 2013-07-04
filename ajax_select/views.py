@@ -44,17 +44,15 @@ def ajax_lookup(request,channel):
 
 
 def add_popup(request,app_label,model):
-    """
-    this presents the admin site popup add view (when you click the green +)
+    """ this presents the admin site popup add view (when you click the green +)
 
-    make sure that you have added ajax_select.urls to your urls.py:
-    (r'^ajax_select/', include('ajax_select.urls')), this URL is expected in
-    the code below, so it won't work under a different path
+        make sure that you have added ajax_select.urls to your urls.py:
+            (r'^ajax_select/', include('ajax_select.urls')),
+        this URL is expected in the code below, so it won't work under a different path
 
-    this view then hijacks the result that the django admin returns and
-    instead of calling django's dismissAddAnontherPopup(win,newId,newRepr) it
-    calls didAddPopup(win,newId,newRepr) which was added inline with
-    bootstrap.html
+        this view then hijacks the result that the django admin returns
+        and instead of calling django's dismissAddAnontherPopup(win,newId,newRepr)
+        it calls didAddPopup(win,newId,newRepr) which was added inline with bootstrap.html
     """
     themodel = models.get_model(app_label, model)
     admin = site._registry[themodel]
@@ -71,8 +69,6 @@ def add_popup(request,app_label,model):
 
     if request.method == 'POST':
         if 'opener.dismissAddAnotherPopup' in response.content:
-            return HttpResponse(
-                response.content.replace(
-                    'dismissAddAnotherPopup', 'didAddPopup'))
+            return HttpResponse( response.content.replace('dismissAddAnotherPopup','didAddPopup' ) )
     return response
 
