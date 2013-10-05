@@ -65,13 +65,12 @@ class BookInline(admin.TabularInline):
                 show_help_text=True)
     extra = 2
 
-    # + check add still not working
-    # no + appearing
-    # def get_formset(self, request, obj=None, **kwargs):
-    #     from ajax_select.fields import autoselect_fields_check_can_add
-    #     fs = super(BookInline, self).get_formset(request, obj,**kwargs)
-    #     autoselect_fields_check_can_add(fs.form, self.model, request.user)
-    #     return fs
+    # this enables the + add option
+    def get_formset(self, request, obj=None, **kwargs):
+        from ajax_select.fields import autoselect_fields_check_can_add
+        fs = super(BookInline, self).get_formset(request, obj,**kwargs)
+        autoselect_fields_check_can_add(fs.form, self.model, request.user)
+        return fs
 
 
 class AuthorAdmin(AjaxSelectAdmin):
