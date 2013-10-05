@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 from ajax_select import make_ajax_form
-from ajax_select.admin import AjaxSelectAdmin
+from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
 from example.forms import ReleaseForm
 from example.models import *
 
@@ -55,7 +55,9 @@ class ReleaseAdmin(AjaxSelectAdmin):
 admin.site.register(Release, ReleaseAdmin)
 
 
-class BookInline(admin.TabularInline):
+class BookInline(AjaxSelectAdminTabularInline):
+
+    # AjaxSelectAdminTabularInline enables the + add option
 
     model = Book
     form = make_ajax_form(Book, {
@@ -65,12 +67,14 @@ class BookInline(admin.TabularInline):
                 show_help_text=True)
     extra = 2
 
-    # this enables the + add option
-    def get_formset(self, request, obj=None, **kwargs):
-        from ajax_select.fields import autoselect_fields_check_can_add
-        fs = super(BookInline, self).get_formset(request, obj,**kwargs)
-        autoselect_fields_check_can_add(fs.form, self.model, request.user)
-        return fs
+    # to enable the + add option
+    # instead of your inline inheriting from AjaxSelectAdminTabularInline
+    # you could implement this
+    # def get_formset(self, request, obj=None, **kwargs):
+    #     from ajax_select.fields import autoselect_fields_check_can_add
+    #     fs = super(BookInline, self).get_formset(request, obj,**kwargs)
+    #     autoselect_fields_check_can_add(fs.form, self.model, request.user)
+    #     return fs
 
 
 class AuthorAdmin(AjaxSelectAdmin):
