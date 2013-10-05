@@ -537,7 +537,7 @@ Contributors
 
 Many thanks to all who found bugs, asked for things, and hassled me to get a new release out.  I'm glad people find good use out of the app.
 
-In particular thanks for help in the 1.2 version:  sjrd (Sébastien Doeraene), Brian May
+In particular thanks for help in the 1.2 version:  @sjrd (Sébastien Doeraene), @brianmay
 
 
 License
