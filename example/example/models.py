@@ -65,11 +65,24 @@ class Release(models.Model):
 
 class Author(models.Model):
 
+    """ Author has multiple books,
+        via foreign keys
+    """
+
     name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Book(models.Model):
+
+    """ Book has no admin, its an inline in the Author admin"""
+
     author = models.ForeignKey(Author)
     title = models.CharField(max_length=100)
     about_group = models.ForeignKey(Group)
     mentions_persons = models.ManyToManyField(Person)
+
+    def __unicode__(self):
+        return self.title
