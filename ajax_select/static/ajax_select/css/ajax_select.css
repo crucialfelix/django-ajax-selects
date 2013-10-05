@@ -19,16 +19,18 @@ form .aligned .results_on_deck {
 }
 ul.ui-autocomplete {
 /*
-this is the dropdown menu.
-    max-width: 320px;
+	this is the dropdown menu.
 
-if max-width is not set and you are using django-admin
-  then the dropdown is the width of your whole page body (totally wrong).
-  so set it in your own css to your preferred width of dropdown
-  OR the ajax_select.js will automatically match it to the size of the text field
-  which is what jquery's autocomplete does normally (but django's admin is breaking).
-tldr: it just works. set max-width if you want it wider
+	if max-width is not set and you are using django-admin
+		then the dropdown is the width of your whole page body (totally wrong).
+
+	this sets max-width at 60% which is graceful at full page or in a popup
+		or on a small width window.
+
+	fixed width is harder see http://stackoverflow.com/questions/4607164/changing-width-of-jquery-ui-autocomplete-widgets-individually
 */
+    max-width: 60%;
+
 	margin: 0;
 	padding: 0;
 	position: absolute;
