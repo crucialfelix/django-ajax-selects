@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.forms.util import flatatt
 from django.template.loader import render_to_string
+from django.template.defaultfilters import force_escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.utils import simplejson
@@ -400,6 +401,7 @@ def plugin_options(channel, channel_name, widget_plugin_options, initial):
 
     return {
         'plugin_options': mark_safe(simplejson.dumps(po)),
+        'data_plugin_options': force_escape(simplejson.dumps(po)),
         # continue to support any custom templates that still expect these
         'lookup_url': po['source'],
         'min_length': po['min_length']

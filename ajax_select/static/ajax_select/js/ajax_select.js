@@ -1,22 +1,8 @@
 
-if(typeof jQuery.fn.autocompletehtml != 'function') {
+if(typeof jQuery.fn.autocompleteselect !== 'function') {
 
 (function($) {
 
-$.fn.autocompletehtml = function() {
-	var $text = $(this), sizeul = true;
-	this.data("autocomplete")._renderItem = function _renderItemHTML(ul, item) {
-		if(sizeul) {
-			if(ul.css('max-width')=='none') ul.css('max-width',$text.outerWidth());
-			sizeul = false;
-		}
-		return $("<li></li>")
-			.data("item.autocomplete", item)
-			.append("<a>" + item.match + "</a>")
-			.appendTo(ul);
-	};
-	return this;
-}
 $.fn.autocompleteselect = function(options) {
 
 	return this.each(function() {
@@ -60,7 +46,6 @@ $.fn.autocompleteselect = function(options) {
 
 		options.select = receiveResult;
 		$text.autocomplete(options);
-		$text.autocompletehtml();
 
 		if (options.initial) {
 			its = options.initial;
@@ -114,7 +99,6 @@ $.fn.autocompleteselectmultiple = function(options) {
 
 		options.select = receiveResult;
 		$text.autocomplete(options);
-		$text.autocompletehtml();
 
 		if (options.initial) {
 			$.each(options.initial, function(i, its) {
@@ -129,10 +113,14 @@ $.fn.autocompleteselectmultiple = function(options) {
 	});
 };
 
-window.addAutoComplete = function (prefix_id, callback ) { /*(html_id)*/
+function addAutoComplete (inp, callback) { /*(html_id)*/
+    var $inp = $(inp),
+        html_id = inp.id,
+        prefix_id = html_id,
+        opts = JSON.parse($inp.attr("data-plugin-options")),
+		prefix = 0;
+
 	/* detects inline forms and converts the html_id if needed */
-	var prefix = 0;
-	var html_id = prefix_id;
 	if(html_id.indexOf("__prefix__") != -1) {
 		// Some dirty loop to find the appropriate element to apply the callback to
 		while ($('#'+html_id).length) {
@@ -144,8 +132,11 @@ window.addAutoComplete = function (prefix_id, callback ) { /*(html_id)*/
 		if ($("#"+html_id+", #"+html_id+"_text").hasClass("ui-autocomplete-input"))
 			return;
 	}
-	callback(html_id);
+
+	callback($inp, opts);
 }
+
+
 /*	the popup handler
 	requires RelatedObjects.js which is part of the django admin js
 	so if using outside of the admin then you would need to include that manually */
@@ -154,6 +145,38 @@ window.didAddPopup = function (win,newId,newRepr) {
 	$("#"+name).trigger('didAddPopup',[html_unescape(newId),html_unescape(newRepr)]);
 	win.close();
 }
+
+// activate any on page
+$(window).bind("init-autocomplete", function () {
+
+    $("input[data-ajax-select=autocomplete]").each(function (i, inp) {
+        addAutoComplete(inp, function($inp, opts) {
+            opts.select =
+                function(event, ui) {
+                    $inp.val(ui.item.value).trigger("added");
+                    return false;
+                };
+            $inp.autocomplete(opts);
+        });
+    });
+
+    $("input[data-ajax-select=autocompleteselect]").each(function (i, inp) {
+        addAutoComplete(inp, function($inp, opts) {
+            $inp.autocompleteselect(opts);
+        });
+    });
+
+    $("input[data-ajax-select=autocompleteselectmultiple]").each(function (i, inp) {
+        addAutoComplete(inp, function($inp, opts) {
+            $inp.autocompleteselectmultiple(opts);
+        });
+    });
+
+});
+
+$(document).ready(function() {
+    $(window).trigger("init-autocomplete");
+});
 
 })(jQuery);
 
