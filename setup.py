@@ -7,15 +7,28 @@ except ImportError:
     use_setuptools()
     from setuptools import setup
 
-setup(name='django-ajax-selects',
-    version='1.2.5',
+setup(
+    name='django-ajax-selects',
+    version='1.3.0',
     description='jQuery-powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
     author='crucialfelix',
     author_email='crucialfelix@gmail.com',
     url='https://github.com/crucialfelix/django-ajax-selects/',
-    packages=['ajax_select', ],
-    package_data={'ajax_select': ['*.py','*.txt','static/css/*','static/images/*','static/js/*','templates/*.html', 'templates/ajax_select/*.html']},
-    classifiers = [
+    packages=['ajax_select'],
+    package_data={'ajax_select':
+        [
+            '*.py',
+            '*.txt',
+            'static/ajax_select/css/*',
+            'static/ajax_select/images/*',
+            'static/ajax_select/js/*',
+            'templates/*.html',
+            'templates/ajax_select/*.html'
+        ]
+    },
+    include_package_data=True,
+    zip_safe=False,
+    classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
         "Development Status :: 5 - Production/Stable",
@@ -27,7 +40,7 @@ setup(name='django-ajax-selects',
         "Topic :: Software Development :: User Interfaces",
         "Framework :: Django",
         ],
-    long_description = """\
+    long_description="""\
 Enables editing of `ForeignKey`, `ManyToManyField` and `CharField` using jQuery UI AutoComplete.
 
 1. The user types a search term into the text field
@@ -37,7 +50,7 @@ Enables editing of `ForeignKey`, `ManyToManyField` and `CharField` using jQuery 
 5. Selected result displays in the "deck" area directly below the input field.
 6. User can click trashcan icon to remove a selected item
 
-+ Django 1.2+
++ Django 1.4+
 + Optional boostrap mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
 + Compatible with staticfiles, appmedia, django-compressor etc
 + Popup to add a new item is supported
