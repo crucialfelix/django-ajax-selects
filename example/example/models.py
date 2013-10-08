@@ -17,7 +17,7 @@ class Group(models.Model):
 
     """ a music group """
 
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200, unique=True, help_text="Name of the group")
     members = models.ManyToManyField(Person, blank=True, help_text="Enter text to search for and add each member of the group.")
     url = models.URLField(blank=True)
 
