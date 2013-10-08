@@ -82,7 +82,7 @@ class Book(models.Model):
     author = models.ForeignKey(Author)
     title = models.CharField(max_length=100)
     about_group = models.ForeignKey(Group)
-    mentions_persons = models.ManyToManyField(Person)
+    mentions_persons = models.ManyToManyField(Person, help_text="Person lookup renders html in menu")
 
     def __unicode__(self):
         return self.title

@@ -18,7 +18,8 @@ class PersonLookup(LookupChannel):
 
     def format_match(self, obj):
         """ (HTML) formatted item for display in the dropdown """
-        return self.format_item_display(obj)
+        return u"%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+        # return self.format_item_display(obj)
 
     def format_item_display(self, obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
