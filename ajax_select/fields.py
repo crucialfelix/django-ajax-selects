@@ -399,6 +399,10 @@ def plugin_options(channel, channel_name, widget_plugin_options, initial):
     if not po.get('source'):
         po['source'] = reverse('ajax_lookup', kwargs={'channel': channel_name})
 
+    # allow html unless explictly false
+    if po.get('html') is None:
+        po['html'] = True
+
     return {
         'plugin_options': mark_safe(simplejson.dumps(po)),
         'data_plugin_options': force_escape(simplejson.dumps(po)),

@@ -129,6 +129,36 @@
     callback($inp, opts);
   }
 
+  // allow html in the results menu
+  // https://github.com/scottgonzalez/jquery-ui-extensions
+  var proto = $.ui.autocomplete.prototype,
+      initSource = proto._initSource;
+
+  function filter(array, term) {
+    var matcher = new RegExp($.ui.autocomplete.escapeRegex(term), 'i');
+    return $.grep(array, function(value) {
+      return matcher.test($('<div>').html(value.label || value.value || value).text());
+    });
+  }
+
+  $.extend(proto, {
+    _initSource: function() {
+      if (this.options.html && $.isArray(this.options.source)) {
+        this.source = function(request, response) {
+          response(filter(this.options.source, request.term));
+        };
+      } else {
+        initSource.call(this);
+      }
+    },
+    _renderItem: function(ul, item) {
+      var body = this.options.html ? item.repr : item.label;
+      return $('<li></li>')
+        .data('item.autocomplete', item)
+        .append($('<a></a>')[this.options.html ? 'html' : 'text' ](body))
+        .appendTo(ul);
+    }
+  });
 
   /*  the popup handler
     requires RelatedObjects.js which is part of the django admin js
