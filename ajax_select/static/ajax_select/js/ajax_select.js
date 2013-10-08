@@ -16,7 +16,7 @@
         $this.val(ui.item.pk);
         $text.val('');
         addKiller(ui.item.repr);
-        $deck.trigger('added');
+        $deck.trigger('added', [ui.item.pk, ui.item]);
 
         return false;
       }
@@ -32,7 +32,7 @@
         }
         $('#' + killer_id).click(function () {
           kill();
-          $deck.trigger('killed');
+          $deck.trigger('killed', [pk]);
         });
       }
 
@@ -69,7 +69,7 @@
           $this.val((prev ? prev : '|') + pk + '|');
           addKiller(ui.item.repr, pk);
           $text.val('');
-          $deck.trigger('added');
+          $deck.trigger('added', [ui.item.pk, ui.item]);
         }
         return false;
       }
@@ -81,7 +81,7 @@
 
         $('#' + killer_id).click(function () {
           kill(pk);
-          $deck.trigger('killed');
+          $deck.trigger('killed', [pk]);
         });
       }
 
@@ -176,7 +176,7 @@
       addAutoComplete(inp, function ($inp, opts) {
         opts.select =
             function (event, ui) {
-              $inp.val(ui.item.value).trigger('added');
+              $inp.val(ui.item.value).trigger('added', [ui.item.pk, ui.item]);
               return false;
             };
         $inp.autocomplete(opts);
