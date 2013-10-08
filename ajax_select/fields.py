@@ -21,7 +21,7 @@ def _media(self):
     # where needed
     js = ('ajax_select/js/bootstrap.js', 'ajax_select/js/ajax_select.js')
     try:
-        if settings.AJAX_SELECT_BOOTSTRAP == False:
+        if not settings.AJAX_SELECT_BOOTSTRAP:
             js = ('ajax_select/js/ajax_select.js',)
     except AttributeError:
         pass
@@ -373,8 +373,7 @@ def _check_can_add(self, user, model):
         ctype = ContentType.objects.get_for_model(model)
         can_add = user.has_perm("%s.add_%s" % (ctype.app_label, ctype.model))
     if can_add:
-        self.widget.add_link = reverse('add_popup',
-            kwargs={'app_label': model._meta.app_label, 'model': model._meta.object_name.lower()})
+        self.widget.add_link = reverse('add_popup', kwargs={'app_label': model._meta.app_label, 'model': model._meta.object_name.lower()})
 
 
 def autoselect_fields_check_can_add(form, model, user):
@@ -398,6 +397,10 @@ def plugin_options(channel, channel_name, widget_plugin_options, initial):
         po['min_length'] = getattr(channel, 'min_length', 1)
     if not po.get('source'):
         po['source'] = reverse('ajax_lookup', kwargs={'channel': channel_name})
+
+    # allow html unless explictly false
+    if po.get('html') is None:
+        po['html'] = True
 
     return {
         'plugin_options': mark_safe(simplejson.dumps(po)),

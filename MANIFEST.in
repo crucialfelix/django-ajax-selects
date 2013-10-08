@@ -1,4 +1,3 @@
-recursive-include ajax_select *.css *.py *.gif *.html *.txt *.js *.md
 recursive-include example *.py *.sh *.txt
 prune example/AJAXSELECTS
 prune example/ajax_select

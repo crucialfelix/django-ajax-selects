@@ -18,6 +18,6 @@ class AjaxSelectAdmin(admin.ModelAdmin):
 class AjaxSelectAdminTabularInline(admin.TabularInline):
 
     def get_formset(self, request, obj=None, **kwargs):
-        fs = super(AjaxSelectAdminTabularInline, self).get_formset(request, obj,**kwargs)
+        fs = super(AjaxSelectAdminTabularInline, self).get_formset(request, obj, **kwargs)
         autoselect_fields_check_can_add(fs.form, self.model, request.user)
         return fs
