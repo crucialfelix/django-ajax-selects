@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.utils import simplejson
 
 
-def ajax_lookup(request,channel):
+def ajax_lookup(request, channel):
 
     """ this view supplies results for foreign keys and many to many fields """
 
@@ -19,23 +19,23 @@ def ajax_lookup(request,channel):
         query = request.GET['term']
     else:
         if 'term' not in request.POST:
-            return HttpResponse('') # suspicious
+            return HttpResponse('')  # suspicious
         query = request.POST['term']
 
     lookup = get_lookup(channel)
-    if hasattr(lookup,'check_auth'):
+    if hasattr(lookup, 'check_auth'):
         lookup.check_auth(request)
 
     if len(query) >= getattr(lookup, 'min_length', 1):
-        instances = lookup.get_query(query,request)
+        instances = lookup.get_query(query, request)
     else:
         instances = []
 
     results = simplejson.dumps([
         {
-            'pk': unicode(getattr(item,'pk',None)),
+            'pk': unicode(getattr(item, 'pk', None)),
             'value': lookup.get_result(item),
-            'match' : lookup.format_match(item),
+            'match': lookup.format_match(item),
             'repr': lookup.format_item_display(item)
         } for item in instances
     ])
@@ -43,7 +43,7 @@ def ajax_lookup(request,channel):
     return HttpResponse(results, mimetype='application/javascript')
 
 
-def add_popup(request,app_label,model):
+def add_popup(request, app_label, model):
     """ this presents the admin site popup add view (when you click the green +)
 
         make sure that you have added ajax_select.urls to your urls.py:
@@ -60,9 +60,17 @@ def add_popup(request,app_label,model):
     # TODO : should detect where we really are
     admin.admin_site.root_path = "/ajax_select/"
 
-    response = admin.add_view(request,request.path)
+    response = admin.add_view(request, request.path)
     if request.method == 'POST':
-        if 'opener.dismissAddAnotherPopup' in response.content:
-            return HttpResponse( response.content.replace('dismissAddAnotherPopup','didAddPopup' ) )
+        try:
+            # this detects TemplateResponse which are not yet rendered
+            # and are returned for form validation errors
+            if not response.is_rendered:
+                out = response.rendered_content
+            else:
+                out = response.content
+        except AttributeError:  # django < 1.5
+            out = response.content
+        if 'opener.dismissAddAnotherPopup' in out:
+            return HttpResponse(out.replace('dismissAddAnotherPopup', 'didAddPopup'))
     return response
-

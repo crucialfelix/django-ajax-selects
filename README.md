@@ -14,9 +14,9 @@ selected:
 
 [Note: screen shots are from the older version. Styling has changed slightly]
 
-1. The user types a search term into the text field
-2. An ajax request is sent to the server.
-3. The dropdown menu is populated with results.
+1. User types a few characters
+2. Ajax request sent to the server
+3. The dropdown menu shows choices
 4. User selects by clicking or using arrow keys
 5. Selected result displays in the "deck" area directly below the input field.
 6. User can click trashcan icon to remove a selected item
@@ -24,15 +24,13 @@ selected:
 Features
 ========
 
-+ Django 1.2+
-+ Optional boostrap mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
-+ Compatible with staticfiles, appmedia, django-compressor etc
-+ Popup to add a new item is supported
-+ Admin inlines now supported
-+ Ajax Selects works in the admin and also in public facing forms.
-+ Rich formatting can be easily defined for the dropdown display and the selected "deck" display.
-+ Templates and CSS are fully customizable
-+ JQuery triggers enable you to add javascript to respond when items are added or removed, so other interface elements on the page can react
++ Works in any form including the Django Admin
++ Popup to add a new item
++ Admin inlines
++ Compatible with widget/form media, staticfiles, asset compressors etc.
++ Automatically Loads jQuery UI  mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
++ Customize HTML, CSS and JS
++ JQuery triggers allow you to customize interface behavior to respond when items are added or removed
 + Default (but customizable) security prevents griefers from pilfering your data via JSON requests
 
 
@@ -44,15 +42,7 @@ Get it
 
     `pip install django-ajax-selects`
 or
-    `easy_install django-ajax-selects`
-or
     download or checkout the distribution
-or
-    install using buildout by adding `django-ajax-selects` to your `eggs`
-
-on fedora:
-    su -c 'yum install django-ajax-selects'
-(note: this version may not be up to date)
 
 
 In settings.py :
@@ -60,17 +50,18 @@ In settings.py :
     # add the app
     INSTALLED_APPS = (
                 ...,
+                'django.contrib.staticfiles',
                 'ajax_select'
                 )
 
     # define the lookup channels in use on the site
     AJAX_LOOKUP_CHANNELS = {
-        #   pass a dict with the model and the field to search against
-        'person'  : {'model':'example.person', 'search_field':'name'}
+        #  simple: search Person.objects.filter(name__icontains=q)
+        'person'  : {'model': 'example.person', 'search_field': 'name'},
+        # define a custom lookup channel
+        'song'   : ('example.lookups', 'SongLookup')
     }
-    # magically include jqueryUI/js/css
-    AJAX_SELECT_BOOTSTRAP = True
-    AJAX_SELECT_INLINES = 'inline'
+
 
 In your urls.py:
 
@@ -98,38 +89,49 @@ In your admin.py:
         pass
     admin.site.register(Person,PersonAdmin)
 
-    # subclass AjaxSelectAdmin
-    class LabelAdmin(AjaxSelectAdmin):
+    class SongAdmin(AjaxSelectAdmin):
         # create an ajax form class using the factory function
         #                     model,fieldlist,   [form superclass]
         form = make_ajax_form(Label,{'owner':'person'})
     admin.site.register(Label,LabelAdmin)
 
+example/lookups.py:
 
-This setup will give most people the ajax powered editing they need by bootstrapping in JS/CSS and implementing default security and simple ajax lookup channels.
+    from ajax_select import LookupChannel
+
+    class SongLookup(LookupChannel):
+
+        model = Song
+
+        def get_query(self,q,request):
+            return Song.objects.filter(title__icontains=q).order_by('title')
+
 
 NOT SO QUICK INSTALLATION
 =========================
 
 Things that can be customized:
 
-+ how and from where jQuery, jQueryUI, jQueryUI theme are loaded
-+ whether to include js/css inline or for better performance via staticfiles or django-compress etc.
 + define custom `LookupChannel` classes to customize:
     + HTML formatting for the drop down results and the item-selected display
     + custom search queries, ordering, user specific filtered results
     + custom channel security (default is staff only)
-+ customizing the CSS
-+ each channel could define its own template to change display or add extra javascript
-+ custom javascript can respond to jQuery triggers when items are selected or removed
++ each channel can define its own template to add controls or javascript
++ JS can respond to jQuery triggers when items are selected or removed
++ custom CSS
++ how and from where jQuery, jQueryUI, jQueryUI theme are loaded
 
 
 Architecture
 ============
 
-A single view services all of the ajax search requests, delegating the searches to named 'channels'.  Each model that needs to be searched for has a channel defined for it. More than one channel may be defined for a Model to serve different needs such as public vs admin or channels that filter the query by specific categories etc. The channel also has access to the request and the user so it can personalize the query results.  Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.
+A single view services all of the ajax search requests, delegating the searches to named 'channels'.
 
 A simple channel can be specified in settings.py, a more complex one (with custom search, formatting, personalization or auth requirements) can be written in a lookups.py file.
+
+Each model that needs to be searched for has a channel defined for it. More than one channel may be defined for a Model to serve different needs such as public vs admin or channels that filter the query by specific categories etc. The channel also has access to the request and the user so it can personalize the query results.  Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.
+
+
 
 There are three model field types with corresponding form fields and widgets:
 
@@ -158,10 +160,10 @@ Defines the available lookup channels.
 + channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
 > This will create a channel automatically
 
-	chanel_name : ( 'app.lookups', 'YourLookup' )
-	    This points to a custom Lookup channel name YourLookup in app/lookups.py
+    chanel_name : ( 'app.lookups', 'YourLookup' )
+        This points to a custom Lookup channel name YourLookup in app/lookups.py
 
-	AJAX_LOOKUP_CHANNELS = {
+    AJAX_LOOKUP_CHANNELS = {
         #   channel : dict with settings to create a channel
         'person'  : {'model':'example.person', 'search_field':'name'},
 
@@ -171,43 +173,27 @@ Defines the available lookup channels.
 
 #### AJAX_SELECT_BOOTSTRAP
 
-Sets if it should automatically include jQuery/jQueryUI/theme.  On large formsets this will cause it to check each time but it will only jQuery the first time.
+By default it will include bootstrap.js in the widget media which will locate or load jQuery and jQuery-UI.
 
-+ True: [easiest]
-    use jQuery if already present, else use the admin's jQuery else load from google's CDN
-    use jqueryUI if present else load from google's CDN
-    use jqueryUI theme if present else load one from google's CDN
+In other words, by default it will just work.
 
-+ False/None/Not set: [default]
-    you should then include jQuery, jqueryUI + theme in your template or js compressor stack
+First one wins:
 
+*  window.jQuery - if you included jQuery on the page
+*  django.jQuery - if you are on an admin page
+*  load from ajax.googleapis com CDN
 
-#### AJAX_SELECT_INLINES
+Likewise for jQuery-UI:
 
-This controls if and how these:
+* window.jQuery.ui
+* load from ajax.googleapis.com with default smoothness theme
 
-    ajax_select/static/js/ajax_select.js
-    ajax_select/static/css/ajax_select.css
+If you want your own theme then load it afterwards to override or:
 
-are included inline in the html with each form field.
+    AJAX_SELECT_BOOTSTRAP = False
 
-+ 'inline': [easiest]
-    Includes the js and css inline
-    This gets you up and running easily and is fine for small sites.
-    But with many form fields this will be less efficient.
+and load your own jquery, jquery ui and theme.
 
-+ 'staticfiles':
-    @import the css/js from {{STATIC_URL}}/ajax_selects using `django.contrib.staticfiles`
-    Requires staticfiles to be installed and to run its management command to collect files.
-    This still imports the css/js multiple times and is thus inefficient but otherwise harmless.
-
-    When using staticfiles you may implement your own `ajax_select.css` and customize to taste as long
-    as your app is before ajax_select in the INSTALLED_APPS.
-
-+ False/None: [default]
-    Does not inline anything. You should include the css/js files in your compressor stack
-    or include them in the head of the admin/base_site.html template.
-    This is the most efficient but takes the longest to configure.
 
 
 urls.py
@@ -332,7 +318,7 @@ ie. what is returned by yourmodel.fieldname_set.all()
 
 In most situations (especially postgres) this order is random, not the order that you originally added them in the interface.  With a bit of hacking I have convinced it to preserve the order [see OrderedManyToMany.md for solution]
 
-######  can_add(self,user,argmodel):
+######  can_add(self, user, argmodel):
 
 Check if the user has permission to add one of these models.
 This enables the green popup +
@@ -351,7 +337,7 @@ Also you could choose to return HttpResponseForbidden("who are you?") instead of
 admin.py
 --------
 
-#### make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False)
+#### make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False)
 
 If your application does not otherwise require a custom Form class then you can use the make_ajax_form helper to create the entire form directly in admin.py.  See forms.py below for cases where you wish to make your own Form.
 
@@ -370,16 +356,16 @@ If your application does not otherwise require a custom Form class then you can 
 
     class YourModelAdmin(AjaxSelectAdmin):
         # create an ajax form class using the factory function
-        #                     model,fieldlist,   [form superclass]
-        form = make_ajax_form(Label,{'owner':'person'})
+        #                     model, fieldlist,   [form superclass]
+        form = make_ajax_form(Label, {'owner': 'person'})
 
     admin.site.register(YourModel,YourModelAdmin)
 
 You may use AjaxSelectAdmin as a mixin class and multiple inherit if you have another Admin class that you would like to use.  You may also just add the hook into your own Admin class:
 
     def get_form(self, request, obj=None, **kwargs):
-        form = super(YourAdminClass,self).get_form(request,obj,**kwargs)
-        autoselect_fields_check_can_add(form,self.model,request.user)
+        form = super(YourAdminClass, self).get_form(request, obj, **kwargs)
+        autoselect_fields_check_can_add(form, self.model, request.user)
         return form
 
 Note that ajax_selects does not need to be in an admin.  Popups will still use an admin view (the registered admin for the model being added), even if the form from where the popup was launched does not.
@@ -390,7 +376,7 @@ forms.py
 
 subclass ModelForm just as usual.  You may add ajax fields using the helper or directly.
 
-#### make_ajax_field(model,model_fieldname,channel,show_help_text = False,**kwargs)
+#### make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwargs)
 
 A factory function to makes an ajax field + widget.  The helper ensures things are set correctly and simplifies usage and imports thus reducing programmer error.  All kwargs are passed into the Field so it is no less customizable.
 
@@ -418,7 +404,7 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
         class Meta:
             model = Release
 
-        group  = make_ajax_field(Release,'group','group',help_text=None)
+        group  = make_ajax_field(Release, 'group', 'group', help_text=None)
 
 #### Without using the helper
 
@@ -435,7 +421,7 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
 
     class ReleaseForm(ModelForm):
 
-        group = AutoCompleteSelectField('group', required=False, help_text=None,plugin_options = {'autoFocus':True,'minLength':4})
+        group = AutoCompleteSelectField('group', required=False, help_text=None, plugin_options = {'autoFocus': True, 'minLength': 4})
 
 #### Using ajax selects in a `FormSet`
 
@@ -458,7 +444,7 @@ There is possibly a better way to do this, but here is an initial example:
             form.fields["project"] = AutoCompleteSelectField('project', required=False)
 
     # pass in the base formset class to the factory
-    TaskFormSet = modelformset_factory(Task,fields=('name','project','area'),extra=0,formset=BaseTaskFormSet)
+    TaskFormSet = modelformset_factory(Task, fields=('name', 'project', 'area'),extra=0, formset=BaseTaskFormSet)
 
 
 
@@ -487,11 +473,6 @@ If you are using `django.contrib.staticfiles` then you can implement `ajax_selec
 If you are doing your own compress stack then of course you can include whatever version you want.
 
 The display style now uses the jQuery UI theme and actually I find the drop down to be not very charming.  The previous version (1.1x) which used the external jQuery AutoComplete plugin had nicer styling.  I might decide to make the default more like that with alternating color rows and a stronger sense of focused item.  Also the current jQuery one wiggles.
-
-The CSS refers to one image that is served from github (as a CDN):
-!['https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'](https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif) 'https://github.com/crucialfelix/django-ajax-selects/raw/master/ajax_select/static/images/loading-indicator.gif'
-
-Your own site's CSS could redefine that with a stronger declaration to point to whatever you like.
 
 The trashcan icon comes from the jQueryUI theme by the css classes:
 
@@ -553,19 +534,12 @@ There is no remove as there is no kill/delete button in a simple auto-complete.
 The user may clear the text themselves but there is no javascript involved. Its just a text field.
 
 
-Planned Improvements
---------------------
-
-TODO: + pop ups are not working in AdminInlines yet
-
-
-
 Contributors
 ------------
 
 Many thanks to all who found bugs, asked for things, and hassled me to get a new release out.  I'm glad people find good use out of the app.
 
-In particular thanks for help in the 1.2 version:  sjrd (Sébastien Doeraene), Brian May
+In particular thanks for help in the 1.2 version:  @sjrd (Sébastien Doeraene), @brianmay
 
 
 License
