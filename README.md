@@ -177,23 +177,23 @@ By default it will include bootstrap.js in the widget media which will locate or
 
 In other words, by default it will just work.
 
+If you don't want it do that, in settings.py:
+    AJAX_SELECT_BOOTSTRAP = False
+
 First one wins:
 
-*  window.jQuery - if you included jQuery on the page
-*  django.jQuery - if you are on an admin page
-*  load from ajax.googleapis com CDN
+*  window.jQuery - if you already included jQuery on the page
+*  or loads: //ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
 
 Likewise for jQuery-UI:
 
 * window.jQuery.ui
-* load from ajax.googleapis.com with default smoothness theme
+* or loads: //ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js
+  with theme: //ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css
 
-If you want your own theme then load it afterwards to override or:
+If you want your own custom theme then load jquery ui and your css first.
 
-    AJAX_SELECT_BOOTSTRAP = False
-
-and load your own jquery, jquery ui and theme.
-
+Warning: the latest jQueryUI seems to have issues with the autocomplete.  I would rather switch to the much nicer select2 than try to get the latest jQuery UI to work.  Its a lot of js and css to load just for a dropdown.
 
 
 urls.py
