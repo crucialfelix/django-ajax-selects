@@ -92,6 +92,13 @@ def make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False,
         class Meta:
             pass
         setattr(Meta, 'model', model)
+        if hasattr(superclass, 'Meta'):
+            if hasattr(superclass.Meta, 'fields'):
+                setattr(Meta, 'fields', superclass.Meta.fields)
+            if hasattr(superclass.Meta, 'exclude'):
+                setattr(Meta, 'exclude', superclass.Meta.exclude)
+            if hasattr(superclass.Meta, 'widgets'):
+                setattr(Meta, 'widgets', superclass.Meta.widgets)
 
     for model_fieldname, channel in fieldlist.iteritems():
         f = make_ajax_field(model, model_fieldname, channel, show_help_text)
