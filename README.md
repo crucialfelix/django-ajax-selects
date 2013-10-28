@@ -1,3 +1,14 @@
+================
+bob-ajax-selects
+================
+
+.. image:: https://pypip.in/v/bob-ajax-selects/badge.png
+    :target: https://crate.io/packages/bob-ajax-selects/
+    :alt: Latest PyPI version
+
+.. image:: https://pypip.in/d/bob-ajax-selects/badge.png
+    :target: https://crate.io/packages/bob-ajax-selects/
+    :alt: Number of PyPI downloads
 
 Enables editing of `ForeignKey`, `ManyToMany` and `CharField` using jQuery UI Autocomplete.
 
