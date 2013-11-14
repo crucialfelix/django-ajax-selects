@@ -1,5 +1,7 @@
 
+import importlib
 from ajax_select import get_lookup
+from django.conf import settings
 from django.contrib.admin import site
 from django.db import models
 from django.http import HttpResponse
@@ -43,6 +45,22 @@ def ajax_lookup(request, channel):
     return HttpResponse(results, mimetype='application/javascript')
 
 
+def get_admin_sites():
+    admin_sites = []
+
+    try:
+        settings_sites = settings.AJAX_ADMIN_SITES
+    except AttributeError:
+        settings_sites = ('django.contrib.admin.site',)
+
+    for site in settings_sites:
+        split_site = site.rsplit('.', 1)
+        module = importlib.import_module(split_site[0])
+        admin_sites.append(getattr(module, split_site[1]))
+
+    return admin_sites
+
+
 def add_popup(request, app_label, model):
     """ this presents the admin site popup add view (when you click the green +)
 
@@ -55,7 +73,20 @@ def add_popup(request, app_label, model):
         it calls didAddPopup(win,newId,newRepr) which was added inline with bootstrap.html
     """
     themodel = models.get_model(app_label, model)
-    admin = site._registry[themodel]
+
+    admin_sites = get_admin_sites()
+
+    admin = None
+    for site in admin_sites:
+        try:
+            admin = site._registry[themodel]
+        except KeyError:
+            pass
+        else:
+            continue
+
+    if not admin:
+        raise Exception('The model could not be found in any of the admin sites')
 
     # TODO : should detect where we really are
     admin.admin_site.root_path = "/ajax_select/"
