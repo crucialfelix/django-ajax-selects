@@ -1,4 +1,3 @@
-
 Enables editing of `ForeignKey`, `ManyToMany` and `CharField` using jQuery UI Autocomplete.
 
 User experience
@@ -266,6 +265,7 @@ Set any options for the jQuery plugin. This includes:
 + disabled
 + position
 + source - setting this would overide the normal ajax URL. could be used to add URL query params
++ render_in_input - setting this to True will render the response in an AutoCompleteSelect input field, rather than in the deck below the input
 
 See http://docs.jquery.com/UI/Autocomplete#options
 
@@ -548,5 +548,3 @@ License
 Dual licensed under the MIT and GPL licenses:
    http://www.opensource.org/licenses/mit-license.php
    http://www.gnu.org/licenses/gpl.html
-
-
