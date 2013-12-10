@@ -105,7 +105,7 @@ def make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False,
 
         TheForm.declared_fields[model_fieldname] = f
         TheForm.base_fields[model_fieldname] = f
-        setattr(TheForm, model_fieldname, f)
+        #setattr(TheForm, model_fieldname, f)
 
     return TheForm
 
