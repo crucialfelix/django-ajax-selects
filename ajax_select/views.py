@@ -7,6 +7,7 @@ try:
     import json
 except ImportError:
     from django.utils import simplejson as json
+from django.utils.encoding import force_text
 
 
 def ajax_lookup(request, channel):
@@ -36,7 +37,7 @@ def ajax_lookup(request, channel):
 
     results = json.dumps([
         {
-            'pk': unicode(getattr(item, 'pk', None)),
+            'pk': force_text(getattr(item, 'pk', None)),
             'value': lookup.get_result(item),
             'match': lookup.format_match(item),
             'repr': lookup.format_item_display(item)

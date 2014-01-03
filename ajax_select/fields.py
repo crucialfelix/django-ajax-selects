@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from django.forms.util import flatatt
 from django.template.loader import render_to_string
 from django.template.defaultfilters import force_escape
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 try:
@@ -96,7 +97,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
         got = data.get(name, None)
         if got:
-            return long(got)
+            return int(got)
         else:
             return None
 
@@ -215,7 +216,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
     def value_from_datadict(self, data, files, name):
         # eg. u'members': [u'|229|4688|190|']
-        return [long(val) for val in data.get(name, '').split('|') if val]
+        return [int(val) for val in data.get(name, '').split('|') if val]
 
     def id_for_label(self, id_):
         return '%s_text' % id_
@@ -237,12 +238,12 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             # '' will cause translation to fail
             # should be u''
             if type(help_text) == str:
-                help_text = unicode(help_text)
+                help_text = force_text(help_text)
             # django admin appends "Hold down "Control",..." to the help text
             # regardless of which widget is used. so even when you specify an explicit help text it appends this other default text onto the end.
             # This monkey patches the help text to remove that
             if help_text != u'':
-                if type(help_text) != unicode:
+                if type(help_text) != str:
                     # ideally this could check request.LANGUAGE_CODE
                     translated = help_text.translate(settings.LANGUAGE_CODE)
                 else:
@@ -381,7 +382,7 @@ def _check_can_add(self, user, model):
 
 def autoselect_fields_check_can_add(form, model, user):
     """ check the form's fields for any autoselect fields and enable their widgets with + sign add links if permissions allow"""
-    for name, form_field in form.declared_fields.iteritems():
+    for name, form_field in form.declared_fields.items():
         if isinstance(form_field, (AutoCompleteSelectMultipleField, AutoCompleteSelectField)):
             db_field = model._meta.get_field_by_name(name)[0]
             form_field.check_can_add(user, db_field.rel.to)
