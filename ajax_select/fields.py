@@ -1,4 +1,3 @@
-
 from ajax_select import get_lookup
 from django import forms
 from django.conf import settings
@@ -9,7 +8,11 @@ from django.template.loader import render_to_string
 from django.template.defaultfilters import force_escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from django.utils import simplejson
+
+try:
+    import json as simplejson
+except ImportError:
+    from django.utils import simplejson
 
 
 as_default_help = u'Enter text to search.'
