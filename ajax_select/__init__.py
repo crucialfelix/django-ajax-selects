@@ -10,6 +10,7 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.contrib.contenttypes.models import ContentType
 from django.forms.models import ModelForm
 from django.utils.text import capfirst
+from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
 
@@ -32,15 +33,15 @@ class LookupChannel(object):
 
     def get_result(self, obj):
         """ The text result of autocompleting the entered query """
-        return escape(unicode(obj))
+        return escape(force_text(obj))
 
     def format_match(self, obj):
         """ (HTML) formatted item for displaying item in the dropdown """
-        return escape(unicode(obj))
+        return escape(force_text(obj))
 
     def format_item_display(self, obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
-        return escape(unicode(obj))
+        return escape(force_text(obj))
 
     def get_objects(self, ids):
         """ Get the currently selected objects when editing an existing model """
@@ -100,7 +101,7 @@ def make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False,
             if hasattr(superclass.Meta, 'widgets'):
                 setattr(Meta, 'widgets', superclass.Meta.widgets)
 
-    for model_fieldname, channel in fieldlist.iteritems():
+    for model_fieldname, channel in fieldlist.items():
         f = make_ajax_field(model, model_fieldname, channel, show_help_text)
 
         TheForm.declared_fields[model_fieldname] = f
@@ -133,7 +134,7 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
 
     field = model._meta.get_field(model_fieldname)
     if not 'label' in kwargs:
-        kwargs['label'] = _(capfirst(unicode(field.verbose_name)))
+        kwargs['label'] = _(capfirst(force_text(field.verbose_name)))
 
     if not 'help_text' in kwargs and field.help_text:
         kwargs['help_text'] = field.help_text
@@ -184,15 +185,15 @@ def get_lookup(channel):
         if not hasattr(lookup_class, 'format_match'):
             setattr(lookup_class, 'format_match',
                 getattr(lookup_class, 'format_item',
-                    lambda self, obj: unicode(obj)))
+                    lambda self, obj: force_text(obj)))
         if not hasattr(lookup_class, 'format_item_display'):
             setattr(lookup_class, 'format_item_display',
                 getattr(lookup_class, 'format_item',
-                    lambda self, obj: unicode(obj)))
+                    lambda self, obj: force_text(obj)))
         if not hasattr(lookup_class, 'get_result'):
             setattr(lookup_class, 'get_result',
                 getattr(lookup_class, 'format_result',
-                    lambda self, obj: unicode(obj)))
+                    lambda self, obj: force_text(obj)))
 
         return lookup_class()
 
