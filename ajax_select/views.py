@@ -1,9 +1,12 @@
-
 from ajax_select import get_lookup
 from django.contrib.admin import site
 from django.db import models
 from django.http import HttpResponse
-from django.utils import simplejson
+
+try:
+    import json as simplejson
+except ImportError:
+    from django.utils import simplejson
 
 
 def ajax_lookup(request, channel):
