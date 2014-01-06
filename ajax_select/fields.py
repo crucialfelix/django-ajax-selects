@@ -9,7 +9,10 @@ from django.template.loader import render_to_string
 from django.template.defaultfilters import force_escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from django.utils import simplejson
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
 
 
 as_default_help = u'Enter text to search.'
@@ -200,7 +203,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'html_id': self.html_id,
             'current': value,
             'current_ids': current_ids,
-            'current_reprs': mark_safe(simplejson.dumps(initial)),
+            'current_reprs': mark_safe(json.dumps(initial)),
             'help_text': help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-", ""),
@@ -403,8 +406,8 @@ def plugin_options(channel, channel_name, widget_plugin_options, initial):
         po['html'] = True
 
     return {
-        'plugin_options': mark_safe(simplejson.dumps(po)),
-        'data_plugin_options': force_escape(simplejson.dumps(po)),
+        'plugin_options': mark_safe(json.dumps(po)),
+        'data_plugin_options': force_escape(json.dumps(po)),
         # continue to support any custom templates that still expect these
         'lookup_url': po['source'],
         'min_length': po['min_length']
