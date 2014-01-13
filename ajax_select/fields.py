@@ -1,4 +1,5 @@
 import json
+import sys
 
 from ajax_select import get_lookup
 from django import forms
@@ -14,7 +15,13 @@ from django.utils.translation import ugettext as _
 
 
 as_default_help = u'Enter text to search.'
+IS_PYTHON2 = sys.version_info.major == 2
 
+
+def _to_number(got):
+    if IS_PYTHON2:
+        return long(got)
+    return int(got)
 
 def _media(self):
     # unless AJAX_SELECT_BOOTSTRAP == False
@@ -94,7 +101,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
         got = data.get(name, None)
         if got:
-            return int(got)
+            return _to_number(got)
         else:
             return None
 
@@ -213,7 +220,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
     def value_from_datadict(self, data, files, name):
         # eg. u'members': [u'|229|4688|190|']
-        return [int(val) for val in data.get(name, '').split('|') if val]
+        return [_to_number(val) for val in data.get(name, '').split('|') if val]
 
     def id_for_label(self, id_):
         return '%s_text' % id_
@@ -240,7 +247,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             # regardless of which widget is used. so even when you specify an explicit help text it appends this other default text onto the end.
             # This monkey patches the help text to remove that
             if help_text != u'':
-                if type(help_text) != str:
+                if not self._is_string(help_text):
                     # ideally this could check request.LANGUAGE_CODE
                     translated = help_text.translate(settings.LANGUAGE_CODE)
                 else:
@@ -272,6 +279,12 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         kwargs['help_text'] = help_text
 
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
+
+    @staticmethod
+    def _is_string(help_text):
+        if IS_PYTHON2:
+            return type(help_text) == unicode
+        return type(help_text) == str
 
     def clean(self, value):
         if not value and self.required:
