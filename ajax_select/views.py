@@ -1,10 +1,10 @@
+import json
 
 from ajax_select import get_lookup
 from django.contrib.admin import site
 from django.db import models
 from django.http import HttpResponse
 from django.utils.encoding import force_text
-from django.utils import simplejson
 
 
 def ajax_lookup(request, channel):
@@ -32,7 +32,7 @@ def ajax_lookup(request, channel):
     else:
         instances = []
 
-    results = simplejson.dumps([
+    results = json.dumps([
         {
             'pk': force_text(getattr(item, 'pk', None)),
             'value': lookup.get_result(item),
