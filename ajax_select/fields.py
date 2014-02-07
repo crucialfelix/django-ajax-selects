@@ -33,11 +33,14 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  plugin_options = {},
                  *args, **kwargs):
         self.plugin_options = plugin_options
-        self.add_link = self.plugin_options.get('add_link')
         super(forms.widgets.TextInput, self).__init__(*args, **kwargs)
         self.channel = channel
         self.help_text = help_text
         self.show_help_text = show_help_text
+
+    @property
+    def add_link(self):
+        return self.plugin_options.get('add_link')
 
     def render(self, name, value, attrs=None):
 
