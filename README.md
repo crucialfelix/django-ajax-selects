@@ -160,7 +160,7 @@ Defines the available lookup channels.
 + channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
 > This will create a channel automatically
 
-    chanel_name : ( 'app.lookups', 'YourLookup' )
+    channel_name : ( 'app.lookups', 'YourLookup' )
         This points to a custom Lookup channel name YourLookup in app/lookups.py
 
     AJAX_LOOKUP_CHANNELS = {
