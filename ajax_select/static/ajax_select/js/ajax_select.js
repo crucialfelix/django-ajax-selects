@@ -201,6 +201,9 @@
     // if dynamically injecting forms onto a page
     // you can trigger them to be ajax-selects-ified:
     $(window).trigger('init-autocomplete');
+    $('.inline-group ul.tools a.add, .inline-group div.add-row a, .inline-group .tabular tr.add-row td a').on('click', function() {
+      $(window).trigger('init-autocomplete');
+    });
   });
 
 })(window.jQuery);
