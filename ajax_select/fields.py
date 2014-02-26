@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import sys
 from ajax_select import get_lookup
 from django import forms
@@ -16,7 +17,7 @@ except ImportError:
     from django.utils import simplejson as json
 
 
-as_default_help = u'Enter text to search.'
+as_default_help = 'Enter text to search.'
 IS_PYTHON2 = sys.version_info.major == 2
 
 
@@ -52,7 +53,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     def __init__(self,
                  channel,
-                 help_text=u'',
+                 help_text='',
                  show_help_text=True,
                  plugin_options={},
                  *args,
@@ -84,7 +85,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = u''
+            help_text = ''
 
         context = {
             'name': name,
@@ -140,7 +141,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 # someone else might have deleted it while you were editing
                 # or your channel is faulty
                 # out of the scope of this field to do anything more than tell you it doesn't exist
-                raise forms.ValidationError(u"%s cannot find object: %s" % (lookup, value))
+                raise forms.ValidationError("%s cannot find object: %s" % (lookup, value))
             return objs[0]
         else:
             if self.required:
@@ -204,7 +205,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = u''
+            help_text = ''
 
         context = {
             'name': name,
@@ -222,7 +223,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'), context))
 
     def value_from_datadict(self, data, files, name):
-        # eg. u'members': [u'|229|4688|190|']
+        # eg. 'members': ['|229|4688|190|']
         return [_to_number(val) for val in data.get(name, '').split('|') if val]
 
     def id_for_label(self, id_):
@@ -243,26 +244,26 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
         if not (help_text is None):
             # '' will cause translation to fail
-            # should be u''
+            # should be ''
             if type(help_text) == str:
                 help_text = force_text(help_text)
             # django admin appends "Hold down "Control",..." to the help text
             # regardless of which widget is used. so even when you specify an explicit help text it appends this other default text onto the end.
             # This monkey patches the help text to remove that
-            if help_text != u'':
+            if help_text != '':
                 if not self._is_string(help_text):
                     # ideally this could check request.LANGUAGE_CODE
                     translated = help_text.translate(settings.LANGUAGE_CODE)
                 else:
                     translated = help_text
-                django_default_help = _(u'Hold down "Control", or "Command" on a Mac, to select more than one.').translate(settings.LANGUAGE_CODE)
+                django_default_help = _('Hold down "Control", or "Command" on a Mac, to select more than one.').translate(settings.LANGUAGE_CODE)
                 if django_default_help in translated:
                     cleaned_help = translated.replace(django_default_help, '').strip()
                     # probably will not show up in translations
                     if cleaned_help:
                         help_text = cleaned_help
                     else:
-                        help_text = u""
+                        help_text = ""
                         show_help_text = False
         else:
             help_text = _(as_default_help)
@@ -333,7 +334,7 @@ class AutoCompleteWidget(forms.TextInput):
         if self.show_help_text:
             help_text = self.help_text
         else:
-            help_text = u''
+            help_text = ''
 
         context = {
             'current_repr': initial,
