@@ -1,4 +1,7 @@
 
+import cPickle
+import base64
+
 from ajax_select import get_lookup
 from django.contrib.admin import site
 from django.db import models
@@ -7,11 +10,11 @@ from django.utils import simplejson
 
 
 def ajax_lookup(request,channel):
-
     """ this view supplies results for foreign keys and many to many fields """
-
     # it should come in as GET unless global $.ajaxSetup({type:"POST"}) has been set
     # in which case we'll support POST
+    channel = base64.b64decode(channel)
+    channel = cPickle.loads(channel)
     if request.method == "GET":
         # we could also insist on an ajax request
         if 'term' not in request.GET:

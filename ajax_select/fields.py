@@ -1,3 +1,6 @@
+import os
+import cPickle
+import base64
 
 from ajax_select import get_lookup
 from django import forms
@@ -11,7 +14,6 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.utils import simplejson
-import os
 
 
 as_default_help = u'Enter text to search.'
@@ -36,12 +38,15 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         self.help_text = help_text
         self.show_help_text = show_help_text
 
+    @property
+    def add_link(self):
+        return self.plugin_options.get('add_link')
+
     def render(self, name, value, attrs=None):
 
         value = value or ''
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
-
         current_repr = ''
         initial = None
         lookup = get_lookup(self.channel)
@@ -72,7 +77,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
-        return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'),context))
+        return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel[1], 'autocompleteselect.html'),context))
 
     def value_from_datadict(self, data, files, name):
 
@@ -86,9 +91,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         return '%s_text' % id_
 
 
-
 class AutoCompleteSelectField(forms.fields.CharField):
-
     """  form field to select a model for a ForeignKey db field """
 
     channel = None
@@ -96,7 +99,6 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
         widget = kwargs.get("widget", False)
-
         if not widget or not isinstance(widget, AutoCompleteSelectWidget):
             widget_kwargs = dict(
                 channel = channel,
@@ -191,7 +193,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
-        return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),context))
+        return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel[1], 'autocompleteselectmultiple.html'),context))
 
     def value_from_datadict(self, data, files, name):
         # eg. u'members': [u'|229|4688|190|']
@@ -282,7 +284,7 @@ class AutoCompleteWidget(forms.TextInput):
         self.help_text = kwargs.pop('help_text', '')
         self.show_help_text = kwargs.pop('show_help_text',True)
         self.plugin_options = kwargs.pop('plugin_options',{})
-
+        self.add_link = self.plugin_options.get('add_link')
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
@@ -291,7 +293,6 @@ class AutoCompleteWidget(forms.TextInput):
 
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
-
         lookup = get_lookup(self.channel)
         if self.show_help_text:
             help_text = self.help_text
@@ -310,7 +311,7 @@ class AutoCompleteWidget(forms.TextInput):
         context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
         context.update(bootstrap())
 
-        templates = ('autocomplete_%s.html' % self.channel,
+        templates = ('autocomplete_%s.html' % self.channel[1],
                      'autocomplete.html')
         return mark_safe(render_to_string(templates, context))
 
@@ -324,7 +325,6 @@ class AutoCompleteField(forms.CharField):
 
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
-
         widget_kwargs = dict(
             help_text = kwargs.get('help_text', _(as_default_help)),
             show_help_text = kwargs.pop('show_help_text',True),
@@ -332,7 +332,9 @@ class AutoCompleteField(forms.CharField):
         )
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
-        widget = AutoCompleteWidget(channel,**widget_kwargs)
+        widget = kwargs.pop('widget', AutoCompleteWidget)(
+            channel, **widget_kwargs
+        )
 
         defaults = {'max_length': 255,'widget': widget}
         defaults.update(kwargs)
@@ -378,7 +380,9 @@ def plugin_options(channel,channel_name,widget_plugin_options,initial):
         # will deprecate that some day and prefer to use plugin_options
         po['min_length'] = getattr(channel, 'min_length', 1)
     if not po.get('source'):
-        po['source'] = reverse('ajax_lookup',kwargs={'channel':channel_name})
+        channel = cPickle.dumps(channel_name)
+        channel = base64.b64encode(channel)
+        po['source'] = reverse('ajax_lookup',kwargs={'channel': channel})
     return {
         'plugin_options': mark_safe(simplejson.dumps(po)),
         # continue to support any custom templates that still expect these

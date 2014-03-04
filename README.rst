@@ -1,3 +1,14 @@
+================
+bob-ajax-selects
+================
+
+.. image:: https://pypip.in/v/bob-ajax-selects/badge.png
+    :target: https://crate.io/packages/bob-ajax-selects/
+    :alt: Latest PyPI version
+
+.. image:: https://pypip.in/d/bob-ajax-selects/badge.png
+    :target: https://crate.io/packages/bob-ajax-selects/
+    :alt: Number of PyPI downloads
 
 Enables editing of `ForeignKey`, `ManyToMany` and `CharField` using jQuery UI Autocomplete.
 
@@ -63,11 +74,6 @@ In settings.py :
                 'ajax_select'
                 )
 
-    # define the lookup channels in use on the site
-    AJAX_LOOKUP_CHANNELS = {
-        #   pass a dict with the model and the field to search against
-        'person'  : {'model':'example.person', 'search_field':'name'}
-    }
     # magically include jqueryUI/js/css
     AJAX_SELECT_BOOTSTRAP = True
     AJAX_SELECT_INLINES = 'inline'
@@ -148,27 +154,25 @@ Example App
 See the example app for a full working admin site with many variations and comments. It installs quickly using virtualenv and sqllite and comes fully configured.
 
 
-settings.py
------------
-
 #### AJAX_LOOKUP_CHANNELS
 
-Defines the available lookup channels.
+You must add a dict with definition channel, example:
 
-+ channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
+`lookup_channel = ('example.lookups', 'SongLookup'),`
+
+```
+ test_fied = AutoCompleteSelectField(lookup_channel)
+```
+
+`{'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }`
 > This will create a channel automatically
 
-	chanel_name : ( 'app.lookups', 'YourLookup' )
+    ( 'app.lookups', 'YourLookup' )
 	    This points to a custom Lookup channel name YourLookup in app/lookups.py
 
-	AJAX_LOOKUP_CHANNELS = {
-        #   channel : dict with settings to create a channel
-        'person'  : {'model':'example.person', 'search_field':'name'},
 
-        # channel: ( module.where_lookup_is, ClassNameOfLookup )
-        'song'   : ('example.lookups', 'SongLookup'),
-    }
-
+settings.py
+-----------
 #### AJAX_SELECT_BOOTSTRAP
 
 Sets if it should automatically include jQuery/jQueryUI/theme.  On large formsets this will cause it to check each time but it will only jQuery the first time.
