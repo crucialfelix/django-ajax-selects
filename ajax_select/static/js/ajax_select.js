@@ -34,7 +34,7 @@ $.fn.autocompleteselect = function(options) {
 			$text.val('');
 			addKiller(ui.item.repr);
 			$deck.trigger("added");
-
+			$this.change();
 			return false;
 		}
 
@@ -91,6 +91,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 				addKiller(ui.item.repr, pk);
 				$text.val('');
 				$deck.trigger("added");
+				$this.change();
 			}
 
 			return false;
