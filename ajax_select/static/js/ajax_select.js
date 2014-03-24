@@ -55,6 +55,7 @@ $.fn.autocompleteselect = function(options) {
 
 		function kill() {
 			$this.val('');
+			$this.change();
 			$deck.children().fadeOut(1.0).remove();
 		}
 
