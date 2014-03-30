@@ -17,6 +17,7 @@
         $text.val('');
         addKiller(ui.item.repr);
         $deck.trigger('added', [ui.item.pk, ui.item]);
+        $this.trigger('change');
 
         return false;
       }
@@ -70,6 +71,7 @@
           addKiller(ui.item.repr, pk);
           $text.val('');
           $deck.trigger('added', [ui.item.pk, ui.item]);
+          $this.trigger('change');
         }
         return false;
       }
@@ -201,6 +203,9 @@
     // if dynamically injecting forms onto a page
     // you can trigger them to be ajax-selects-ified:
     $(window).trigger('init-autocomplete');
+    $('.inline-group ul.tools a.add, .inline-group div.add-row a, .inline-group .tabular tr.add-row td a').on('click', function() {
+      $(window).trigger('init-autocomplete');
+    });
   });
 
 })(window.jQuery);
