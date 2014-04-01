@@ -69,8 +69,22 @@ $.fn.autocompleteselect = function(options) {
 		}
 
 		$this.bind('didAddPopup', function(event, pk, repr) {
-			ui = { item: { pk: pk, repr: repr } }
+			ui = { item: { pk: pk, repr: repr } };
 			receiveResult(null, ui);
+		});
+
+		$this.change(function (ev) {
+			var pk, repr, ui;
+			if (typeof ev.cloneSource !== 'undefined') {
+				pk = ev.cloneSource.val();
+				// depends on addKiller implementation
+				repr = ev.cloneSource.next().children('div').children().slice(1);
+				repr = $.map(repr, function (el) {
+					return el.outerHTML;
+				}).join('');
+				ui = { item: { pk: pk, repr: repr } };
+				receiveResult(null, ui);
+			}
 		});
 	});
 };
