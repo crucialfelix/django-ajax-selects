@@ -18,7 +18,7 @@ except ImportError:
 
 
 as_default_help = 'Enter text to search.'
-IS_PYTHON2 = sys.version_info.major == 2
+IS_PYTHON2 = sys.version_info[0] == 2
 
 
 def _to_number(got):
