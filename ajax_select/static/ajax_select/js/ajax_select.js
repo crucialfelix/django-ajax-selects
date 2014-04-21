@@ -154,7 +154,7 @@
       }
     },
     _renderItem: function(ul, item) {
-      var body = this.options.html ? item.repr : item.label;
+      var body = this.options.html ? item.match : item.label;
       return $('<li></li>')
         .data('item.autocomplete', item)
         .append($('<a></a>')[this.options.html ? 'html' : 'text' ](body))
