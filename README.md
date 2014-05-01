@@ -65,7 +65,7 @@ In settings.py :
 
 In your urls.py:
 
-    from django.conf.urls.defaults import *
+    from django.conf.urls import *
 
     from django.contrib import admin
     from ajax_select import urls as ajax_select_urls
@@ -77,6 +77,8 @@ In your urls.py:
         (r'^admin/lookups/', include(ajax_select_urls)),
         (r'^admin/', include(admin.site.urls)),
     )
+
+For Django 1.3 or earlier replace the first line by `from django.conf.urls.defaults import *`.
 
 In your admin.py:
 
