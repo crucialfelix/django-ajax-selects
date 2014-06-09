@@ -375,6 +375,9 @@ def plugin_options(channel,channel_name,widget_plugin_options,initial):
         po['initial'] = initial
     po.update(getattr(channel,'plugin_options',{}))
     po.update(widget_plugin_options)
+    if not po.get('disable_confirm'):
+        if not po.get('confirm_text'):
+            po['confirm_text'] = _('Are you sure you want to delete?')
     if not po.get('min_length'):
         # backward compatibility: honor the channel's min_length attribute
         # will deprecate that some day and prefer to use plugin_options
