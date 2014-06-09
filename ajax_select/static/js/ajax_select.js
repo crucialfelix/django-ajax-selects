@@ -48,8 +48,16 @@ $.fn.autocompleteselect = function(options) {
 				$("#"+id+"_on_deck > div").prepend(killButton);
 			}
 			$("#" + killer_id).click(function() {
-				kill();
-				$deck.trigger("killed");
+				if (options.confirm_text){
+					var delete_item = confirm(options.confirm_text);
+					if (delete_item) {
+						kill();
+						$deck.trigger("killed");
+					}
+				}else {
+					kill();
+					$deck.trigger("killed");
+				}
 			});
 		}
 
@@ -118,8 +126,16 @@ $.fn.autocompleteselectmultiple = function(options) {
 			$deck.append('<div id="'+id+'_on_deck_'+pk+'">' + killButton + repr + ' </div>');
 
 			$("#"+killer_id).click(function() {
-				kill(pk);
-				$deck.trigger("killed");
+				if (options.confirm_text){
+					var delete_item = confirm(options.confirm_text);
+					if (delete_item) {
+						kill(pk);
+						$deck.trigger("killed");
+					}
+				}else {
+					kill(pk);
+					$deck.trigger("killed");
+				}
 			});
 		}
 
