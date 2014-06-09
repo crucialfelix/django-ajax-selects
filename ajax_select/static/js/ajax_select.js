@@ -54,7 +54,7 @@ $.fn.autocompleteselect = function(options) {
 						kill();
 						$deck.trigger("killed");
 					}
-				}else {
+				} else {
 					kill();
 					$deck.trigger("killed");
 				}
@@ -132,7 +132,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 						kill(pk);
 						$deck.trigger("killed");
 					}
-				}else {
+				} else {
 					kill(pk);
 					$deck.trigger("killed");
 				}
