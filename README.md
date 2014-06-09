@@ -284,7 +284,7 @@ Set any options for the jQuery plugin. This includes:
 + disabled
 + position
 + source - setting this would overide the normal ajax URL. could be used to add URL query params
-+ disable_confirm - default plugin show confirm dialog, set confirm_text = True to disable confirm dialog
++ disable_confirm - default plugin show confirm dialog, set disable_confirm = True to disable confirm dialog
 + confirm_text - set custom confirm text
 
 See http://docs.jquery.com/UI/Autocomplete#options
