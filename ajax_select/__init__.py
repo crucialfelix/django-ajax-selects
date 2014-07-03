@@ -33,6 +33,10 @@ class LookupChannel(object):
         """ The text result of autocompleting the entered query """
         return unicode(obj)
 
+    def get_item_url(self, obj):
+        """The url to object, selectable on widget."""
+        return None
+
     def format_match(self,obj):
         """ (HTML) formatted item for displaying item in the dropdown """
         return unicode(obj)

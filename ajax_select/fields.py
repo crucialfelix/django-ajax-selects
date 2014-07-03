@@ -56,8 +56,15 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 obj = objs[0]
             except IndexError:
                 raise Exception("%s cannot find object:%s" % (lookup, value))
-            current_repr = lookup.format_item_display(obj)
-            initial = [current_repr,obj.pk]
+            url = lookup.get_item_url(obj)
+            item_display = lookup.format_item_display(obj)
+            if url:
+                current_repr = '<a href="{}" target="_blank">{}</a>'.format(
+                    url, item_display,
+                )
+            else:
+                current_repr = item_display
+            initial = [current_repr, obj.pk]
 
         if self.show_help_text:
             help_text = self.help_text
@@ -171,7 +178,14 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         # text repr of currently selected items
         initial = []
         for obj in objects:
-            display = lookup.format_item_display(obj)
+            url = lookup.get_item_url(obj)
+            item_display = lookup.format_item_display(obj)
+            if url:
+                display = '<a href="{}" target="_blank">{}</a>'.format(
+                    url, item_display,
+                )
+            else:
+                display = item_display
             initial.append([display,obj.pk])
 
         if self.show_help_text:
