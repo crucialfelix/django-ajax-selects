@@ -32,17 +32,20 @@ $.fn.autocompleteselect = function(options) {
 			}
 			$this.val(ui.item.pk);
 			$text.val('');
-			addKiller(ui.item.repr);
+			addKiller(ui.item.repr, null, ui.item.url);
 			$deck.trigger("added");
 			$this.change();
 			return false;
 		}
 
-		function addKiller(repr,pk) {
+		function addKiller(repr, pk, url) {
 			killer_id = "kill_" + pk + id;
 			killButton = '<span class="ui-icon ui-icon-trash" id="'+killer_id+'">X</span> ';
 			if (repr) {
 				$deck.empty();
+				if (url){
+					repr = '<a href="' + url + '" target="_blank">' + repr + '</a>';
+				}
 				$deck.append("<div>" + killButton + repr + "</div>");
 			} else {
 				$("#"+id+"_on_deck > div").prepend(killButton);
@@ -111,7 +114,7 @@ $.fn.autocompleteselectmultiple = function(options) {
 
 			if (prev.indexOf("|"+pk+"|") == -1) {
 				$this.val((prev ? prev : "|") + pk + "|");
-				addKiller(ui.item.repr, pk);
+				addKiller(ui.item.repr, pk, ui.item.url);
 				$text.val('');
 				$deck.trigger("added");
 				$this.change();
@@ -120,10 +123,17 @@ $.fn.autocompleteselectmultiple = function(options) {
 			return false;
 		}
 
-		function addKiller(repr, pk) {
+		function addKiller(repr, pk, url) {
 			killer_id = "kill_" + pk + id;
 			killButton = '<span class="ui-icon ui-icon-trash" id="'+killer_id+'">X</span> ';
-			$deck.append('<div id="'+id+'_on_deck_'+pk+'">' + killButton + repr + ' </div>');
+			var item_content = null;
+			if (url) {
+				item_content = '<div id="'+ id +'_on_deck_' + pk + '">' +
+					killButton + '<a href="' + url + '" target="_blank">' + repr + '</a></div>';
+			} else {
+				item_content = '<div id="'+id+'_on_deck_'+pk+'">' + killButton + repr + ' </div>';
+			}
+			$deck.append(item_content);
 
 			$("#"+killer_id).click(function() {
 				if (options.confirm_text){
