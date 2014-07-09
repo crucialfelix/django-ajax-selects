@@ -39,7 +39,8 @@ def ajax_lookup(request,channel):
             'pk': unicode(getattr(item,'pk',None)),
             'value': lookup.get_result(item),
             'match' : lookup.format_match(item),
-            'repr': lookup.format_item_display(item)
+            'repr': lookup.format_item_display(item),
+            'url': lookup.get_item_url(item),
         } for item in instances
     ])
 

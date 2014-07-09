@@ -258,6 +258,10 @@ Those old lookup channels will still work and the previous methods will be used.
             u""" result is the simple text that is the completion of what the person typed """
             return obj.name
 
+        def get_item_url(self, obj):
+            """The url to object, selectable on widget."""
+            return None
+
         def format_match(self,obj):
             """ (HTML) formatted item for display in the dropdown """
             return self.format_item_display(obj)
@@ -284,6 +288,8 @@ Set any options for the jQuery plugin. This includes:
 + disabled
 + position
 + source - setting this would overide the normal ajax URL. could be used to add URL query params
++ disable_confirm - default plugin show confirm dialog, set disable_confirm = True to disable confirm dialog
++ confirm_text - set custom confirm text
 
 See http://docs.jquery.com/UI/Autocomplete#options
 
@@ -315,6 +321,10 @@ The text result of autocompleting the entered query.  This is currently displaye
 after the user has selected the item.  Then the item is displayed in the item_display deck and the text field is cleared.
 Future versions may offer different handlers for how to display the selected item(s).  In the current version you may
 add extra script and use triggers to customize.
+
+######  get_item_url(self, obj):
+
+Url to selected item. Is not mandatory.
 
 ######  format_match(self,obj):
 

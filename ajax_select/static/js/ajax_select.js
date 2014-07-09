@@ -32,29 +32,41 @@ $.fn.autocompleteselect = function(options) {
 			}
 			$this.val(ui.item.pk);
 			$text.val('');
-			addKiller(ui.item.repr);
+			addKiller(ui.item.repr, null, ui.item.url);
 			$deck.trigger("added");
-
+			$this.change();
 			return false;
 		}
 
-		function addKiller(repr,pk) {
+		function addKiller(repr, pk, url) {
 			killer_id = "kill_" + pk + id;
 			killButton = '<span class="ui-icon ui-icon-trash" id="'+killer_id+'">X</span> ';
 			if (repr) {
 				$deck.empty();
+				if (url){
+					repr = '<a href="' + url + '" target="_blank">' + repr + '</a>';
+				}
 				$deck.append("<div>" + killButton + repr + "</div>");
 			} else {
 				$("#"+id+"_on_deck > div").prepend(killButton);
 			}
 			$("#" + killer_id).click(function() {
-				kill();
-				$deck.trigger("killed");
+				if (options.confirm_text){
+					var delete_item = confirm(options.confirm_text);
+					if (delete_item) {
+						kill();
+						$deck.trigger("killed");
+					}
+				} else {
+					kill();
+					$deck.trigger("killed");
+				}
 			});
 		}
 
 		function kill() {
 			$this.val('');
+			$this.change();
 			$deck.children().fadeOut(1.0).remove();
 		}
 
@@ -68,8 +80,22 @@ $.fn.autocompleteselect = function(options) {
 		}
 
 		$this.bind('didAddPopup', function(event, pk, repr) {
-			ui = { item: { pk: pk, repr: repr } }
+			ui = { item: { pk: pk, repr: repr } };
 			receiveResult(null, ui);
+		});
+
+		$this.change(function (ev) {
+			var pk, repr, ui;
+			if (typeof ev.cloneSource !== 'undefined') {
+				pk = ev.cloneSource.val();
+				// depends on addKiller implementation
+				repr = ev.cloneSource.next().children('div').children().slice(1);
+				repr = $.map(repr, function (el) {
+					return el.outerHTML;
+				}).join('');
+				ui = { item: { pk: pk, repr: repr } };
+				receiveResult(null, ui);
+			}
 		});
 	});
 };
@@ -88,22 +114,38 @@ $.fn.autocompleteselectmultiple = function(options) {
 
 			if (prev.indexOf("|"+pk+"|") == -1) {
 				$this.val((prev ? prev : "|") + pk + "|");
-				addKiller(ui.item.repr, pk);
+				addKiller(ui.item.repr, pk, ui.item.url);
 				$text.val('');
 				$deck.trigger("added");
+				$this.change();
 			}
 
 			return false;
 		}
 
-		function addKiller(repr, pk) {
+		function addKiller(repr, pk, url) {
 			killer_id = "kill_" + pk + id;
 			killButton = '<span class="ui-icon ui-icon-trash" id="'+killer_id+'">X</span> ';
-			$deck.append('<div id="'+id+'_on_deck_'+pk+'">' + killButton + repr + ' </div>');
+			var item_content = null;
+			if (url) {
+				item_content = '<div id="'+ id +'_on_deck_' + pk + '">' +
+					killButton + '<a href="' + url + '" target="_blank">' + repr + '</a></div>';
+			} else {
+				item_content = '<div id="'+id+'_on_deck_'+pk+'">' + killButton + repr + ' </div>';
+			}
+			$deck.append(item_content);
 
 			$("#"+killer_id).click(function() {
-				kill(pk);
-				$deck.trigger("killed");
+				if (options.confirm_text){
+					var delete_item = confirm(options.confirm_text);
+					if (delete_item) {
+						kill(pk);
+						$deck.trigger("killed");
+					}
+				} else {
+					kill(pk);
+					$deck.trigger("killed");
+				}
 			});
 		}
 
