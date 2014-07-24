@@ -44,7 +44,7 @@ def ajax_lookup(request, channel):
         } for item in instances
     ])
 
-    return HttpResponse(results, mimetype='application/javascript')
+    return HttpResponse(results, content_type='application/javascript')
 
 
 def add_popup(request, app_label, model):
