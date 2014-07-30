@@ -9,7 +9,7 @@ except ImportError:
     from setuptools import setup
 
 setup(name='bob-ajax-selects',
-    version='1.4.0',
+    version='1.4.1',
     description='jQuery-powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
     author='Kamil Warguła, crucialfelix',
     author_email='kwargula@gmail.com crucialfelix@gmail.com',
