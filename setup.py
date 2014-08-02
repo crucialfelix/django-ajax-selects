@@ -9,8 +9,8 @@ except ImportError:
 
 setup(
     name='django-ajax-selects',
-    version='1.3.4',
-    description='jQuery-powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
+    version='1.3.5',
+    description='jQuery-UI powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
     author='crucialfelix',
     author_email='crucialfelix@gmail.com',
     url='https://github.com/crucialfelix/django-ajax-selects/',
@@ -40,7 +40,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Software Development :: User Interfaces",
         "Framework :: Django",
-        ],
+    ],
     long_description="""\
 Enables editing of `ForeignKey`, `ManyToManyField` and `CharField` using jQuery UI AutoComplete.
 
