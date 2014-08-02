@@ -1,5 +1,5 @@
 """JQuery-Ajax Autocomplete fields for Django Forms"""
-__version__ = "1.3.4"
+__version__ = "1.3.5"
 __author__ = "crucialfelix"
 __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "https://github.com/crucialfelix/django-ajax-selects/"
@@ -49,7 +49,8 @@ class LookupChannel(object):
         # this will be however the related objects Manager returns them
         # which is not guaranteed to be the same order they were in when you last edited
         # see OrdredManyToMany.md
-        ids = [int(id) for id in ids]
+        pk_type = self.model._meta.pk.to_python
+        ids = [pk_type(id) for id in ids]
         things = self.model.objects.in_bulk(ids)
         return [things[aid] for aid in ids if aid in things]
 

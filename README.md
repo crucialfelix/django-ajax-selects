@@ -65,7 +65,7 @@ In settings.py :
 
 In your urls.py:
 
-    from django.conf.urls.defaults import *
+    from django.conf.urls import *
 
     from django.contrib import admin
     from ajax_select import urls as ajax_select_urls
@@ -77,6 +77,8 @@ In your urls.py:
         (r'^admin/lookups/', include(ajax_select_urls)),
         (r'^admin/', include(admin.site.urls)),
     )
+
+For Django 1.3 or earlier replace the first line by `from django.conf.urls.defaults import *`.
 
 In your admin.py:
 
@@ -539,7 +541,8 @@ Contributors
 
 Many thanks to all who found bugs, asked for things, and hassled me to get a new release out.  I'm glad people find good use out of the app.
 
-In particular thanks for help in the 1.2 version:  @sjrd (Sébastien Doeraene), @brianmay
+In particular thanks for help in the 1.2 version:  @sjrd (Sébastien Doeraene)
+And much thanks to @brianmay for assistance over many releases.
 
 
 License
@@ -548,5 +551,3 @@ License
 Dual licensed under the MIT and GPL licenses:
    http://www.opensource.org/licenses/mit-license.php
    http://www.gnu.org/licenses/gpl.html
-
-
