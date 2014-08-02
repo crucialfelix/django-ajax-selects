@@ -15,7 +15,7 @@
         }
         $this.val(ui.item.pk);
         $text.val('');
-        addKiller(ui.item.repr);
+        addKiller(ui.item.repr, ui.item.pk);
         $deck.trigger('added', [ui.item.pk, ui.item]);
         $this.trigger('change');
 
