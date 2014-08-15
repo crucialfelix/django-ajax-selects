@@ -282,7 +282,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             'channel': channel,
             'help_text': help_text,
             'show_help_text': show_help_text,
-            'channel_options': kwargs.pop('channel_options', {})
+            'channel_options': kwargs.pop('channel_options', {}),
             'plugin_options': kwargs.pop('plugin_options', {})
         }
         kwargs['widget'] = AutoCompleteSelectMultipleWidget(**widget_kwargs)
