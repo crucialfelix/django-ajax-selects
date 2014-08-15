@@ -23,6 +23,10 @@ class LookupChannel(object):
     plugin_options = {}
     min_length = 1
 
+    def __init__(self, **kwargs):
+        self.__dict__.update(**kwargs)
+        super(LookupChannel, self).__init__()
+
     def get_query(self, q, request):
         """ return a query set searching for the query string q
             either implement this method yourself or set the search_field
@@ -162,7 +166,7 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
 
 ####################  private  ##################################################
 
-def get_lookup(channel):
+def get_lookup(channel, **channel_options):
     """ find the lookup class for the named channel.  this is used internally """
     try:
         lookup_label = settings.AJAX_LOOKUP_CHANNELS[channel]
@@ -195,7 +199,7 @@ def get_lookup(channel):
                 getattr(lookup_class, 'format_result',
                     lambda self, obj: force_text(obj)))
 
-        return lookup_class()
+        return lookup_class(**channel_options)
 
 
 def make_channel(app_model, arg_search_field):
