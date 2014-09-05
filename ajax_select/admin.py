@@ -15,14 +15,14 @@ class AjaxSelectAdmin(admin.ModelAdmin):
 
 class AjaxSelectAdminInlineFormsetMixin(object):
     def get_formset(self, request, obj=None, **kwargs):
-        fs = super(AjaxSelectAdminFormsetMixin, self).get_formset(request, obj, **kwargs)
+        fs = super(AjaxSelectAdminInlineFormsetMixin, self).get_formset(request, obj, **kwargs)
         autoselect_fields_check_can_add(fs.form, self.model, request.user)
         return fs
 
 
-class AjaxSelectAdminTabularInline(AjaxSelectAdminFormsetMixin, admin.TabularInline):
+class AjaxSelectAdminTabularInline(AjaxSelectAdminInlineFormsetMixin, admin.TabularInline):
     pass
 
 
-class AjaxSelectAdminStackedInline(AjaxSelectAdminFormsetMixin, admin.StackedInline):
+class AjaxSelectAdminStackedInline(AjaxSelectAdminInlineFormsetMixin, admin.StackedInline):
     pass
