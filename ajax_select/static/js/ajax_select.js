@@ -1,3 +1,15 @@
+if (typeof jQuery == 'undefined') {
+    try { // use django admins
+        jQuery=django.jQuery;
+    } catch(err) {
+        document.write('<script type="text/javascript"  src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"><\/script>');
+    }
+}
+if(typeof jQuery == 'undefined' || (typeof jQuery.ui == 'undefined')) {
+    document.write('<script type="text/javascript"  src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"><\/script>');
+    document.write('<link type="text/css" rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/smoothness/jquery-ui.css" />');
+}
+//]]>
 
 if(typeof jQuery.fn.autocompletehtml != 'function') {
 
@@ -200,3 +212,88 @@ window.didAddPopup = function (win,newId,newRepr) {
 })(jQuery);
 
 }
+
+
+var BobAjaxSelect = (function (window, undefined) {
+    'use strict';
+
+    var instance;
+
+    var BobAjaxSelectAPI = function () {}
+
+    BobAjaxSelectAPI.prototype.register_text_field = function (selector, options) {
+        addAutoComplete(selector, function(html_id) {
+            options['select'] =
+                function(event, ui) {
+                    $("#"+html_id).val(ui.item.value).trigger("added");
+                    return false;
+                }
+            $("#"+html_id).autocomplete(options).autocompletehtml();
+        });
+    }
+
+    BobAjaxSelectAPI.prototype.register_select_field = function (selector, options) {
+        addAutoComplete(selector, function(html_id) {
+           $("#"+html_id).autocompleteselect(options);
+        });
+    }
+
+    BobAjaxSelectAPI.prototype.register_selectmultiple_field = function (selector, options) {
+        addAutoComplete(selector, function(html_id) {
+           $("#"+html_id).autocompleteselectmultiple(options);
+        });
+    }
+
+    BobAjaxSelectAPI.prototype.register_fields = function (type, selector, options) {
+        var instance = BobAjaxSelect.getInstance();
+        switch (type) {
+            case 'text':
+                instance.register_text_field(selector, options);
+                break;
+            case 'select':
+                instance.register_select_field(selector, options);
+                break;
+            case 'selectmultiple':
+                instance.register_selectmultiple_field(selector, options);
+                break;
+        }
+    }
+
+    BobAjaxSelectAPI.prototype.register_on_load = function () {
+        var instance = BobAjaxSelect.getInstance();
+        var text_fields = $('[data-bob-text-field-options]');
+        var select_fields = $('[data-bob-select-field-options]');
+        var selectmultiple_fields = $('[data-bob-selectmultiple-field-options]');
+        var fields = {
+            'text': text_fields,
+            'select': select_fields,
+            'selectmultiple': selectmultiple_fields,
+        }
+
+        $.each( fields, function( key, values ) {
+            var data_name = 'bob-' + key + '-field-options';
+            $.each( values, function( i, field ) {
+                instance.register_fields(
+                    key, field.id, $(field).data(data_name)
+                );
+            });
+        });
+    }
+
+    var getInstance = function () {
+        if (!instance) {
+            instance = new BobAjaxSelectAPI();
+        }
+        return instance;
+    }
+
+    return {
+        getInstance: getInstance
+    }
+
+})(window);
+
+$(document).ready(function() {
+    bob_ajax_select_instance = BobAjaxSelect.getInstance();
+    bob_ajax_select_instance.register_on_load();
+});
