@@ -1,19 +1,8 @@
-{% if bootstrap %}{% include "ajax_select/bootstrap.html" %}{% endif %}
 <input type="text" name="{{name}}_text" id="{{html_id}}_text" value="" {{ extra_attrs }} />
 {% if add_link %}
 	<a href="{{ add_link }}" class="add-another addlink" id="add_{{ html_id }}" onclick="return showAddAnotherPopup(this);"> add</a>
 {% endif %}
-<input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" />
+<input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" data-bob-selectmultiple-field-options='{{ plugin_options }}' />
 <div id="{{html_id}}_on_deck" class="results_on_deck"></div>
-<script type="text/javascript">//<![CDATA[
-jQuery(document).ready(function($){
-	addAutoComplete("{{html_id}}", function(html_id) {
-		$("#"+html_id).autocompleteselectmultiple({{plugin_options}});
-	});
-{% block extra_script %}{% endblock %}
-});
-//]]>
-</script>
 {# django admin adds the help text. this is for use outside of the admin #}
 {% block help %}{% if help_text %}<p class="help">{{help_text}}</p>{% endif %}{% endblock %}
-{{ inline }}
