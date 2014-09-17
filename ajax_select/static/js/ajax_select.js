@@ -244,7 +244,7 @@ var BobAjaxSelect = (function (window, undefined) {
         });
     }
 
-    BobAjaxSelectAPI.prototype.register_fields = function (type, selector, options) {
+    BobAjaxSelectAPI.prototype._register_fields = function (type, selector, options) {
         var instance = BobAjaxSelect.getInstance();
         switch (type) {
             case 'text':
@@ -259,11 +259,11 @@ var BobAjaxSelect = (function (window, undefined) {
         }
     }
 
-    BobAjaxSelectAPI.prototype.register_on_load = function () {
+    BobAjaxSelectAPI.prototype.register_in_element = function (element) {
         var instance = BobAjaxSelect.getInstance();
-        var text_fields = $('[data-bob-text-field-options]');
-        var select_fields = $('[data-bob-select-field-options]');
-        var selectmultiple_fields = $('[data-bob-selectmultiple-field-options]');
+        var text_fields = $(element).find('[data-bob-text-field-options]');
+        var select_fields = $(element).find('[data-bob-select-field-options]');
+        var selectmultiple_fields = $(element).find('[data-bob-selectmultiple-field-options]');
         var fields = {
             'text': text_fields,
             'select': select_fields,
@@ -273,11 +273,17 @@ var BobAjaxSelect = (function (window, undefined) {
         $.each( fields, function( key, values ) {
             var data_name = 'bob-' + key + '-field-options';
             $.each( values, function( i, field ) {
-                instance.register_fields(
+                instance._register_fields(
                     key, field.id, $(field).data(data_name)
                 );
             });
         });
+    }
+
+
+    BobAjaxSelectAPI.prototype.register_on_load = function () {
+        var instance = BobAjaxSelect.getInstance();
+        instance.register_in_element($('body'));
     }
 
     var getInstance = function () {
