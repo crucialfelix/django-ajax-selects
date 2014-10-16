@@ -1,88 +1,697 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset='utf-8'>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Django-ajax-selects by crucialfelix</title>
 
-  <title>crucialfelix/django-ajax-selects @ GitHub</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Django-ajax-selects</h1>
+        <p>jQuery UI-powered auto-complete fields for ForeignKey, ManyToMany and text fields</p>
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #dfe79c;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #201863; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #201863; }
-    h3 { text-align: center; color: #201863; }
-    a { color: #201863; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
+        <p class="view"><a href="https://github.com/crucialfelix/django-ajax-selects">View the Project on GitHub <small>crucialfelix/django-ajax-selects</small></a></p>
 
-<body>
-  <a href="https://github.com/crucialfelix/django-ajax-selects"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 
-  <div id="container">
+        <ul>
+          <li><a href="https://github.com/crucialfelix/django-ajax-selects/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/crucialfelix/django-ajax-selects/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/crucialfelix/django-ajax-selects">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>Enables editing of <code>ForeignKey</code>, <code>ManyToMany</code> and <code>CharField</code> using jQuery UI Autocomplete.</p>
 
-    <div class="download">
-      <a href="https://github.com/crucialfelix/django-ajax-selects/zipball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
-      <a href="https://github.com/crucialfelix/django-ajax-selects/tarball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
+<h1>
+<a name="user-experience" class="anchor" href="#user-experience"><span class="octicon octicon-link"></span></a>User experience</h1>
+
+<p>selecting:</p>
+
+<p><img src="http://media.crucial-systems.com/posts/selecting.png"></p>
+
+<p>selected:</p>
+
+<p><img src="http://media.crucial-systems.com/posts/selected.png"></p>
+
+<p>[Note: screen shots are from the older version. Styling has changed slightly]</p>
+
+<ol>
+<li>User types a few characters</li>
+<li>Ajax request sent to the server</li>
+<li>The dropdown menu shows choices</li>
+<li>User selects by clicking or using arrow keys</li>
+<li>Selected result displays in the "deck" area directly below the input field.</li>
+<li>User can click trashcan icon to remove a selected item</li>
+</ol>
+
+<h1>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h1>
+
+<ul>
+<li>Works in any form including the Django Admin</li>
+<li>Popup to add a new item</li>
+<li>Admin inlines</li>
+<li>Compatible with widget/form media, staticfiles, asset compressors etc.</li>
+<li>Automatically Loads jQuery UI  mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN</li>
+<li>Customize HTML, CSS and JS</li>
+<li>JQuery triggers allow you to customize interface behavior to respond when items are added or removed</li>
+<li>Default (but customizable) security prevents griefers from pilfering your data via JSON requests</li>
+</ul>
+
+<h1>
+<a name="quick-installation" class="anchor" href="#quick-installation"><span class="octicon octicon-link"></span></a>Quick Installation</h1>
+
+<p>Get it</p>
+
+<pre><code>`pip install django-ajax-selects`
+</code></pre>
+
+<p>or
+    download or checkout the distribution</p>
+
+<p>In settings.py :</p>
+
+<pre><code># add the app
+INSTALLED_APPS = (
+            ...,
+            'django.contrib.staticfiles',
+            'ajax_select'
+            )
+
+# define the lookup channels in use on the site
+AJAX_LOOKUP_CHANNELS = {
+    #  simple: search Person.objects.filter(name__icontains=q)
+    'person'  : {'model': 'example.person', 'search_field': 'name'},
+    # define a custom lookup channel
+    'song'   : ('example.lookups', 'SongLookup')
+}
+</code></pre>
+
+<p>In your urls.py:</p>
+
+<pre><code>from django.conf.urls import *
+
+from django.contrib import admin
+from ajax_select import urls as ajax_select_urls
+
+admin.autodiscover()
+
+urlpatterns = patterns('',
+    # include the lookup urls
+    (r'^admin/lookups/', include(ajax_select_urls)),
+    (r'^admin/', include(admin.site.urls)),
+)
+</code></pre>
+
+<p>For Django 1.3 or earlier replace the first line by <code>from django.conf.urls.defaults import *</code>.</p>
+
+<p>In your admin.py:</p>
+
+<pre><code>from django.contrib import admin
+from ajax_select import make_ajax_form
+from ajax_select.admin import AjaxSelectAdmin
+from example.models import *
+
+class PersonAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(Person,PersonAdmin)
+
+class SongAdmin(AjaxSelectAdmin):
+    # create an ajax form class using the factory function
+    #                     model,fieldlist,   [form superclass]
+    form = make_ajax_form(Label,{'owner':'person'})
+admin.site.register(Label,LabelAdmin)
+</code></pre>
+
+<p>example/lookups.py:</p>
+
+<pre><code>from ajax_select import LookupChannel
+
+class SongLookup(LookupChannel):
+
+    model = Song
+
+    def get_query(self,q,request):
+        return Song.objects.filter(title__icontains=q).order_by('title')
+</code></pre>
+
+<h1>
+<a name="not-so-quick-installation" class="anchor" href="#not-so-quick-installation"><span class="octicon octicon-link"></span></a>NOT SO QUICK INSTALLATION</h1>
+
+<p>Things that can be customized:</p>
+
+<ul>
+<li>define custom <code>LookupChannel</code> classes to customize:
+
+<ul>
+<li>HTML formatting for the drop down results and the item-selected display</li>
+<li>custom search queries, ordering, user specific filtered results</li>
+<li>custom channel security (default is staff only)</li>
+</ul>
+</li>
+<li>each channel can define its own template to add controls or javascript</li>
+<li>JS can respond to jQuery triggers when items are selected or removed</li>
+<li>custom CSS</li>
+<li>how and from where jQuery, jQueryUI, jQueryUI theme are loaded</li>
+</ul>
+
+<h1>
+<a name="architecture" class="anchor" href="#architecture"><span class="octicon octicon-link"></span></a>Architecture</h1>
+
+<p>A single view services all of the ajax search requests, delegating the searches to named 'channels'.</p>
+
+<p>A simple channel can be specified in settings.py, a more complex one (with custom search, formatting, personalization or auth requirements) can be written in a lookups.py file.</p>
+
+<p>Each model that needs to be searched for has a channel defined for it. More than one channel may be defined for a Model to serve different needs such as public vs admin or channels that filter the query by specific categories etc. The channel also has access to the request and the user so it can personalize the query results.  Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.</p>
+
+<p>There are three model field types with corresponding form fields and widgets:</p>
+
+<table>
+<tr>
+<th>Database field</th>
+<th>Form field</th>
+<th>Form widget</th>
+</tr>
+<tr>
+<td>models.CharField</td>
+<td>AutoCompleteField</td>
+<td>AutoCompleteWidget</td>
+</tr>
+<tr>
+<td>models.ForeignKey</td>
+<td>AutoCompleteSelectField</td>
+<td>AutoCompleteSelectWidget</td>
+</tr>
+<tr>
+<td>models.ManyToManyField</td>
+<td>AutoCompleteSelectMultipleField</td>
+<td>AutoCompleteSelectMultipleWidget</td>
+</tr>
+</table>
+
+<p>Generally the helper functions documented below can be used to generate a complete form or an individual field (with widget) for a form.  In rare cases you might need to specify the ajax form field explicitly in your Form.</p>
+
+<h1>
+<a name="example-app" class="anchor" href="#example-app"><span class="octicon octicon-link"></span></a>Example App</h1>
+
+<p>See the example app for a full working admin site with many variations and comments. It installs quickly using virtualenv and sqllite and comes fully configured.</p>
+
+<h2>
+<a name="settingspy" class="anchor" href="#settingspy"><span class="octicon octicon-link"></span></a>settings.py</h2>
+
+<h4>
+<a name="ajax_lookup_channels" class="anchor" href="#ajax_lookup_channels"><span class="octicon octicon-link"></span></a>AJAX_LOOKUP_CHANNELS</h4>
+
+<p>Defines the available lookup channels.</p>
+
+<ul>
+<li>
+<p>channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }</p>
+
+<blockquote>
+<p>This will create a channel automatically</p>
+</blockquote>
+
+<p>channel_name : ( 'app.lookups', 'YourLookup' )
+    This points to a custom Lookup channel name YourLookup in app/lookups.py</p>
+
+<p>AJAX_LOOKUP_CHANNELS = {
+    #   channel : dict with settings to create a channel
+    'person'  : {'model':'example.person', 'search_field':'name'},</p>
+
+<pre><code># channel: ( module.where_lookup_is, ClassNameOfLookup )
+'song'   : ('example.lookups', 'SongLookup'),
+</code></pre>
+
+<p>}</p>
+</li>
+</ul>
+
+<h4>
+<a name="ajax_select_bootstrap" class="anchor" href="#ajax_select_bootstrap"><span class="octicon octicon-link"></span></a>AJAX_SELECT_BOOTSTRAP</h4>
+
+<p>By default it will include bootstrap.js in the widget media which will locate or load jQuery and jQuery-UI.</p>
+
+<p>In other words, by default it will just work.</p>
+
+<p>If you don't want it do that, in settings.py:
+    AJAX_SELECT_BOOTSTRAP = False</p>
+
+<p>First one wins:</p>
+
+<ul>
+<li> window.jQuery - if you already included jQuery on the page</li>
+<li> or loads: //ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js</li>
+</ul>
+
+<p>Likewise for jQuery-UI:</p>
+
+<ul>
+<li>window.jQuery.ui</li>
+<li>or loads: //ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/jquery-ui.min.js
+with theme: //ajax.googleapis.com/ajax/libs/jqueryui/1.8.24/themes/smoothness/jquery-ui.css</li>
+</ul>
+
+<p>If you want your own custom theme then load jquery ui and your css first.</p>
+
+<p>Warning: the latest jQueryUI seems to have issues with the autocomplete.  I would rather switch to the much nicer select2 than try to get the latest jQuery UI to work.  Its a lot of js and css to load just for a dropdown.</p>
+
+<h2>
+<a name="urlspy" class="anchor" href="#urlspy"><span class="octicon octicon-link"></span></a>urls.py</h2>
+
+<p>Simply include the ajax_select urls in your site's urlpatterns:</p>
+
+<pre><code>from django.conf.urls.defaults import *
+
+from django.contrib import admin
+from ajax_select import urls as ajax_select_urls
+
+admin.autodiscover()
+
+urlpatterns = patterns('',
+    (r'^admin/lookups/', include(ajax_select_urls)),
+    (r'^admin/', include(admin.site.urls)),
+)
+</code></pre>
+
+<h2>
+<a name="lookupspy" class="anchor" href="#lookupspy"><span class="octicon octicon-link"></span></a>lookups.py</h2>
+
+<p>By convention this is where you would define custom lookup channels</p>
+
+<p>Subclass <code>LookupChannel</code> and override any method you wish to customize.</p>
+
+<p>1.1x Upgrade note: previous versions did not have a parent class. The methods format_result and format_item have been renamed to format_match and format_item_display respectively.
+Those old lookup channels will still work and the previous methods will be used.  It is still better to adjust your lookup channels to inherit from the new base class.</p>
+
+<pre><code>from ajax_select import LookupChannel
+from django.utils.html import escape
+from django.db.models import Q
+from example.models import *
+
+class PersonLookup(LookupChannel):
+
+    model = Person
+
+    def get_query(self,q,request):
+        return Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name')
+
+    def get_result(self,obj):
+        u""" result is the simple text that is the completion of what the person typed """
+        return obj.name
+
+    def format_match(self,obj):
+        """ (HTML) formatted item for display in the dropdown """
+        return self.format_item_display(obj)
+
+    def format_item_display(self,obj):
+        """ (HTML) formatted item for displaying item in the selected deck area """
+        return u"%s&lt;div&gt;&lt;i&gt;%s&lt;/i&gt;&lt;/div&gt;" % (escape(obj.name),escape(obj.email))
+
+Note that raw strings should always be escaped with the escape() function
+</code></pre>
+
+<h4>
+<a name="methods-you-can-override-in-your-lookupchannel" class="anchor" href="#methods-you-can-override-in-your-lookupchannel"><span class="octicon octicon-link"></span></a>Methods you can override in your <code>LookupChannel</code>
+</h4>
+
+<h6>
+<a name="model-property" class="anchor" href="#model-property"><span class="octicon octicon-link"></span></a>model [property]</h6>
+
+<p>The model class this channel searches</p>
+
+<h6>
+<a name="plugin_options-property-default" class="anchor" href="#plugin_options-property-default"><span class="octicon octicon-link"></span></a>plugin_options [property, default={}]</h6>
+
+<p>Set any options for the jQuery plugin. This includes:</p>
+
+<ul>
+<li>minLength</li>
+<li>autoFocus</li>
+<li>disabled</li>
+<li>position</li>
+<li>source - setting this would overide the normal ajax URL. could be used to add URL query params</li>
+</ul>
+
+<p>See <a href="http://docs.jquery.com/UI/Autocomplete#options">http://docs.jquery.com/UI/Autocomplete#options</a></p>
+
+<p>The field or widget may also specify plugin_options that will overwrite those specified by the channel.</p>
+
+<h6>
+<a name="min_length-property-default1" class="anchor" href="#min_length-property-default1"><span class="octicon octicon-link"></span></a>min_length [property, default=1]</h6>
+
+<p>This is a jQuery plugin option.  It is preferred to set this in the plugin_options dict, but this older style attribute will still be honored.</p>
+
+<p>Minimum query length to return a result.  Large datasets can choke if they search too often with small queries.
+Better to demand at least 2 or 3 characters.
+This param is also used in jQuery's UI when filtering results from its own cache.</p>
+
+<h6>
+<a name="search_field-property-optional" class="anchor" href="#search_field-property-optional"><span class="octicon octicon-link"></span></a>search_field [property, optional]</h6>
+
+<p>Name of the field for the query to search with icontains.  This is used only in the default get_query implementation.
+Usually better to just implement your own get_query</p>
+
+<h6>
+<a name="get_queryselfqrequest" class="anchor" href="#get_queryselfqrequest"><span class="octicon octicon-link"></span></a>get_query(self,q,request)</h6>
+
+<p>return a query set searching for the query string q, ordering as appropriate.
+Either implement this method yourself or set the search_field property.
+Note that you may return any iterable so you can even use yield and turn this method into a generator,
+or return an generator or list comprehension.</p>
+
+<h6>
+<a name="get_resultselfobj" class="anchor" href="#get_resultselfobj"><span class="octicon octicon-link"></span></a>get_result(self,obj):</h6>
+
+<p>The text result of autocompleting the entered query.  This is currently displayed only for a moment in the text field
+after the user has selected the item.  Then the item is displayed in the item_display deck and the text field is cleared.
+Future versions may offer different handlers for how to display the selected item(s).  In the current version you may
+add extra script and use triggers to customize.</p>
+
+<h6>
+<a name="format_matchselfobj" class="anchor" href="#format_matchselfobj"><span class="octicon octicon-link"></span></a>format_match(self,obj):</h6>
+
+<p>(HTML) formatted item for displaying item in the result dropdown</p>
+
+<h6>
+<a name="format_item_displayselfobj" class="anchor" href="#format_item_displayselfobj"><span class="octicon octicon-link"></span></a>format_item_display(self,obj):</h6>
+
+<p>(HTML) formatted item for displaying item in the selected deck area (directly below the text field).
+Note that we use jQuery .position() to correctly place the deck area below the text field regardless of
+whether the widget is in the admin, and admin inline or an outside form.  ie. it does not depend on django's
+admin css to correctly place the selected display area.</p>
+
+<h6>
+<a name="get_objectsselfids" class="anchor" href="#get_objectsselfids"><span class="octicon octicon-link"></span></a>get_objects(self,ids):</h6>
+
+<p>Get the currently selected objects when editing an existing model</p>
+
+<p>Note that the order of the ids supplied for ManyToMany fields is dependent on how the objects manager fetches it.
+ie. what is returned by yourmodel.fieldname_set.all()</p>
+
+<p>In most situations (especially postgres) this order is random, not the order that you originally added them in the interface.  With a bit of hacking I have convinced it to preserve the order [see OrderedManyToMany.md for solution]</p>
+
+<h6>
+<a name="can_addself-user-argmodel" class="anchor" href="#can_addself-user-argmodel"><span class="octicon octicon-link"></span></a>can_add(self, user, argmodel):</h6>
+
+<p>Check if the user has permission to add one of these models.
+This enables the green popup +
+Default is the standard django permission check</p>
+
+<h6>
+<a name="check_authselfrequest" class="anchor" href="#check_authselfrequest"><span class="octicon octicon-link"></span></a>check_auth(self,request):</h6>
+
+<p>To ensure that nobody can get your data via json simply by knowing the URL.
+The default is to limit it to request.user.is_staff and raise a PermissionDenied exception.
+By default this is an error with a 401 response, but your middleware may intercept and choose to do other things.</p>
+
+<p>Public facing forms should write a custom <code>LookupChannel</code> to implement as needed.
+Also you could choose to return HttpResponseForbidden("who are you?") instead of raising PermissionDenied</p>
+
+<h2>
+<a name="adminpy" class="anchor" href="#adminpy"><span class="octicon octicon-link"></span></a>admin.py</h2>
+
+<h4>
+<a name="make_ajax_formmodel-fieldlist-superclassmodelform-show_help_textfalse" class="anchor" href="#make_ajax_formmodel-fieldlist-superclassmodelform-show_help_textfalse"><span class="octicon octicon-link"></span></a>make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False)</h4>
+
+<p>If your application does not otherwise require a custom Form class then you can use the make_ajax_form helper to create the entire form directly in admin.py.  See forms.py below for cases where you wish to make your own Form.</p>
+
+<ul>
+<li>
+<em>model</em>: your model</li>
+<li>
+<em>fieldlist</em>: a dict of {fieldname : channel_name, ... }</li>
+<li>
+<em>superclass</em>: [default ModelForm] Substitute a different superclass for the constructed Form class.</li>
+<li>
+<em>show_help_text</em>: [default False]
+Leave blank [False] if using this form in a standard Admin.
+Set it True for InlineAdmin classes or if making a form for use outside of the Admin.</li>
+</ul>
+
+<h6>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h6>
+
+<pre><code>from ajax_select import make_ajax_form
+from ajax_select.admin import AjaxSelectAdmin
+from yourapp.models import YourModel
+
+class YourModelAdmin(AjaxSelectAdmin):
+    # create an ajax form class using the factory function
+    #                     model, fieldlist,   [form superclass]
+    form = make_ajax_form(Label, {'owner': 'person'})
+
+admin.site.register(YourModel,YourModelAdmin)
+</code></pre>
+
+<p>You may use AjaxSelectAdmin as a mixin class and multiple inherit if you have another Admin class that you would like to use.  You may also just add the hook into your own Admin class:</p>
+
+<pre><code>def get_form(self, request, obj=None, **kwargs):
+    form = super(YourAdminClass, self).get_form(request, obj, **kwargs)
+    autoselect_fields_check_can_add(form, self.model, request.user)
+    return form
+</code></pre>
+
+<p>Note that ajax_selects does not need to be in an admin.  Popups will still use an admin view (the registered admin for the model being added), even if the form from where the popup was launched does not.</p>
+
+<h2>
+<a name="formspy" class="anchor" href="#formspy"><span class="octicon octicon-link"></span></a>forms.py</h2>
+
+<p>subclass ModelForm just as usual.  You may add ajax fields using the helper or directly.</p>
+
+<h4>
+<a name="make_ajax_fieldmodel-model_fieldname-channel-show_help_textfalse-kwargs" class="anchor" href="#make_ajax_fieldmodel-model_fieldname-channel-show_help_textfalse-kwargs"><span class="octicon octicon-link"></span></a>make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwargs)</h4>
+
+<p>A factory function to makes an ajax field + widget.  The helper ensures things are set correctly and simplifies usage and imports thus reducing programmer error.  All kwargs are passed into the Field so it is no less customizable.</p>
+
+<ul>
+<li>
+<em>model</em>:              the model that this ModelForm is for</li>
+<li>
+<em>model_fieldname</em>:    the field on the model that is being edited (ForeignKey, ManyToManyField or CharField)</li>
+<li>
+<em>channel</em>:            the lookup channel to use for searches</li>
+<li>
+<em>show_help_text</em>:      [default False]  Whether to show the help text inside the widget itself.
+                    When using in AdminInline or outside of the admin then set it to True.</li>
+<li>
+<p><em>kwargs</em>:             Additional kwargs are passed on to the form field.
+Of interest:
+    help_text="Custom help text"
+or:
+    # do not show any help at all
+    help_text=None</p>
+
+<p>plugin_options - directly specify jQuery plugin options.  see Lookup plugin_options above</p>
+</li>
+</ul>
+
+<h5>
+<a name="example-1" class="anchor" href="#example-1"><span class="octicon octicon-link"></span></a>Example</h5>
+
+<pre><code>from ajax_select import make_ajax_field
+
+class ReleaseForm(ModelForm):
+
+    class Meta:
+        model = Release
+
+    group  = make_ajax_field(Release, 'group', 'group', help_text=None)
+</code></pre>
+
+<h4>
+<a name="without-using-the-helper" class="anchor" href="#without-using-the-helper"><span class="octicon octicon-link"></span></a>Without using the helper</h4>
+
+<pre><code>from ajax_select.fields import AutoCompleteSelectField
+
+class ReleaseForm(ModelForm):
+
+    group = AutoCompleteSelectField('group', required=False, help_text=None)
+</code></pre>
+
+<h4>
+<a name="setting-plugin-options" class="anchor" href="#setting-plugin-options"><span class="octicon octicon-link"></span></a>Setting plugin options</h4>
+
+<pre><code>from ajax_select.fields import AutoCompleteSelectField
+
+class ReleaseForm(ModelForm):
+
+    group = AutoCompleteSelectField('group', required=False, help_text=None, plugin_options = {'autoFocus': True, 'minLength': 4})
+</code></pre>
+
+<h4>
+<a name="using-ajax-selects-in-a-formset" class="anchor" href="#using-ajax-selects-in-a-formset"><span class="octicon octicon-link"></span></a>Using ajax selects in a <code>FormSet</code>
+</h4>
+
+<p>There is possibly a better way to do this, but here is an initial example:</p>
+
+<p><code>forms.py</code></p>
+
+<pre><code>from django.forms.models import modelformset_factory
+from django.forms.models import BaseModelFormSet
+from ajax_select.fields import AutoCompleteSelectMultipleField, AutoCompleteSelectField
+
+from models import *
+
+# create a superclass
+class BaseTaskFormSet(BaseModelFormSet):
+
+    # that adds the field in, overwriting the previous default field
+    def add_fields(self, form, index):
+        super(BaseTaskFormSet, self).add_fields(form, index)
+        form.fields["project"] = AutoCompleteSelectField('project', required=False)
+
+# pass in the base formset class to the factory
+TaskFormSet = modelformset_factory(Task, fields=('name', 'project', 'area'),extra=0, formset=BaseTaskFormSet)
+</code></pre>
+
+<h2>
+<a name="templates" class="anchor" href="#templates"><span class="octicon octicon-link"></span></a>templates/</h2>
+
+<p>Each form field widget is rendered using a template.  You may write a custom template per channel and extend the base template in order to implement these blocks:</p>
+
+<pre><code>{% block extra_script %}{% endblock %}
+{% block help %}{% endblock %}
+</code></pre>
+
+<table>
+    <tr>
+<th>form Field</th>
+<th>tries this first</th>
+<th>default template</th>
+</tr>
+    <tr>
+<td>AutoCompleteField</td>
+<td>templates/autocomplete_{{CHANNELNAME}}.html</td>
+<td>templates/autocomplete.html</td>
+</tr> <tr>
+<td>AutoCompleteSelectField</td>
+<td>templates/autocompleteselect_{{CHANNELNAME}}.html</td>
+<td>templates/autocompleteselect.html</td>
+</tr>
+ <tr>
+<td>AutoCompleteSelectMultipleField</td>
+<td>templates/autocompleteselectmultiple_{{CHANNELNAME}}.html</td>
+<td>templates/autocompleteselectmultiple.html</td>
+</tr>
+</table>
+
+<p>See ajax_select/static/js/ajax_select.js below for the use of jQuery trigger events</p>
+
+<h2>
+<a name="ajax_selectstaticcssajax_selectcss" class="anchor" href="#ajax_selectstaticcssajax_selectcss"><span class="octicon octicon-link"></span></a>ajax_select/static/css/ajax_select.css</h2>
+
+<p>If you are using <code>django.contrib.staticfiles</code> then you can implement <code>ajax_select.css</code> and put your app ahead of ajax_select to cause it to be collected by the management command <code>collectfiles</code>.</p>
+
+<p>If you are doing your own compress stack then of course you can include whatever version you want.</p>
+
+<p>The display style now uses the jQuery UI theme and actually I find the drop down to be not very charming.  The previous version (1.1x) which used the external jQuery AutoComplete plugin had nicer styling.  I might decide to make the default more like that with alternating color rows and a stronger sense of focused item.  Also the current jQuery one wiggles.</p>
+
+<p>The trashcan icon comes from the jQueryUI theme by the css classes:</p>
+
+<pre><code>"ui-icon ui-icon-trash"
+</code></pre>
+
+<p>The css declaration:</p>
+
+<pre><code>.results_on_deck .ui-icon.ui-icon-trash { }
+</code></pre>
+
+<p>would be "stronger" than jQuery's style declaration and thus you could make trash look less trashy.</p>
+
+<h2>
+<a name="ajax_selectstaticjsajax_selectjs" class="anchor" href="#ajax_selectstaticjsajax_selectjs"><span class="octicon octicon-link"></span></a>ajax_select/static/js/ajax_select.js</h2>
+
+<p>You probably don't want to mess with this one.  But by using the extra_script block as detailed in templates/ above you can add extra javascript, particularily to respond to event Triggers.</p>
+
+<p>Triggers are a great way to keep code clean and untangled. see: <a href="http://docs.jquery.com/Events/trigger">http://docs.jquery.com/Events/trigger</a></p>
+
+<p>Two triggers/signals are sent: 'added' and 'killed'. These are sent to the $("#{{html_id}}_on_deck") element. That is the area that surrounds the currently selected items.</p>
+
+<p>Extend the template, implement the extra_script block and bind functions that will respond to the trigger:</p>
+
+<h5>
+<a name="multi-select" class="anchor" href="#multi-select"><span class="octicon octicon-link"></span></a>multi select:</h5>
+
+<pre><code>{% block extra_script %}
+    $("#{{html_id}}_on_deck").bind('added',function() {
+            id = $("#{{html_id}}").val();
+            alert('added id:' + id );
+    });
+    $("#{{html_id}}_on_deck").bind('killed',function() {
+            current = $("#{{html_id}}").val()
+            alert('removed, current is:' + current);
+    });
+{% endblock %}
+</code></pre>
+
+<h5>
+<a name="select" class="anchor" href="#select"><span class="octicon octicon-link"></span></a>select:</h5>
+
+<pre><code>{% block extra_script %}
+    $("#{{html_id}}_on_deck").bind('added',function() {
+            id = $("#{{html_id}}").val();
+            alert('added id:' + id );
+    });
+    $("#{{html_id}}_on_deck").bind('killed',function() {
+            alert('removed');
+    });
+{% endblock %}
+</code></pre>
+
+<h5>
+<a name="auto-complete-text-field" class="anchor" href="#auto-complete-text-field"><span class="octicon octicon-link"></span></a>auto-complete text field:</h5>
+
+<pre><code>{% block extra_script %}
+    $('#{{ html_id }}').bind('added',function() {
+            entered = $('#{{ html_id }}').val();
+            alert( entered );
+    });
+{% endblock %}
+</code></pre>
+
+<p>There is no remove as there is no kill/delete button in a simple auto-complete.
+The user may clear the text themselves but there is no javascript involved. Its just a text field.</p>
+
+<h2>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h2>
+
+<p>Many thanks to all who found bugs, asked for things, and hassled me to get a new release out.  I'm glad people find good use out of the app.</p>
+
+<p>In particular thanks for help in the 1.2 version:  <a href="https://github.com/sjrd" class="user-mention">@sjrd</a> (Sébastien Doeraene)
+And much thanks to <a href="https://github.com/brianmay" class="user-mention">@brianmay</a> for assistance over many releases.</p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Dual licensed under the MIT and GPL licenses:
+   <a href="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a>
+   <a href="http://www.gnu.org/licenses/gpl.html">http://www.gnu.org/licenses/gpl.html</a></p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/crucialfelix">crucialfelix</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-154147-9");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
 
-    <h1><a href="https://github.com/crucialfelix/django-ajax-selects">django-ajax-selects</a>
-      <span class="small">by <a href="https://github.com/crucialfelix">crucialfelix</a></span></h1>
-
-    <div class="description">
-      jQuery UI-powered auto-complete fields for ForeignKey, ManyToMany and Text fields
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-      <h2>Authors</h2>
-      <p>crucialfelix (crucialfelix@gmail.com)      </p>
-    
-
-    
-      <h2>Contact</h2>
-      <p> (crucialfelix@gmail.com)<br/>      </p>
-    
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="https://github.com/crucialfelix/django-ajax-selects/zipball/master">zip</a> or
-      <a href="https://github.com/crucialfelix/django-ajax-selects/tarball/master">tar formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/crucialfelix/django-ajax-selects</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="https://github.com/crucialfelix/django-ajax-selects">crucialfelix/django-ajax-selects</a>
-    </div>
-
-  </div>
-
-</body>
+  </body>
 </html>
