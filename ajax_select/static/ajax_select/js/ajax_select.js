@@ -1,5 +1,5 @@
 
-if(typeof jQuery.fn.autocompletehtml != 'function') {
+if(typeof $jq16.fn.autocompletehtml != 'function') {
 
 (function($) {
 
@@ -155,6 +155,6 @@ window.didAddPopup = function (win,newId,newRepr) {
 	win.close();
 }
 
-})(jQuery);
+})($jq16);
 
 }
