@@ -157,6 +157,9 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
             channel,
             **kwargs
             )
+    # Django 1.7 admin needs a limit_choices_to attribute on field
+    if not hasattr(f, 'limit_choices_to'):
+        f.limit_choices_to = None
     return f
 
 
