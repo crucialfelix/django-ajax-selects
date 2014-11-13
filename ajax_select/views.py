@@ -31,12 +31,19 @@ def ajax_lookup(request, channel):
     else:
         instances = []
 
+    def origin(item):
+        origlu = getattr(item, 'origin', None)
+        if not origlu:
+            return None
+        return origlu.model.__name__
+
     results = simplejson.dumps([
         {
             'pk': unicode(getattr(item, 'pk', None)),
             'value': lookup.get_result(item),
             'match': lookup.format_match(item),
-            'repr': lookup.format_item_display(item)
+            'repr': lookup.format_item_display(item),
+            'origin': origin(item),
         } for item in instances
     ])
 
