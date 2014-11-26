@@ -73,6 +73,37 @@ class LookupChannel(object):
             raise PermissionDenied
 
 
+class CascadeLookupChannel(LookupChannel):
+    """Similar to LookupChannel, but it allows to narrow its results according
+    to the result from the parent lookup channel (if specified).
+    Such result comes here as 'parent_pk', which always will be an integer
+    (representing parent object's id).
+    In order to use this class, you should override 'get_cascading_query' method
+    instead of the usual 'get_query'.
+    """
+    def get_cascading_query(self, query, request, parent_pk):
+        """
+        This method should be overriden. By default, parent_pk is ignored.
+        """
+        return super(CascadeLookupChannel, self).get_query(query, request)
+
+    def get_query(self, query, request):
+        """
+        Gets the parent_pk from request and calls self.get_dependent_query.
+        You should override self.get_dependent_query instead of this method.
+        """
+        if request.method == "GET":
+            if 'parent_pk' not in request.GET:
+                parent_pk = None
+            else:
+                parent_pk = request.GET['parent_pk']
+        else:
+            if 'parent_pk' not in request.POST:
+                parent_pk = None
+            else:
+                parent_pk = request.POST['parent_pk']
+        return self.get_cascading_query(query, request, parent_pk)
+
 
 def make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False,**kwargs):
     """ Creates a ModelForm subclass with autocomplete fields
@@ -203,5 +234,3 @@ def make_channel(app_model,arg_search_field):
         search_field = arg_search_field
 
     return MadeLookupChannel()
-
-
