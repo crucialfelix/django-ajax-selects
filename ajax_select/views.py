@@ -69,4 +69,3 @@ def add_popup(request,app_label,model):
         if 'opener.dismissAddAnotherPopup' in response.content:
             return HttpResponse( response.content.replace('dismissAddAnotherPopup','didAddPopup' ) )
     return response
-

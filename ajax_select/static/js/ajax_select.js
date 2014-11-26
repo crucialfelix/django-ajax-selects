@@ -210,9 +210,7 @@ window.didAddPopup = function (win,newId,newRepr) {
 }
 
 })(jQuery);
-
 }
-
 
 var BobAjaxSelect = (function (window, undefined) {
     'use strict';
@@ -278,6 +276,40 @@ var BobAjaxSelect = (function (window, undefined) {
                 );
             });
         });
+
+        // handler for AutoCompleteCascadeSelectField - in the future, it might be better
+        // to convert it to one of those '$.fn.autocompleteselect...' functions
+        (function () {
+            // iterate over all child inputs having 'data-parent-id' as an attribute
+            $('input[data-parent-id]').each(function (i, input) {
+                var childId = input.id.substring(0, input.id.length - 5);
+                var childHiddenSel = 'input[type=hidden]#' + childId;
+                var parentDeck = $('#' + $(input).data('parentId') + '_on_deck');
+                var childDeck = $('#' + childId + '_on_deck');
+                // get the original AJAX source from options
+                var options = $(input).data('autocomplete').options;
+                var source = options.source;
+                // get the initial value that may be already selected on parent
+                var parent = $('#' + $(input).data('parentId'));
+                var pk = parseInt(parent.val(), 10) || void 0;
+                // get/reset the pk's value from parent when it's added/removed
+                parentDeck.on('added', function () {
+                    pk = parseInt(parent.val(), 10) || void 0;
+                });
+                parentDeck.on('killed', function () {
+                    pk = void 0;
+                });
+                // reset the value of the hidden child field when it's deck gets killed
+                childDeck.on('killed', function () {
+                    $(childHiddenSel).val('');
+                })
+                // modify the autocomplete function in a way that it apart the usual query
+                // (term) it should also send the value selected in the parent field (pk)
+                $(input).autocomplete("option", "source", function(request, response) {
+                    $.getJSON(source, {'term': request.term, 'parent_pk': pk}, response);
+                });
+            });
+        })();
     }
 
 
