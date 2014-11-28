@@ -1,0 +1,2 @@
+install:
+	pip install -e .
