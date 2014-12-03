@@ -309,6 +309,45 @@ var BobAjaxSelect = (function (window, undefined) {
                     $.getJSON(source, {'term': request.term, 'parent_pk': pk}, response);
                 });
             });
+            // similar as above, but for CascadeModelChoiceField
+            $('select[data-parent-id]').each(function (i, input) {
+                var parentDeck = $('#' + $(input).data('parentId') + '_on_deck');
+                var parent = $('#' + $(input).data('parentId'));
+                var pk = parseInt(parent.val(), 10) || void 0;
+                var source = $(input).attr('data-channel');
+                var clearChoices = function (input) {
+                    $(input).find('option').remove();
+                    $(input).append($('<option></option>').val('').html('---------'));
+                };
+                var getChoices = function (input, pk, initial) {
+                    var optionSelected = $(input).find('option[selected=selected]').val()
+                    $.ajax({
+                        'type': 'GET',
+                        'url': source + '?term=' + pk,
+                        'dataType': 'json',
+                        'cache': false,
+                        'success': function (json) {
+                            clearChoices(input);
+                            for (var i = 0; i < json.length; i++) {
+                                $(input).append($('<option></option>').val(json[i].pk).html(json[i].value));
+                            };
+                            if (initial === true) {
+                                $(input).find('option[value=' + optionSelected + ']').attr('selected', 'selected');
+                            };
+                        }
+                    });
+                };
+                // initialization of available choices, hence 'true' as third argument
+                getChoices(input, pk, true);
+                parentDeck.on('added', function () {
+                    pk = parseInt(parent.val(), 10) || void 0;
+                    getChoices(input, pk);
+                });
+                parentDeck.on('killed', function () {
+                    pk = void 0;
+                    clearChoices(input);
+                });
+            });
         })();
     }
 
