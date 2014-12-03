@@ -15,6 +15,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.forms.util import flatatt
+from django.template import Context, Template
 from django.template.defaultfilters import escapejs
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
@@ -26,7 +27,7 @@ from django.utils import simplejson
 as_default_help = u'Enter text to search.'
 
 
-####################################################################################
+###############################################################################
 
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
@@ -143,7 +144,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
         _check_can_add(self,user,model)
 
 
-####################################################################################
+###############################################################################
 
 class AutoCompleteCascadeSelectField(AutoCompleteSelectField):
     """An extension of AutoCompleteSelectField, which allows selecting values
@@ -156,6 +157,15 @@ class AutoCompleteCascadeSelectField(AutoCompleteSelectField):
        *parent* field (e.g. attrs={'id': 'id_parent_field'}) - this id will be
        available here as parent_field_widget_id.
     And also, this field should be used together with CascadeLookupChannel.
+    Example usage:
+
+    phone_model = AutoCompleteCascadeSelectField(
+        ('phoneapp.channels', 'PhoneModelLookup'),
+        required=True,  # optional
+        label=_('Phone model'),
+        # 'parent_field' should be an instance of AutoCompleteSelectField
+        parent_field=phone_manufacturer,
+     )
     """
     def __init__(self, channel, *args, **kwargs):
         if 'parent_field' in kwargs:
@@ -164,17 +174,70 @@ class AutoCompleteCascadeSelectField(AutoCompleteSelectField):
             attrs = kwargs.pop('attrs', {})
             attrs.update({'data-parent-id': parent_field_widget_id})
             widget_kwargs = dict(
-                channel = channel,
-                help_text = kwargs.get('help_text',_(as_default_help)),
-                show_help_text = kwargs.pop('show_help_text', True),
-                plugin_options = kwargs.pop('plugin_options', {}),
-                attrs = attrs,
+                channel=channel,
+                help_text=kwargs.get('help_text', _(as_default_help)),
+                show_help_text=kwargs.pop('show_help_text', True),
+                plugin_options=kwargs.pop('plugin_options', {}),
+                attrs=attrs,
             )
             kwargs['widget'] = AutoCompleteSelectWidget(**widget_kwargs)
-        super(AutoCompleteCascadeSelectField, self).__init__(channel, *args, **kwargs)
+        super(AutoCompleteCascadeSelectField, self).__init__(channel, *args,
+                                                             **kwargs)
 
 
-####################################################################################
+###############################################################################
+
+class CascadeSelect(forms.Select):
+    """A slightly modified version of forms.Select - added generation of
+    'data-channel' attribute based on the 'channel' value passed to init
+    and base URL where lookups should be attached ('ajax_lookup').
+    """
+    def __init__(self, channel, attrs=None, choices=()):
+        super(CascadeSelect, self).__init__(attrs, choices)
+        self.channel = channel
+
+    def render(self, name, value, attrs=None, choices=()):
+        t = Template('{% url ajax_lookup channel %}')
+        c = Context({'channel': self.channel})
+        channel = t.render(c)
+        attrs.update({'data-channel': channel})
+        if value is None:
+            value = ''
+        final_attrs = self.build_attrs(attrs, name=name)
+        output = [u'<select%s>' % flatatt(final_attrs)]
+        options = self.render_options(choices, [value])
+        if options:
+            output.append(options)
+        output.append(u'</select>')
+        return mark_safe(u'\n'.join(output))
+
+
+class CascadeModelChoiceField(forms.ModelChoiceField):
+    """An extension of ModelChoiceField adjusted for cascading selects in a
+    similar fashion as AutoCompleteCascadeSelectField. Example usage:
+
+    phone_model = CascadeModelChoiceField(
+        ('phoneapp.channels', 'PhoneModelLookup'),
+        label=_('Phone model'),
+        queryset=PhoneModel.objects.all(),
+        # 'parent_field' should be an instance of AutoCompleteSelectField
+        parent_field=phone_manufacturer,
+    )
+    """
+    def __init__(self, channel, *args, **kwargs):
+        if 'parent_field' in kwargs:
+            channel = cPickle.dumps(channel)
+            channel = base64.b64encode(channel)
+            parent_field = kwargs.pop('parent_field')
+            parent_field_widget_id = parent_field.widget.attrs.get('id')
+            attrs = kwargs.pop('attrs', {})
+            attrs.update({'data-parent-id': parent_field_widget_id})
+            widget_kwargs = dict(attrs=attrs)
+            kwargs['widget'] = CascadeSelect(channel, **widget_kwargs)
+        super(CascadeModelChoiceField, self).__init__(*args, **kwargs)
+
+
+###############################################################################
 
 class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
@@ -318,7 +381,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         _check_can_add(self,user,model)
 
 
-####################################################################################
+###############################################################################
 
 class AutoCompleteWidget(forms.TextInput):
     """
@@ -391,7 +454,7 @@ class AutoCompleteField(forms.CharField):
         super(AutoCompleteField, self).__init__(*args, **defaults)
 
 
-####################################################################################
+###############################################################################
 
 def _check_can_add(self,user,model):
     """ check if the user can add the model, deferring first to
