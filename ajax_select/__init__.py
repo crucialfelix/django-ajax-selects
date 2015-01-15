@@ -132,7 +132,10 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
                                    AutoCompleteSelectMultipleField, \
                                    AutoCompleteSelectField
 
-    field = model._meta.get_field(model_fieldname)
+    field, _ignore, direct, _ignore = model._meta.get_field_by_name(model_fieldname)
+    if not direct:
+        field = field.field
+
     if not 'label' in kwargs:
         kwargs['label'] = _(capfirst(force_text(field.verbose_name)))
 
