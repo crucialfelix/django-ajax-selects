@@ -91,7 +91,7 @@ In your admin.py:
         pass
     admin.site.register(Person,PersonAdmin)
 
-    class SongAdmin(AjaxSelectAdmin):
+    class LabelAdmin(AjaxSelectAdmin):
         # create an ajax form class using the factory function
         #                     model,fieldlist,   [form superclass]
         form = make_ajax_form(Label,{'owner':'person'})
