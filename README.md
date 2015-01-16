@@ -33,7 +33,7 @@ Features
 + JQuery triggers allow you to customize interface behavior to respond when items are added or removed
 + Default (but customizable) security prevents griefers from pilfering your data via JSON requests
 
-
+Supported Django version: 1.6 and newer
 
 Quick Installation
 ==================
