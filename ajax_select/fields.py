@@ -499,7 +499,7 @@ def plugin_options(channel,channel_name,widget_plugin_options,initial):
         channel = base64.b64encode(channel)
         po['source'] = reverse('ajax_lookup',kwargs={'channel': channel})
     return {
-        'plugin_options': mark_safe(simplejson.dumps(po)),
+        'plugin_options': simplejson.dumps(po),
         # continue to support any custom templates that still expect these
         'lookup_url': po['source'],
         'min_length': po['min_length']
