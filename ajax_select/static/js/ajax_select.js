@@ -339,15 +339,25 @@ var BobAjaxSelect = (function (window, undefined) {
                 };
                 // initialization of available choices, hence 'true' as third argument
                 getChoices(input, pk, true);
-                parentDeck.on('added', function () {
-                    pk = parseInt(parent.val(), 10) || void 0;
-                    getChoices(input, pk);
-                });
-                parentDeck.on('killed', function () {
-                    pk = void 0;
-                    clearChoices(input);
-                });
+                if (parentDeck.length === 0) {
+                    // parent field's widget is simple *select*
+                    $('#' + $(input).data('parentId')).on('change', function () {
+                        pk = parseInt(parent.val(), 10) || void 0;
+                        getChoices(input, pk);
+                    });
+                } else {
+                    // parent field's widget is *AutoCompleteSelectWidget*
+                    parentDeck.on('added', function () {
+                        pk = parseInt(parent.val(), 10) || void 0;
+                        getChoices(input, pk);
+                    });
+                    parentDeck.on('killed', function () {
+                        pk = void 0;
+                        clearChoices(input);
+                    });
+                }
             });
+
         })();
     }
 

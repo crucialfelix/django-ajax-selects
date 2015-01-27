@@ -220,9 +220,19 @@ class CascadeModelChoiceField(forms.ModelChoiceField):
         ('phoneapp.channels', 'PhoneModelLookup'),
         label=_('Phone model'),
         queryset=PhoneModel.objects.all(),
-        # 'parent_field' should be an instance of AutoCompleteSelectField
+        # 'parent_field' should be an instance of:
+        # AutoCompleteSelectField or ModelChoiceField
         parent_field=phone_manufacturer,
     )
+
+    In addition phone_manufacturer's widget ``id`` MUST be set, like::
+
+        phone_manufacturer = ModelChoiceField(
+            ..
+            widget=Select(attrs={'id': 'data-center-selection'}),
+            ..
+        )
+
     """
     def __init__(self, channel, *args, **kwargs):
         if 'parent_field' in kwargs:
@@ -230,10 +240,13 @@ class CascadeModelChoiceField(forms.ModelChoiceField):
             channel = base64.b64encode(channel)
             parent_field = kwargs.pop('parent_field')
             parent_field_widget_id = parent_field.widget.attrs.get('id')
-            attrs = kwargs.pop('attrs', {})
-            attrs.update({'data-parent-id': parent_field_widget_id})
-            widget_kwargs = dict(attrs=attrs)
-            kwargs['widget'] = CascadeSelect(channel, **widget_kwargs)
+            if not parent_field_widget_id:
+                raise Exception(
+                    "Set 'id' attribute on triggering field's widget"
+                )
+            widget_attrs = kwargs.pop('attrs', {})
+            widget_attrs.update({'data-parent-id': parent_field_widget_id})
+            kwargs['widget'] = CascadeSelect(channel, attrs=widget_attrs)
         super(CascadeModelChoiceField, self).__init__(*args, **kwargs)
 
 
