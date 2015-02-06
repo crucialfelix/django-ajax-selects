@@ -62,6 +62,10 @@ In settings.py :
         'song'   : ('example.lookups', 'SongLookup')
     }
 
+    # define a default ajax lookup method, this can be overridden
+    # by plugin options provided by either field or lookup channel
+    AJAX_LOOKUP_METHOD = 'POST' | 'GET'
+
 
 In your urls.py:
 
@@ -235,8 +239,8 @@ Those old lookup channels will still work and the previous methods will be used.
 
         model = Person
 
-        def get_query(self,q,request):
-            return Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name')
+        def get_query(self,q,request,offset=None,limit=None):
+            return self._apply_limits(Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name'),offset,limit)
 
         def get_result(self,obj):
             u""" result is the simple text that is the completion of what the person typed """
@@ -268,8 +272,21 @@ Set any options for the jQuery plugin. This includes:
 + disabled
 + position
 + source - setting this would overide the normal ajax URL. could be used to add URL query params
++ limit - limits the number of results returned by the service lookup, defaults to 30
++ method - specifies the lookup query method, one of 'GET' or 'POST', defaults to settings.AJAX_LOOKUP_METHOD, or 'GET'
 
 See http://docs.jquery.com/UI/Autocomplete#options
+
+####### limit [property, default=30]
+
+This is a non standard option for Autocomplete that can be set by the user on either field or lookup. Defaults to 30.
+This option will limit the number of results returned by the server on each lookup. Whenever the user scrolls the item
+list to its end, the system will try to retrieve more results from the server.
+
+####### method [property, default='GET']
+
+This is a non standard option for Autocomplete that can be set to override the default request method used when
+trying to retrieve results from the server. Defaults to 'GET'.
 
 The field or widget may also specify plugin_options that will overwrite those specified by the channel.
 
@@ -286,10 +303,13 @@ This param is also used in jQuery's UI when filtering results from its own cache
 Name of the field for the query to search with icontains.  This is used only in the default get_query implementation.
 Usually better to just implement your own get_query
 
-######  get_query(self,q,request)
+######  get_query(self,q,request,offset=None,limit=None)
 
-return a query set searching for the query string q, ordering as appropriate.
+return a query set searching for the query string q, ordering as appropriate. The optional parameters offset and limit
+will be applied on the query set by invoking the `_apply_limits` method and returning the result returned by that method.
 Either implement this method yourself or set the search_field property.
+When overriding this method, you may want to also call `_apply_limits` to further limit the results of your query, depending
+on your specific use case.
 Note that you may return any iterable so you can even use yield and turn this method into a generator,
 or return an generator or list comprehension.
 

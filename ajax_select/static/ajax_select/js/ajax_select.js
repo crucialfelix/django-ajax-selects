@@ -117,6 +117,8 @@
     /* detects inline forms and converts the html_id if needed */
     if (html_id.indexOf('__prefix__') !== -1) {
       // Some dirty loop to find the appropriate element to apply the callback to
+      // TODO:this is suboptimal, make this a simple loop over the results from $(...)
+      // TODO:WTF is the use of this?
       while ($('#' + html_id).length) {
         html_id = prefix_id.replace(/__prefix__/, prefix++);
       }
@@ -145,19 +147,139 @@
 
   $.extend(proto, {
     _initSource: function() {
-      if (this.options.html && $.isArray(this.options.source)) {
+      if ($.isArray(this.options.source)) {
         this.source = function(request, response) {
           response(filter(this.options.source, request.term));
         };
-      } else {
-        initSource.call(this);
+      } else if (typeof this.options.source == 'string') {
+        // make source a function that will fetch new results the
+        // first time it gets called and reset the current scroll 
+        // state accordingly.
+
+        var self = this;
+        // flag that prevents us from binding the scroll event
+        // handler multiple times
+        self.isMenuScrollEventBound = false;
+        this.source = function(request, response) {
+          // abort existing request when available
+          if (self.xhr) {
+            self.xhr.abort();
+          }
+
+          // initialize offset
+          self._offset = 0;
+          // end of file marker in case that subsequent requests
+          // yield an empty result which will prevent us from making
+          // redundant roundtrips to the server
+          self._eof = false;
+
+          // use sensible defaults if non were provided
+          if (typeof self.options.limit == 'undefined') {
+            self.options.limit = 3;
+          }
+
+          request.offset = self._offset;
+          request.limit = self.options.limit;
+          self._requestIncrementally(request, response);
+        }
       }
+      else {
+        throw new Error('source must be either an array or a url');
+      }
+    },
+    // Adapted from http://jsfiddle.net/LesignButure/EVsye/
+    _renderMenu: function (ul, items) {
+
+      var self = this;
+      $.each(items, function (index, item) {
+        self._renderItemData(ul, item);
+      });
+      if (!$.isArray(this.options.source)) {
+        var $ul = $(ul);
+
+        if (!self.isMenuScrollEventBound) {
+          self.isMenuScrollEventBound = true;
+          $ul.scroll(function () {
+
+            function isScrollbarBottom(container) {
+              var height = container.outerHeight();
+              var scrollHeight = container[0].scrollHeight;
+              var scrollTop = container.scrollTop();
+
+              return scrollTop >= scrollHeight - height;
+            };
+
+            // prevent this from querying the server if no more results are available
+            if (!self._eof && isScrollbarBottom($ul)) {
+
+              self._addSpinner(ul);
+              self._requestIncrementally({term:self.term, offset:self._offset, limit:self._limit}, function (results) {
+
+                self._removeSpinner(ul);
+                if (results.length == 0) {
+                  self.data('eof', true);
+                }
+                else {
+                  // render items
+                  $.each(results, function (index, item) {
+                    self._renderItemData(ul, item);
+                  });
+
+                  // refresh menu
+                  self.menu.deactivate();
+                  self.menu.refresh();
+                  // size and position menu
+                  $ul.show();
+                  self._resizeMenu();
+                  $ul.position($.extend({
+                    of: self.element
+                  }, self.options.position));
+                  if (self.options.autoFocus) {
+                    self.menu.next(new $.Event("mouseover"));
+                  }
+                }
+              });
+            }
+          });
+        }
+      }
+    },
+    _addSpinner: function(ul) {
+      // TODO:implement
+    },
+    _removeSpinner: function(ul) {
+      // TODO:implement
+    },
+    _requestIncrementally: function(request, response) {
+
+      var self = this;
+      this.xhr = $.ajax({
+        url : self.options.source,
+        type : self.options.method,
+        data : request,
+        dataFilter : function (data, type) {
+          // we assume that the result is a valid json array
+          return $.parseJSON(data);
+        },
+        success : function (data, textStatus, jqXHR) {
+          if (data.length < self.options.limit) {
+            self._eof = true;
+          }
+          // update current offset
+          self._offset += data.length;
+          response(data);
+        },
+        error : function (jqXHR, textStatus, errorThrown) {
+          // TODO:error handling
+          // For now we will simply mimic the original behaviour
+          response([]);
+        }
+      });
     },
     _renderItem: function(ul, item) {
       var body = this.options.html ? item.match: item.label;
-      return $('<li></li>')
-        .data('item.autocomplete', item)
-        .append($('<a></a>')[this.options.html ? 'html' : 'text' ](body))
+      return $('<li>')
+        .append($('<a>')[this.options.html ? 'html' : 'text' ](body))
         .appendTo(ul);
     }
   });
@@ -203,6 +325,8 @@
     // if dynamically injecting forms onto a page
     // you can trigger them to be ajax-selects-ified:
     $(window).trigger('init-autocomplete');
+
+    // TODO:eats some performance each time any of these are clicked - really necessary?
     $('.inline-group ul.tools a.add, .inline-group div.add-row a, .inline-group .tabular tr.add-row td a').on('click', function() {
       $(window).trigger('init-autocomplete');
     });

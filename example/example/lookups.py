@@ -9,8 +9,8 @@ class PersonLookup(LookupChannel):
 
     model = Person
 
-    def get_query(self, q, request):
-        return Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name')
+    def get_query(self, q, request, offset=None, limit=None):
+        return self._apply_limits(Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name'), offset, limit)
 
     def get_result(self, obj):
         u""" result is the simple text that is the completion of what the person typed """
@@ -30,8 +30,8 @@ class GroupLookup(LookupChannel):
 
     model = Group
 
-    def get_query(self, q, request):
-        return Group.objects.filter(name__icontains=q).order_by('name')
+    def get_query(self, q, request, offset=None, limit=None):
+        return self._apply_limits(Group.objects.filter(name__icontains=q).order_by('name'), offset, limit)
 
     def get_result(self, obj):
         return unicode(obj)
@@ -54,8 +54,8 @@ class SongLookup(LookupChannel):
 
     model = Song
 
-    def get_query(self, q, request):
-        return Song.objects.filter(title__icontains=q).select_related('group').order_by('title')
+    def get_query(self, q, request, offset=None, limit=None):
+        return self._apply_limits(Song.objects.filter(title__icontains=q).select_related('group').order_by('title'), offset, limit)
 
     def get_result(self, obj):
         return unicode(obj.title)
@@ -129,7 +129,7 @@ class ClicheLookup(LookupChannel):
         u"cat's pajamas",
         u"cat got your tongue?"]
 
-    def get_query(self, q, request):
+    def get_query(self, q, request, offset=None, limit=None):
         return sorted([w for w in self.words if q in w])
 
     def get_result(self, obj):
