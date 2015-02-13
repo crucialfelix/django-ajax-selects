@@ -92,7 +92,7 @@ def make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False,
     class TheForm(superclass):
 
         class Meta:
-            pass
+            fields = '__all__'
         setattr(Meta, 'model', model)
         if hasattr(superclass, 'Meta'):
             if hasattr(superclass.Meta, 'fields'):
