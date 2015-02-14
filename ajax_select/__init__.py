@@ -23,13 +23,13 @@ class LookupChannel(object):
     plugin_options = {}
     min_length = 1
 
-    def get_query(self, q, request):
+    def get_query(self, q, request, offset=None, limit=None):
         """ return a query set searching for the query string q
             either implement this method yourself or set the search_field
             in the LookupChannel class definition
         """
         kwargs = {"%s__icontains" % self.search_field: q}
-        return self.model.objects.filter(**kwargs).order_by(self.search_field)
+        return self._apply_limits(self.model.objects.filter(**kwargs).order_by(self.search_field), offset, limit)
 
     def get_result(self, obj):
         """ The text result of autocompleting the entered query """
@@ -70,6 +70,26 @@ class LookupChannel(object):
          """
         if not request.user.is_staff:
             raise PermissionDenied
+
+    def _apply_limits(self, queryset, offset, limit):
+
+        result = queryset
+
+        if offset is not None:
+
+            if limit is not None:
+
+                result = queryset[offset:offset + limit]
+
+            else:
+
+                result = queryset[offset:]
+
+        elif limit is not None:
+
+            result = queryset[:limit]
+
+        return result
 
 
 def make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False, **kwargs):

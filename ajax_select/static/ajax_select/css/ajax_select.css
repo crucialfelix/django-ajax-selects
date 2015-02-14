@@ -29,10 +29,16 @@ ul.ui-autocomplete {
 
 	fixed width is harder see http://stackoverflow.com/questions/4607164/changing-width-of-jquery-ui-autocomplete-widgets-individually
 */
+    max-height: 100px;
     max-width: 60%;
+
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
 
 	margin: 0;
 	padding: 0;
+    padding-right: 20px;
 	position: absolute;
 }
 ul.ui-autocomplete li {
@@ -43,4 +49,10 @@ ul.ui-autocomplete li a {
 	display: block;
 	padding: 2px 3px;
 	cursor: pointer;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+    height: 100px;
 }
