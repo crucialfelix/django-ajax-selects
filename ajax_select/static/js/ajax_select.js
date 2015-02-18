@@ -337,8 +337,14 @@ var BobAjaxSelect = (function (window, undefined) {
                         }
                     });
                 };
-                // initialization of available choices, hence 'true' as third argument
-                getChoices(input, pk, true);
+                if(typeof pk === 'undefined'){
+                    // clear possible child choices if parent is undefined (ex. on empty, initial form)
+                    clearChoices(input);
+                }
+                else{
+                    // initialization of available choices, hence 'true' as third argument
+                    getChoices(input, pk, true);
+                }
                 if (parentDeck.length === 0) {
                     // parent field's widget is simple *select*
                     $('#' + $(input).data('parentId')).on('change', function () {
