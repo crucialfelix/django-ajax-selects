@@ -180,6 +180,39 @@ $.fn.autocompleteselectmultiple = function(options) {
 			ui = { item: { pk: pk, repr: repr } }
 			receiveResult(null, ui);
 		});
+
+		function resetWidget() {
+            var allSelects = $this.parent().children('div');
+            allSelects.slice(1).remove();
+            $(allSelects[0]).children().remove();
+            $this.val("|");
+		}
+
+		$this.change(function (ev) {
+			if (typeof ev.cloneSource !== 'undefined') {
+                resetWidget();
+
+				var pk = ev.cloneSource.val();
+                var pks = pk.split('|').slice(1, -1);
+
+                var divs = ev.cloneSource.next().children('div');
+                $.each(divs, function(key, item) {
+                    var repr = $(item).children('a').html();
+                    pk = pks[key];
+                    var ui = {
+                        item: {
+                            label: pk,
+                            match: repr,
+                            pk: pk,
+                            repr: repr,
+                            url: $(item).children('a').attr('href'),
+                            value: pk
+                        }
+                    };
+                    receiveResult(null, ui);
+                });
+			}
+		});
 	});
 };
 
