@@ -225,13 +225,35 @@ class CascadeModelChoiceField(forms.ModelChoiceField):
         parent_field=phone_manufacturer,
     )
 
-    In addition phone_manufacturer's widget ``id`` MUST be set, like::
+    In addition phone_manufacturer's widget ``id`` CAN be set, like::
 
         phone_manufacturer = ModelChoiceField(
             ..
             widget=Select(attrs={'id': 'data-center-selection'}),
             ..
         )
+
+    or when using in formset id should be set in form dynamically, like below:
+
+        class UserForm(forms.ModelForm):
+            class Meta:
+                model = User
+                fields = ("country", "city")
+
+            country = AutoCompleteSelectField(
+                ('app.channels', 'CountryLookup'),
+            )
+            city = CascadeModelChoiceField(
+                ('app.channels', 'CityLookup'),
+                queryset=City.objects.all(),
+                parent_field=country,
+            )
+
+            def __init__(self, *args, **kwargs):
+                super(UserForm, self).__init__(*args, **kwargs)
+                self['city'].field.widget.attrs['data-parent-id'] = (
+                    self['country'].auto_id
+                )
 
     """
     def __init__(self, channel, *args, **kwargs):
@@ -240,12 +262,9 @@ class CascadeModelChoiceField(forms.ModelChoiceField):
             channel = base64.b64encode(channel)
             parent_field = kwargs.pop('parent_field')
             parent_field_widget_id = parent_field.widget.attrs.get('id')
-            if not parent_field_widget_id:
-                raise Exception(
-                    "Set 'id' attribute on triggering field's widget"
-                )
             widget_attrs = kwargs.pop('attrs', {})
-            widget_attrs.update({'data-parent-id': parent_field_widget_id})
+            if parent_field_widget_id:
+                widget_attrs.update({'data-parent-id': parent_field_widget_id})
             kwargs['widget'] = CascadeSelect(channel, attrs=widget_attrs)
         super(CascadeModelChoiceField, self).__init__(*args, **kwargs)
 
