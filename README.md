@@ -65,7 +65,7 @@ In settings.py :
 
 In your urls.py:
 
-    from django.conf.urls import *
+    from django.conf.urls import patterns, include
 
     from django.contrib import admin
     from ajax_select import urls as ajax_select_urls
@@ -84,17 +84,17 @@ In your admin.py:
     from django.contrib import admin
     from ajax_select import make_ajax_form
     from ajax_select.admin import AjaxSelectAdmin
-    from example.models import *
+    from example.models import Person, Label
 
     class PersonAdmin(admin.ModelAdmin):
         pass
-    admin.site.register(Person,PersonAdmin)
+    admin.site.register(Person, PersonAdmin)
 
     class LabelAdmin(AjaxSelectAdmin):
         # create an ajax form class using the factory function
         #                     model,fieldlist,   [form superclass]
-        form = make_ajax_form(Label,{'owner':'person'})
-    admin.site.register(Label,LabelAdmin)
+        form = make_ajax_form(Label, {'owner': 'person'})
+    admin.site.register(Label, LabelAdmin)
 
 example/lookups.py:
 
@@ -104,7 +104,7 @@ example/lookups.py:
 
         model = Song
 
-        def get_query(self,q,request):
+        def get_query(self, q, request):
             return Song.objects.filter(title__icontains=q).order_by('title')
 
 
@@ -158,7 +158,7 @@ settings.py
 
 Defines the available lookup channels.
 
-+ channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search' }
++ channel_name : {'model': 'app.modelname', 'search_field': 'name_of_field_to_search'}
 > This will create a channel automatically
 
     channel_name : ( 'app.lookups', 'YourLookup' )
@@ -166,10 +166,10 @@ Defines the available lookup channels.
 
     AJAX_LOOKUP_CHANNELS = {
         #   channel : dict with settings to create a channel
-        'person'  : {'model':'example.person', 'search_field':'name'},
+        'person': {'model': 'example.person', 'search_field': 'name'},
 
         # channel: ( module.where_lookup_is, ClassNameOfLookup )
-        'song'   : ('example.lookups', 'SongLookup'),
+        'song': ('example.lookups', 'SongLookup'),
     }
 
 #### AJAX_SELECT_BOOTSTRAP
@@ -202,7 +202,7 @@ urls.py
 
 Simply include the ajax_select urls in your site's urlpatterns:
 
-    from django.conf.urls.defaults import *
+    from django.conf.urls.defaults import patterns, include
 
     from django.contrib import admin
     from ajax_select import urls as ajax_select_urls
@@ -228,26 +228,26 @@ Those old lookup channels will still work and the previous methods will be used.
     from ajax_select import LookupChannel
     from django.utils.html import escape
     from django.db.models import Q
-    from example.models import *
+    from example.models import Person
 
     class PersonLookup(LookupChannel):
 
         model = Person
 
-        def get_query(self,q,request):
+        def get_query(self, q, request):
             return Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name')
 
-        def get_result(self,obj):
+        def get_result(self, obj):
             u""" result is the simple text that is the completion of what the person typed """
             return obj.name
 
-        def format_match(self,obj):
+        def format_match(self, obj):
             """ (HTML) formatted item for display in the dropdown """
             return self.format_item_display(obj)
 
-        def format_item_display(self,obj):
+        def format_item_display(self, obj):
             """ (HTML) formatted item for displaying item in the selected deck area """
-            return u"%s<div><i>%s</i></div>" % (escape(obj.name),escape(obj.email))
+            return u"%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
 
     Note that raw strings should always be escaped with the escape() function
 
@@ -435,7 +435,7 @@ There is possibly a better way to do this, but here is an initial example:
     from django.forms.models import BaseModelFormSet
     from ajax_select.fields import AutoCompleteSelectMultipleField, AutoCompleteSelectField
 
-    from models import *
+    from models import Task
 
     # create a superclass
     class BaseTaskFormSet(BaseModelFormSet):
@@ -446,7 +446,7 @@ There is possibly a better way to do this, but here is an initial example:
             form.fields["project"] = AutoCompleteSelectField('project', required=False)
 
     # pass in the base formset class to the factory
-    TaskFormSet = modelformset_factory(Task, fields=('name', 'project', 'area'),extra=0, formset=BaseTaskFormSet)
+    TaskFormSet = modelformset_factory(Task, fields=('name', 'project', 'area'), extra=0, formset=BaseTaskFormSet)
 
 
 
@@ -459,9 +459,9 @@ Each form field widget is rendered using a template.  You may write a custom tem
     {% block help %}{% endblock %}
 
 <table>
-    <tr><th>form Field</th><th>tries this first</th><th>default template</th></tr>
-    <tr><td>AutoCompleteField</td><td>templates/autocomplete_{{CHANNELNAME}}.html</td><td>templates/autocomplete.html</td></tr> <tr><td>AutoCompleteSelectField</td><td>templates/autocompleteselect_{{CHANNELNAME}}.html</td><td>templates/autocompleteselect.html</td></tr>
- <tr><td>AutoCompleteSelectMultipleField</td><td>templates/autocompleteselectmultiple_{{CHANNELNAME}}.html</td><td>templates/autocompleteselectmultiple.html</td></tr>
+  <tr><th>form Field</th><th>tries this first</th><th>default template</th></tr>
+  <tr><td>AutoCompleteField</td><td>templates/autocomplete_{{CHANNELNAME}}.html</td><td>templates/autocomplete.html</td></tr> <tr><td>AutoCompleteSelectField</td><td>templates/autocompleteselect_{{CHANNELNAME}}.html</td><td>templates/autocompleteselect.html</td></tr>
+  <tr><td>AutoCompleteSelectMultipleField</td><td>templates/autocompleteselectmultiple_{{CHANNELNAME}}.html</td><td>templates/autocompleteselectmultiple.html</td></tr>
 </table>
 
 See ajax_select/static/js/ajax_select.js below for the use of jQuery trigger events
@@ -501,35 +501,35 @@ Extend the template, implement the extra_script block and bind functions that wi
 ##### multi select:
 
     {% block extra_script %}
-        $("#{{html_id}}_on_deck").bind('added',function() {
-                id = $("#{{html_id}}").val();
-                alert('added id:' + id );
+        $("#{{html_id}}_on_deck").bind('added', function() {
+          id = $("#{{html_id}}").val();
+          alert('added id:' + id );
         });
-        $("#{{html_id}}_on_deck").bind('killed',function() {
-                current = $("#{{html_id}}").val()
-                alert('removed, current is:' + current);
+        $("#{{html_id}}_on_deck").bind('killed', function() {
+          current = $("#{{html_id}}").val()
+          alert('removed, current is:' + current);
         });
     {% endblock %}
 
 ##### select:
 
     {% block extra_script %}
-        $("#{{html_id}}_on_deck").bind('added',function() {
-                id = $("#{{html_id}}").val();
-                alert('added id:' + id );
-        });
-        $("#{{html_id}}_on_deck").bind('killed',function() {
-                alert('removed');
-        });
+      $("#{{html_id}}_on_deck").bind('added', function() {
+        id = $("#{{html_id}}").val();
+        alert('added id:' + id );
+      });
+      $("#{{html_id}}_on_deck").bind('killed', function() {
+        alert('removed');
+      });
     {% endblock %}
 
 ##### auto-complete text field:
 
     {% block extra_script %}
-        $('#{{ html_id }}').bind('added',function() {
-                entered = $('#{{ html_id }}').val();
-                alert( entered );
-        });
+      $('#{{ html_id }}').bind('added', function() {
+        entered = $('#{{ html_id }}').val();
+        alert(entered);
+      });
     {% endblock %}
 
 There is no remove as there is no kill/delete button in a simple auto-complete.

@@ -59,7 +59,8 @@ Enables editing of `ForeignKey`, `ManyToManyField` and `CharField` using jQuery 
 + Ajax Selects works in the admin and also in public facing forms.
 + Rich formatting can be easily defined for the dropdown display and the selected "deck" display.
 + Templates and CSS are fully customizable
-+ JQuery triggers enable you to add javascript to respond when items are added or removed, so other interface elements on the page can react
++ JQuery triggers enable you to add javascript to respond when items are added or removed,
+  so other interface elements on the page can react
 + Default (but customizable) security prevents griefers from pilfering your data via JSON requests
 
 """

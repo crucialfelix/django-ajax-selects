@@ -17,7 +17,7 @@ class ReleaseForm(ModelForm):
     label = make_ajax_field(Release, 'label', 'label', help_text="Search for label by name")
 
     # any extra kwargs are passed onto the field, so you may pass a custom help_text here
-    #songs = make_ajax_field(Release,'songs','song', help_text=u"Search for song by title")
+    # songs = make_ajax_field(Release,'songs','song', help_text=u"Search for song by title")
 
     # testing bug with no help text supplied
     songs = make_ajax_field(Release, 'songs', 'song', help_text="", show_help_text=True)

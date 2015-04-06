@@ -98,8 +98,8 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'add_link': self.add_link,
         }
         context.update(plugin_options(lookup, self.channel, self.plugin_options, initial))
-
-        return mark_safe(render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'), context))
+        out = render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'), context)
+        return mark_safe(out)
 
     def value_from_datadict(self, data, files, name):
 
@@ -219,8 +219,10 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'add_link': self.add_link,
         }
         context.update(plugin_options(lookup, self.channel, self.plugin_options, initial))
-
-        return mark_safe(render_to_string(('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'), context))
+        out = render_to_string(
+            ('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),
+            context)
+        return mark_safe(out)
 
     def value_from_datadict(self, data, files, name):
         # eg. 'members': ['|229|4688|190|']
@@ -248,7 +250,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             if type(help_text) == str:
                 help_text = force_text(help_text)
             # django admin appends "Hold down "Control",..." to the help text
-            # regardless of which widget is used. so even when you specify an explicit help text it appends this other default text onto the end.
+            # regardless of which widget is used. so even when you specify an explicit
+            # help text it appends this other default text onto the end.
             # This monkey patches the help text to remove that
             if help_text != '':
                 if not self._is_string(help_text):
@@ -256,7 +259,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
                     translated = help_text.translate(settings.LANGUAGE_CODE)
                 else:
                     translated = help_text
-                django_default_help = _('Hold down "Control", or "Command" on a Mac, to select more than one.').translate(settings.LANGUAGE_CODE)
+                dh = 'Hold down "Control", or "Command" on a Mac, to select more than one.'
+                django_default_help = _(dh).translate(settings.LANGUAGE_CODE)
                 if django_default_help in translated:
                     cleaned_help = translated.replace(django_default_help, '').strip()
                     # probably will not show up in translations
@@ -354,7 +358,8 @@ class AutoCompleteWidget(forms.TextInput):
 
 class AutoCompleteField(forms.CharField):
     """
-    Field uses an AutoCompleteWidget to lookup possible completions using a channel and stores raw text (not a foreign key)
+    Field uses an AutoCompleteWidget to lookup possible completions
+    using a channel and stores raw text (not a foreign key)
     """
     channel = None
 
@@ -379,10 +384,11 @@ class AutoCompleteField(forms.CharField):
 ####################################################################################
 
 def _check_can_add(self, user, model):
-    """ check if the user can add the model, deferring first to
-        the channel if it implements can_add()
-        else using django's default perm check.
-        if it can add, then enable the widget to show the + link
+    """
+    check if the user can add the model, deferring first to
+    the channel if it implements can_add()
+    else using django's default perm check.
+    if it can add, then enable the widget to show the + link
     """
     lookup = get_lookup(self.channel)
     if hasattr(lookup, 'can_add'):
@@ -391,11 +397,17 @@ def _check_can_add(self, user, model):
         ctype = ContentType.objects.get_for_model(model)
         can_add = user.has_perm("%s.add_%s" % (ctype.app_label, ctype.model))
     if can_add:
-        self.widget.add_link = reverse('add_popup', kwargs={'app_label': model._meta.app_label, 'model': model._meta.object_name.lower()})
+        self.widget.add_link = reverse('add_popup', kwargs={
+            'app_label': model._meta.app_label,
+            'model': model._meta.object_name.lower()
+        })
 
 
 def autoselect_fields_check_can_add(form, model, user):
-    """ check the form's fields for any autoselect fields and enable their widgets with + sign add links if permissions allow"""
+    """
+    check the form's fields for any autoselect fields and enable their
+    widgets with + sign add links if permissions allow
+    """
     for name, form_field in form.declared_fields.items():
         if isinstance(form_field, (AutoCompleteSelectMultipleField, AutoCompleteSelectField)):
             db_field = model._meta.get_field_by_name(name)[0]
@@ -426,4 +438,4 @@ def plugin_options(channel, channel_name, widget_plugin_options, initial):
         # continue to support any custom templates that still expect these
         'lookup_url': po['source'],
         'min_length': po['min_length']
-        }
+    }

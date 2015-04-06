@@ -134,12 +134,12 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
                                    AutoCompleteSelectField
 
     field = model._meta.get_field(model_fieldname)
-    if not 'label' in kwargs:
+    if 'label' not in kwargs:
         kwargs['label'] = _(capfirst(force_text(field.verbose_name)))
 
-    if not 'help_text' in kwargs and field.help_text:
+    if ('help_text' not in kwargs) and field.help_text:
         kwargs['help_text'] = field.help_text
-    if not 'required' in kwargs:
+    if 'required' not in kwargs:
         kwargs['required'] = not field.blank
 
     kwargs['show_help_text'] = show_help_text
@@ -161,7 +161,7 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
     return f
 
 
-####################  private  ##################################################
+# -----------------------   private  --------------------------------------------- #
 
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """
