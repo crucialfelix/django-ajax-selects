@@ -24,10 +24,13 @@ as_default_help = 'Enter text to search.'
 IS_PYTHON2 = sys.version_info[0] == 2
 
 
-def _to_number(got):
-    if IS_PYTHON2:
-        return long(got)
-    return int(got)
+def _as_pk(got):
+    # a unicode method that checks for integers
+    if got.isnumeric():
+        if IS_PYTHON2:
+            return long(got)
+        return int(got)
+    return got
 
 
 def _media(self):
@@ -105,12 +108,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         return mark_safe(out)
 
     def value_from_datadict(self, data, files, name):
-
-        got = data.get(name, None)
-        if got:
-            return _to_number(got)
-        else:
-            return None
+        return _as_pk(data.get(name, None))
 
     def id_for_label(self, id_):
         return '%s_text' % id_
@@ -229,7 +227,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
     def value_from_datadict(self, data, files, name):
         # eg. 'members': ['|229|4688|190|']
-        return [_to_number(val) for val in data.get(name, '').split('|') if val]
+        return [_as_pk(val) for val in data.get(name, '').split('|') if val]
 
     def id_for_label(self, id_):
         return '%s_text' % id_
