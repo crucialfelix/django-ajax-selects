@@ -32,7 +32,7 @@ Features
 + Customize HTML, CSS and JS
 + JQuery triggers allow you to customize interface behavior to respond when items are added or removed
 + Default (but customizable) security prevents griefers from pilfering your data via JSON requests
-
++ Django 1.6+
 
 
 Quick Installation
