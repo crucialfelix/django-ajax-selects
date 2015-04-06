@@ -9,6 +9,7 @@ class ReleaseForm(ModelForm):
 
     class Meta:
         model = Release
+        exclude = []
 
     #           args:  this model, fieldname on this model, lookup_channel_name
     group = make_ajax_field(Release, 'group', 'group', show_help_text=True)

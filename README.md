@@ -405,6 +405,7 @@ A factory function to makes an ajax field + widget.  The helper ensures things a
 
         class Meta:
             model = Release
+            exclude = []
 
         group  = make_ajax_field(Release, 'group', 'group', help_text=None)
 
