@@ -51,7 +51,7 @@ Enables editing of `ForeignKey`, `ManyToManyField` and `CharField` using jQuery 
 5. Selected result displays in the "deck" area directly below the input field.
 6. User can click trashcan icon to remove a selected item
 
-+ Django 1.4+
++ Django 1.6+
 + Optional boostrap mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
 + Compatible with staticfiles, appmedia, django-compressor etc
 + Popup to add a new item is supported
