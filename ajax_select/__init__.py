@@ -1,5 +1,5 @@
 """JQuery-Ajax Autocomplete fields for Django Forms"""
-__version__ = "1.3.5"
+__version__ = "1.3.6"
 __author__ = "crucialfelix"
 __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "https://github.com/crucialfelix/django-ajax-selects/"
@@ -92,7 +92,8 @@ def make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False,
     class TheForm(superclass):
 
         class Meta:
-            pass
+            exclude = []
+
         setattr(Meta, 'model', model)
         if hasattr(superclass, 'Meta'):
             if hasattr(superclass.Meta, 'fields'):
@@ -133,12 +134,12 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
                                    AutoCompleteSelectField
 
     field = model._meta.get_field(model_fieldname)
-    if not 'label' in kwargs:
+    if 'label' not in kwargs:
         kwargs['label'] = _(capfirst(force_text(field.verbose_name)))
 
-    if not 'help_text' in kwargs and field.help_text:
+    if ('help_text' not in kwargs) and field.help_text:
         kwargs['help_text'] = field.help_text
-    if not 'required' in kwargs:
+    if 'required' not in kwargs:
         kwargs['required'] = not field.blank
 
     kwargs['show_help_text'] = show_help_text
@@ -160,7 +161,7 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
     return f
 
 
-####################  private  ##################################################
+# -----------------------   private  --------------------------------------------- #
 
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """

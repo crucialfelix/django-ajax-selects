@@ -1,7 +1,7 @@
 
 from django.db.models import Q
 from django.utils.html import escape
-from example.models import *
+from example.models import Person, Group, Song
 from ajax_select import LookupChannel
 
 
@@ -81,7 +81,19 @@ class ClicheLookup(LookupChannel):
         u"let the cat out of the bag",
         u"fat cat",
         u"the early bird catches the worm",
-        u"catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as catch as catch can as can",
+        u"catch as catch can as catch as catch can as catch as catch can as catch as catch "
+        "can as catch as catch can as catch as catch can as catch as catch can as catch as "
+        "catch can as catch as catch can as catch as catch can as catch as catch can as catch "
+        "as catch can as catch as catch can as catch as catch can as catch as catch can as "
+        "catch as catch can as catch as catch can as catch as catch can as catch as catch "
+        "can as catch as catch can as catch as catch can as catch as catch can as catch "
+        "as catch can as catch as catch can as catch as catch can as catch as catch can "
+        "as catch as catch can as catch as catch can as catch as catch can as catch as "
+        "catch can as catch as catch can as catch as catch can as catch as catch can as "
+        "catch as catch can as catch as catch can as catch as catch can as catch as catch "
+        "can as catch as catch can as catch as catch can as catch as catch can as catch "
+        "as catch can as catch as catch can as catch as catch can as catch as catch can "
+        "as catch as catch can as catch as catch can as can",
         u"you can catch more flies with honey than with vinegar",
         u"catbird seat",
         u"cat's paw",

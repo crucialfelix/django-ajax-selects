@@ -3,7 +3,7 @@ from django.contrib import admin
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
 from example.forms import ReleaseForm
-from example.models import *
+from example.models import Person, Label, Group, Song, Release, Book, Author
 
 
 class PersonAdmin(AjaxSelectAdmin):
