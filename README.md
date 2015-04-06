@@ -78,7 +78,6 @@ In your urls.py:
         (r'^admin/', include(admin.site.urls)),
     )
 
-For Django 1.3 or earlier replace the first line by `from django.conf.urls.defaults import *`.
 
 In your admin.py:
 
