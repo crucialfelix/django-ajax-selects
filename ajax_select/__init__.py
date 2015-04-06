@@ -1,5 +1,5 @@
 """JQuery-Ajax Autocomplete fields for Django Forms"""
-__version__ = "1.3.5"
+__version__ = "1.3.6"
 __author__ = "crucialfelix"
 __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "https://github.com/crucialfelix/django-ajax-selects/"
