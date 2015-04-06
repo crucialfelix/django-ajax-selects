@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
     name='django-ajax-selects',
-    version='1.3.5',
+    version='1.3.6',
     description='jQuery-UI powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
     author='crucialfelix',
     author_email='crucialfelix@gmail.com',
@@ -51,7 +51,7 @@ Enables editing of `ForeignKey`, `ManyToManyField` and `CharField` using jQuery 
 5. Selected result displays in the "deck" area directly below the input field.
 6. User can click trashcan icon to remove a selected item
 
-+ Django 1.4+
++ Django 1.6+
 + Optional boostrap mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
 + Compatible with staticfiles, appmedia, django-compressor etc
 + Popup to add a new item is supported
