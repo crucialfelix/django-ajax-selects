@@ -1,13 +1,13 @@
 
 from django.contrib import admin
 from ajax_select import make_ajax_form
-from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
+from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline, AjaxSelectAdminStackedInline
 from example.forms import ReleaseForm
 from example.models import Person, Label, Group, Song, Release, Book, Author
 
 
 class PersonAdmin(AjaxSelectAdmin):
-
+    
     pass
 
 admin.site.register(Person, PersonAdmin)
@@ -31,10 +31,26 @@ class LabelAdmin(AjaxSelectAdmin):
 admin.site.register(Label, LabelAdmin)
 
 
+class ReleaseInline(AjaxSelectAdminStackedInline):
+    
+    # Example of the stacked inline
+
+    model = Release
+    form = make_ajax_form(Release, {
+        'group': 'group',
+        'label': 'label',
+        'songs': 'song',
+    })
+    extra = 1
+
+
 class GroupAdmin(AjaxSelectAdmin):
 
     # this shows a ManyToMany field
     form = make_ajax_form(Group, {'members': 'person'})
+    inlines = [
+        ReleaseInline
+    ]
 
 admin.site.register(Group, GroupAdmin)
 
