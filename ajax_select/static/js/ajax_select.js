@@ -129,6 +129,7 @@ define(['jquery', 'mustache', 'jquery-ui'], function ($, Mustache) {
             }
 
             function addKiller(repr, pk, url) {
+                var killer_id, killButton;
                 killer_id = "kill_" + pk + id;
                 killButton = '<span class="ui-icon ui-icon-trash" id="'+killer_id+'">X</span> ';
                 var item_content = null;
