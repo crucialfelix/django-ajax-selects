@@ -28,6 +28,7 @@ setup(
     },
     include_package_data=True,
     zip_safe=False,
+    license="MIT",
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",

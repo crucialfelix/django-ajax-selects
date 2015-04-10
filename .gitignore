@@ -1,3 +1,6 @@
 *.pyc
 *.egg-info/
 example/AJAXSELECTS/*
+.tox
+htmlcov
+.coverage

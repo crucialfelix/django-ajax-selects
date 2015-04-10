@@ -7,7 +7,7 @@ from example.models import Person, Label, Group, Song, Release, Book, Author
 
 
 class PersonAdmin(AjaxSelectAdmin):
-    
+
     pass
 
 admin.site.register(Person, PersonAdmin)
@@ -32,7 +32,7 @@ admin.site.register(Label, LabelAdmin)
 
 
 class ReleaseInline(AjaxSelectAdminStackedInline):
-    
+
     # Example of the stacked inline
 
     model = Release
