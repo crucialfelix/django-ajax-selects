@@ -1,0 +1,4 @@
+coverage
+coveralls
+flake8>=2.1.0
+tox>=1.7.0
