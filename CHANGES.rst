@@ -1,7 +1,14 @@
 Change Log
 ----------
 
-1.6
+1.6.1
+~~~~~
+Released on April 23, 2015
+
+* Used RequireJS
+
+
+1.6.0
 ~~~
 Released on April 13, 2015
 
