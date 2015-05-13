@@ -152,7 +152,12 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def check_can_add(self, user, model):
         _check_can_add(self, user, model)
 
-
+    def to_python(self, value):
+        lookup = get_lookup(self.channel)
+        try:
+            return lookup.to_python(value)
+        except AttributeError as e:
+            return value
 ####################################################################################
 
 
@@ -303,7 +308,12 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
     def check_can_add(self, user, model):
         _check_can_add(self, user, model)
 
-
+    def to_python(self, value):
+        lookup = get_lookup(self.channel)
+        try:
+            return lookup.to_python(value)
+        except AttributeError as e:
+            return value
 ####################################################################################
 
 
@@ -381,7 +391,12 @@ class AutoCompleteField(forms.CharField):
 
         super(AutoCompleteField, self).__init__(*args, **defaults)
 
-
+    def to_python(self, value):
+        lookup = get_lookup(self.channel)
+        try:
+            return lookup.to_python(value)
+        except AttributeError as e:
+            return value
 ####################################################################################
 
 def _check_can_add(self, user, model):
