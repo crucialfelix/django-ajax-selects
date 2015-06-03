@@ -5,8 +5,8 @@ help:
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "lint - check style with flake8"
-	@echo "test - run tests quickly with the default Python"
-	@echo "testall - run tests on every Python version with tox"
+	@echo "test - run tests quickly with the currently installed Django"
+	@echo "testall - run tests on every Django version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 	@echo "release - package and upload a release"
@@ -28,13 +28,13 @@ lint:
 	flake8 .
 
 test:
-	django-admin.py test --settings=test_settings ajax_select
+	python runtests.py
 
 test-all:
 	tox
 
 coverage:
-	coverage run --source ajax_select setup.py test
+	coverage run --source ajax_select runtests.py
 	coverage report -m
 	coverage html
 	open htmlcov/index.html
