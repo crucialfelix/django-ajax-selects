@@ -90,7 +90,7 @@ def make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False,**k
     class TheForm(superclass):
 
         class Meta:
-            pass
+            exclude = []
         setattr(Meta, 'model', model)
 
     for model_fieldname,channel in fieldlist.iteritems():

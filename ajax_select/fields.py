@@ -8,7 +8,7 @@ from django.forms.util import flatatt
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from django.utils import simplejson
+import json
 import os
 
 
@@ -197,7 +197,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'html_id':self.html_id,
             'current':value,
             'current_ids':current_ids,
-            'current_reprs':mark_safe(simplejson.dumps(initial)),
+            'current_reprs':mark_safe(json.dumps(initial)),
             'help_text':help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
@@ -399,7 +399,7 @@ def plugin_options(channel,channel_name,widget_plugin_options,initial):
     if not po.get('source'):
         po['source'] = reverse('ajax_lookup',kwargs={'channel':channel_name})
     return {
-        'plugin_options': mark_safe(simplejson.dumps(po)),
+        'plugin_options': mark_safe(json.dumps(po)),
         # continue to support any custom templates that still expect these
         'lookup_url': po['source'],
         'min_length': po['min_length']

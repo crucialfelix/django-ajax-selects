@@ -3,7 +3,7 @@ from ajax_select import get_lookup
 from django.contrib.admin import site
 from django.db import models
 from django.http import HttpResponse
-from django.utils import simplejson
+import json
 
 
 def ajax_lookup(request, channel):
@@ -37,7 +37,7 @@ def ajax_lookup(request, channel):
             return None
         return origlu.model.__name__
 
-    results = simplejson.dumps([
+    results = json.dumps([
         {
             'pk': unicode(getattr(item, 'pk', None)),
             'value': lookup.get_result(item),
