@@ -13,6 +13,9 @@ from django.utils.text import capfirst
 from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
+from django.utils.module_loading import autodiscover_modules
+from .sites import site
+from .decorators import register
 
 
 class LookupChannel(object):
@@ -166,11 +169,10 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """
     try:
-        lookup_label = settings.AJAX_LOOKUP_CHANNELS[channel]
-    except AttributeError:
-        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS is not configured")
+        lookup_label = site._registry[channel]
     except KeyError:
-        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS not configured correctly for %r" % channel)
+        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS not configured correctly for %(channel)r "
+                                   "or autodiscovery could not locate %(channel)r" % {'channel': channel})
 
     if isinstance(lookup_label, dict):
         # 'channel' : dict(model='app.model', search_field='title' )
@@ -214,3 +216,10 @@ def make_channel(app_model, arg_search_field):
         search_field = arg_search_field
 
     return MadeLookupChannel()
+
+
+
+def autodiscover():
+    autodiscover_modules('lookups', register_to=site)
+
+default_app_config = 'ajax_select.apps.AjaxSelectConfig'
