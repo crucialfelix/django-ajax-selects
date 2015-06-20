@@ -18,10 +18,15 @@ class Person(models.Model):
 
     name = models.CharField()
 
+    class Meta:
+        app_label = 'testapp'
 
 class Author(models.Model):
 
     name = models.CharField()
+
+    class Meta:
+        app_label = 'testapp'
 
 
 class Book(models.Model):
@@ -32,7 +37,8 @@ class Book(models.Model):
     name = models.CharField()
     mentions_persons = models.ManyToManyField(Person, help_text="MENTIONS PERSONS HELP TEXT")
 
-
+    class Meta:
+        app_label = 'testapp'
 # ---------------------------  tests ---------------------------------- #
 
 # class TestAjax_select(unittest.TestCase):

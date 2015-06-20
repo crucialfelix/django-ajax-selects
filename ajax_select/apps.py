@@ -12,10 +12,9 @@ class SimpleAjaxSelectConfig(AppConfig):
     verbose_name = _('AjaxSelects')
 
     def ready(self):
-        try:
+        if hasattr(settings, 'AJAX_LOOKUP_CHANNELS'):
             site.register(settings.AJAX_LOOKUP_CHANNELS)
-        except AttributeError:
-            raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS is not configured")
+
 
 class AjaxSelectConfig(SimpleAjaxSelectConfig):
 

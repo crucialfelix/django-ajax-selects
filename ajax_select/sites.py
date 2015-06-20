@@ -19,7 +19,7 @@ class AjaxSelectSite(object):
         for channel_name in lookup_labels.keys():
             if self.is_registered(channel_name):
                 raise AlreadyRegistered('The channel "%s" is already registered' % channel_name)
-            self._registry.update(lookup_labels)
+        self._registry.update(lookup_labels)
 
     def unregister(self, lookup_labels):
         """
