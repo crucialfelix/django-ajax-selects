@@ -55,5 +55,5 @@ class TestPersonLookup(TestCase):
     def test_person_lookup_is_registered(self):
         self.assertIsNotNone(ajax_select.site._registry.get('testperson'))
 
-    def test_person_lookup_is_registered(self):
+    def test_unregistered_person_lookup_is_not_registered(self):
         self.assertIsNone(ajax_select.site._registry.get('testunregisteredperson'))
