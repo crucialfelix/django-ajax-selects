@@ -223,9 +223,8 @@ def autodiscover():
     try:
         from django.utils.module_loading import autodiscover_modules
     except ImportError:
-        raise Exception("Django-Ajax-Selects now uses Django's built-in module autodiscovery by default.  "
-                        "AutoDiscovery is only supported in Django 1.7+. Try using the SimpleAjaxSelectConfig "
-                        "in order to register lookup channels in settings.py for Django <=1.6.")
+        raise ImproperlyConfigured("AJAX_LOOKUP_CHANNELS is not set and cannot do "
+                                   "app autodiscovery unless Django version is >=1.7")
     autodiscover_modules('lookups', register_to=site)
 
 
