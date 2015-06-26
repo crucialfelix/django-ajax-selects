@@ -4,7 +4,7 @@ __author__ = "crucialfelix"
 __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "https://github.com/crucialfelix/django-ajax-selects/"
 
-from django.conf import settings
+import django
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.contrib.contenttypes.models import ContentType
@@ -13,7 +13,7 @@ from django.utils.text import capfirst
 from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
-from django.utils.module_loading import autodiscover_modules
+
 from .sites import site
 from .decorators import register
 
@@ -220,6 +220,17 @@ def make_channel(app_model, arg_search_field):
 
 
 def autodiscover():
+    try:
+        from django.utils.module_loading import autodiscover_modules
+    except ImportError:
+        raise Exception("Django-Ajax-Selects now uses Django's built-in module autodiscovery by default.  "
+                        "AutoDiscovery is only supported in Django 1.7+. Try using the SimpleAjaxSelectConfig "
+                        "in order to register lookup channels in settings.py for Django <=1.6.")
     autodiscover_modules('lookups', register_to=site)
 
-default_app_config = 'ajax_select.apps.AjaxSelectConfig'
+
+if django.VERSION[0] == 1 and django.VERSION[1] <= 6:
+    # Django <= 1.6, use settings.AJAX_LOOKUP_CHANNELS only
+    default_app_config = 'ajax_select.apps.SimpleAjaxSelectConfig'
+else:
+    default_app_config = 'ajax_select.apps.AjaxSelectConfig'
