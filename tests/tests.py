@@ -8,6 +8,7 @@ from .test_models import Person
 
 from django.test import TestCase
 
+
 @ajax_select.register('testperson')
 class PersonLookup(LookupChannel):
     model = Person
@@ -47,6 +48,7 @@ class UnregisteredPersonLookup(LookupChannel):
     def format_item_display(self, obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
         return u"%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+
 
 class TestPersonLookup(TestCase):
     def setUp(self):

@@ -21,6 +21,7 @@ class Person(models.Model):
     class Meta:
         app_label = 'testapp'
 
+
 class Author(models.Model):
 
     name = models.CharField()

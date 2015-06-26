@@ -67,6 +67,7 @@ class SongLookup(LookupChannel):
     def format_item_display(self, obj):
         return "%s<div><i>by %s</i></div>" % (escape(obj.title), escape(obj.group.name))
 
+
 # Here using decorator syntax rather than settings.AJAX_LOOKUP_CHANNELS
 @ajax_select.register('cliche')
 class ClicheLookup(LookupChannel):

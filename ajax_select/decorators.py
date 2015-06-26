@@ -22,7 +22,7 @@ def register(label):
 
         lookup_module_location = lookup_class.__module__
 
-        site.register({label: (lookup_module_location,  lookup_class.__name__) })
+        site.register({label: (lookup_module_location, lookup_class.__name__)})
 
         return lookup_class
     return _ajax_select_wrapper
