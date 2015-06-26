@@ -228,7 +228,7 @@ def autodiscover():
     autodiscover_modules('lookups', register_to=site)
 
 
-if django.VERSION[0] == 1 and django.VERSION[1] <= 6:
+if django.VERSION[:2] <= (1, 6):
     # Django <= 1.6, use settings.AJAX_LOOKUP_CHANNELS only
     default_app_config = 'ajax_select.apps.SimpleAjaxSelectConfig'
 else:
