@@ -18,6 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 from .sites import site
 from .decorators import register  # noqa
 
+
 class LookupChannel(object):
 
     """Subclass this, setting model and overiding the methods below to taste"""
