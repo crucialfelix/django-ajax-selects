@@ -114,8 +114,8 @@ LOOKUP CHANNEL AUTODISCOVERY IN DJANGO 1.7+
 # with a decorator syntax and have them auto-discovered at initialization time.
 # Auto-discovery will look for custom lookup channels defined
 # in a "lookups.py" module in your app(s).  This can be useful if you
-# have a large number of apps with ajax lookups.  Auto-discovery can be used
-# alongside AJAX_LOOKUP_CHANNELS in settings.py, as long as you do not
+# have a large number of apps with ajax lookups.  Decorator-registered lookups
+# can be used # alongside AJAX_LOOKUP_CHANNELS in settings.py, as long as you do not
 # use the same lookup channel label more than once.
 
 In your example/lookups.py:
