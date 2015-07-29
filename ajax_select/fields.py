@@ -132,7 +132,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 channel=channel,
                 help_text=kwargs.get('help_text', _(as_default_help)),
                 show_help_text=kwargs.pop('show_help_text', True),
-                plugin_options=kwargs.pop('plugin_options', {})
+                plugin_options=kwargs.pop('plugin_options', {}),
                 url_params = kwargs.pop('url_params', None)
             )
             kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
@@ -290,7 +290,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             'channel': channel,
             'help_text': help_text,
             'show_help_text': show_help_text,
-            'plugin_options': kwargs.pop('plugin_options', {})
+            'plugin_options': kwargs.pop('plugin_options', {}),
             'url_params': kwargs.pop('url_params', None)
         }
         kwargs['widget'] = AutoCompleteSelectMultipleWidget(**widget_kwargs)
