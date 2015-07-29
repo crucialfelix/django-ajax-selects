@@ -65,6 +65,9 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  *args,
                  **kwargs):
         self.plugin_options = plugin_options
+        url_params = kwargs.pop('url_params', None)
+        if url_params:
+            self.plugin_options['url_params'] = url_params
         super(forms.widgets.TextInput, self).__init__(*args, **kwargs)
         self.channel = channel
         self.help_text = help_text
@@ -130,6 +133,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 help_text=kwargs.get('help_text', _(as_default_help)),
                 show_help_text=kwargs.pop('show_help_text', True),
                 plugin_options=kwargs.pop('plugin_options', {})
+                url_params = kwargs.pop('url_params', None)
             )
             kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
         super(AutoCompleteSelectField, self).__init__(max_length=255, *args, **kwargs)
@@ -153,11 +157,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
         _check_can_add(self, user, model)
 
     def to_python(self, value):
-        lookup = get_lookup(self.channel)
-        try:
-            return lookup.to_python(value)
-        except AttributeError as e:
-            return value
+        return get_lookup(self.channel).to_python(value)
 ####################################################################################
 
 
@@ -176,6 +176,9 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
                  plugin_options={},
                  *args,
                  **kwargs):
+        url_params = kwargs.pop('url_params', None)
+        if url_params:
+            plugin_options['url_params'] = url_params
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
         self.channel = channel
 
@@ -288,6 +291,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             'help_text': help_text,
             'show_help_text': show_help_text,
             'plugin_options': kwargs.pop('plugin_options', {})
+            'url_params': kwargs.pop('url_params', None)
         }
         kwargs['widget'] = AutoCompleteSelectMultipleWidget(**widget_kwargs)
         kwargs['help_text'] = help_text
@@ -309,11 +313,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         _check_can_add(self, user, model)
 
     def to_python(self, value):
-        lookup = get_lookup(self.channel)
-        try:
-            return lookup.to_python(value)
-        except AttributeError as e:
-            return value
+        return get_lookup(self.channel).to_python(value)
+
 ####################################################################################
 
 
@@ -335,7 +336,9 @@ class AutoCompleteWidget(forms.TextInput):
         self.help_text = kwargs.pop('help_text', '')
         self.show_help_text = kwargs.pop('show_help_text', True)
         self.plugin_options = kwargs.pop('plugin_options', {})
-
+        url_params = kwargs.pop('url_params', None)
+        if url_params:
+            self.plugin_options['url_params'] = url_params
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None):
@@ -380,10 +383,12 @@ class AutoCompleteField(forms.CharField):
         widget_kwargs = dict(
             help_text=kwargs.get('help_text', _(as_default_help)),
             show_help_text=kwargs.pop('show_help_text', True),
-            plugin_options=kwargs.pop('plugin_options', {})
+            plugin_options=kwargs.pop('plugin_options', {}),
+            url_params=kwargs.pop('url_params', None)
         )
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
+            
         widget = AutoCompleteWidget(channel, **widget_kwargs)
 
         defaults = {'max_length': 255, 'widget': widget}
@@ -392,11 +397,7 @@ class AutoCompleteField(forms.CharField):
         super(AutoCompleteField, self).__init__(*args, **defaults)
 
     def to_python(self, value):
-        lookup = get_lookup(self.channel)
-        try:
-            return lookup.to_python(value)
-        except AttributeError as e:
-            return value
+        return get_lookup(self.channel).to_python(value)
 ####################################################################################
 
 def _check_can_add(self, user, model):
@@ -443,6 +444,11 @@ def plugin_options(channel, channel_name, widget_plugin_options, initial):
         po['min_length'] = getattr(channel, 'min_length', 1)
     if not po.get('source'):
         po['source'] = reverse('ajax_lookup', kwargs={'channel': channel_name})
+        if 'url_params' in widget_plugin_options:
+            querystring = "&".join(["%s=%s" % (k,v) for k,v
+                                    in widget_plugin_options['url_params'].items()])
+            if querystring:
+                po['source'] = "%s?%s" % (po['source'], querystring)
 
     # allow html unless explictly false
     if po.get('html') is None:

@@ -118,6 +118,7 @@ Things that can be customized:
     + custom search queries, ordering, user specific filtered results
     + custom channel security (default is staff only)
 + each channel can define its own template to add controls or javascript
++ each channel can define the coercion of its pk to the correct datatype
 + JS can respond to jQuery triggers when items are selected or removed
 + custom CSS
 + how and from where jQuery, jQueryUI, jQueryUI theme are loaded
@@ -131,6 +132,8 @@ A single view services all of the ajax search requests, delegating the searches 
 A simple channel can be specified in settings.py, a more complex one (with custom search, formatting, personalization or auth requirements) can be written in a lookups.py file.
 
 Each model that needs to be searched for has a channel defined for it. More than one channel may be defined for a Model to serve different needs such as public vs admin or channels that filter the query by specific categories etc. The channel also has access to the request and the user so it can personalize the query results.  Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.
+
+Additional url params can be appended to the url of the Autocomplete JQuery Plugin via the **'url_params'** option available both as a form field param and as a plugin_option key
 
 
 
@@ -267,6 +270,7 @@ Set any options for the jQuery plugin. This includes:
 + disabled
 + position
 + source - setting this would overide the normal ajax URL. could be used to add URL query params
++ url_params - allows you to append fixed querystring variables to source if a string source or none is provided
 
 See http://docs.jquery.com/UI/Autocomplete#options
 
@@ -291,6 +295,9 @@ return a query set searching for the query string q, ordering as appropriate.
 Either implement this method yourself or set the search_field property.
 Note that you may return any iterable so you can even use yield and turn this method into a generator,
 or return an generator or list comprehension.
+
+######  to_python(self, value):
+returns value coerced to the correct datatype. This is useful when using changed_data array of Django Form.
 
 ######  get_result(self,obj):
 

@@ -30,6 +30,9 @@ class LookupChannel(object):
         """
         kwargs = {"%s__icontains" % self.search_field: q}
         return self.model.objects.filter(**kwargs).order_by(self.search_field)
+    
+    def to_python(self, value):
+        return value
 
     def get_result(self, obj):
         """ The text result of autocompleting the entered query """
