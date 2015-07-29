@@ -369,6 +369,13 @@ You may use AjaxSelectAdmin as a mixin class and multiple inherit if you have an
         autoselect_fields_check_can_add(form, self.model, request.user)
         return form
 
+If you are using ajax select fields on an Inline form in Django Admin, you should override get_formset to check permission and include the add button when appropriate:
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(YourAdminClass, self).get_form(request, obj, **kwargs)
+        autoselect_fields_check_can_add(formset.form, self.model, request.user)
+        return formset
+
 Note that ajax_selects does not need to be in an admin.  Popups will still use an admin view (the registered admin for the model being added), even if the form from where the popup was launched does not.
 
 
