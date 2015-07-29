@@ -133,7 +133,7 @@ A simple channel can be specified in settings.py, a more complex one (with custo
 
 Each model that needs to be searched for has a channel defined for it. More than one channel may be defined for a Model to serve different needs such as public vs admin or channels that filter the query by specific categories etc. The channel also has access to the request and the user so it can personalize the query results.  Those channels can be reused by any Admin that wishes to lookup that model for a ManyToMany or ForeignKey field.
 
-Additional url params can be appended to the url of the Autocomplete JQuery Plugin via the **'url_params'** option available both as a form field param and as a plugin_option key
+Additional url params can be appended to the url of the Autocomplete JQuery Plugin via the **'url_params'** option available both as a form field param and as a plugin_option key. Such an option is a dict.
 
 
 
@@ -270,7 +270,7 @@ Set any options for the jQuery plugin. This includes:
 + disabled
 + position
 + source - setting this would overide the normal ajax URL. could be used to add URL query params
-+ url_params - allows you to append fixed querystring variables to source if a string source or none is provided
++ url_params - a dict that allows you to append fixed querystring variables to source if a string source or none is provided
 
 See http://docs.jquery.com/UI/Autocomplete#options
 
