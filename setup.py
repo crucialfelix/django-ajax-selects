@@ -9,11 +9,11 @@ except ImportError:
 
 setup(
     name='django-ajax-selects',
-    version='1.3.6',
+    version='1.3.7',
     description='jQuery-UI powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
-    author='crucialfelix',
-    author_email='crucialfelix@gmail.com',
-    url='https://github.com/crucialfelix/django-ajax-selects/',
+    author='Jose Flores',
+    author_email='jose.jflores@gmail.com',
+    url='https://github.com/jose-flores/django-ajax-selects',
     packages=['ajax_select'],
     package_data={'ajax_select':
         [
