@@ -40,7 +40,7 @@ Quick Installation
 
 Get it
 
-    `pip install django-ajax-selects`
+    pip install django-ajax-selects
 or
     download or checkout the distribution
 
