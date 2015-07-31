@@ -45,10 +45,6 @@
       options.select = receiveResult;
       $text.autocomplete(options);
 
-      if (options.initial) {
-        addKiller(options.initial[0], options.initial[1]);
-      }
-
       function reset(){
         if (options.initial) {
           addKiller(options.initial[0], options.initial[1]);
