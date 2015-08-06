@@ -11,9 +11,9 @@ setup(
     name='django-ajax-selects',
     version='1.3.7',
     description='jQuery-UI powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
-    author='Jose Flores',
+    author='crucialfelix',
     author_email='jose.jflores@gmail.com',
-    url='https://github.com/jose-flores/django-ajax-selects',
+    url='https://github.com/crucialfelix/django-ajax-selects',
     packages=['ajax_select'],
     package_data={'ajax_select':
         [
