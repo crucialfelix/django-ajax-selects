@@ -35,7 +35,6 @@ AJAX_LOOKUP_CHANNELS = {
     'person': ('example.lookups', 'PersonLookup'),
     'group': ('example.lookups', 'GroupLookup'),
     'song': ('example.lookups', 'SongLookup'),
-    'cliche': ('example.lookups', 'ClicheLookup')
 }
 
 
