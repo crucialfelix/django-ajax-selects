@@ -8,7 +8,6 @@ from django import VERSION
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db.models.fields.related import ForeignKey, ManyToManyField
-from django.contrib.contenttypes.models import ContentType
 from django.forms.models import ModelForm
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
@@ -63,6 +62,7 @@ class LookupChannel(object):
             one of these models. This enables the green popup +
             Default is the standard django permission check
         """
+        from django.contrib.contenttypes.models import ContentType
         ctype = ContentType.objects.get_for_model(argmodel)
         return user.has_perm("%s.add_%s" % (ctype.app_label, ctype.model))
 
