@@ -4,6 +4,7 @@ __author__ = "crucialfelix"
 __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "https://github.com/crucialfelix/django-ajax-selects/"
 
+from django import VERSION
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.db.models.fields.related import ForeignKey, ManyToManyField
@@ -13,6 +14,9 @@ from django.utils.text import capfirst
 from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.translation import ugettext_lazy as _
+
+from .sites import site
+from .decorators import register  # noqa
 
 
 class LookupChannel(object):
@@ -166,11 +170,10 @@ def make_ajax_field(model, model_fieldname, channel, show_help_text=False, **kwa
 def get_lookup(channel):
     """ find the lookup class for the named channel.  this is used internally """
     try:
-        lookup_label = settings.AJAX_LOOKUP_CHANNELS[channel]
-    except AttributeError:
-        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS is not configured")
+        lookup_label = site._registry[channel]
     except KeyError:
-        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS not configured correctly for %r" % channel)
+        raise ImproperlyConfigured("settings.AJAX_LOOKUP_CHANNELS not configured correctly for %(channel)r "
+                                   "or autodiscovery could not locate %(channel)r" % {'channel': channel})
 
     if isinstance(lookup_label, dict):
         # 'channel' : dict(model='app.model', search_field='title' )
@@ -214,3 +217,22 @@ def make_channel(app_model, arg_search_field):
         search_field = arg_search_field
 
     return MadeLookupChannel()
+
+
+def autodiscover():
+    try:
+        from django.utils.module_loading import autodiscover_modules
+    except ImportError:
+        raise ImproperlyConfigured("AJAX_LOOKUP_CHANNELS is not set in settings.py and we cannot do "
+                                   "app autodiscovery unless Django version is >=1.7")
+    autodiscover_modules('lookups', register_to=site)
+
+
+if VERSION[:2] <= (1, 6):
+    # Django <= 1.6, use settings.AJAX_LOOKUP_CHANNELS only
+    try:
+        site.register(settings.AJAX_LOOKUP_CHANNELS)
+    except AttributeError:
+        pass  # Allow AJAX_LOOKUP_CHANNELS to be empty and fail at the point of get_lookup()
+else:
+    default_app_config = 'ajax_select.apps.AjaxSelectConfig'

@@ -15,6 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.staticfiles',
     "ajax_select",
+    "tests"
 ]
 SITE_ID = 1
 MIDDLEWARE_CLASSES = (

@@ -40,7 +40,7 @@ Quick Installation
 
 Get it
 
-    `pip install django-ajax-selects`
+    pip install django-ajax-selects
 or
     download or checkout the distribution
 
@@ -107,6 +107,33 @@ example/lookups.py:
         def get_query(self, q, request):
             return Song.objects.filter(title__icontains=q).order_by('title')
 
+
+LOOKUP CHANNEL AUTODISCOVERY IN DJANGO 1.7+
+===================================
+# If using Django 1.7+, you can also register custom lookup channels
+# with a decorator syntax and have them auto-discovered at initialization time.
+# Auto-discovery will look for custom lookup channels defined
+# in a "lookups.py" module in your app(s).  This can be useful if you
+# have a large number of apps with ajax lookups.  Decorator-registered lookups
+# can be used alongside AJAX_LOOKUP_CHANNELS in settings.py, as long as you do not
+# use the same lookup channel label more than once.
+
+In your example/lookups.py:
+
+...
+from ajax_select import register, LookupChannel
+
+@register('lookup_label')
+class ExampleLookupChannel(LookupChannel):
+    model = ExampleModel
+    ...
+
+-> equivalent to { 'lookup_label' : ( 'example.lookups', 'ExampleLookupChannel') } in settings.py
+
+# ! Please note that auto-discovery is not enabled in Django <=1.6, and
+# attempting to use the register decorator will result in an exception.
+# If using Django <=1.6, continue to use settings.AJAX_LOOKUP_CHANNELS to
+# register your custom lookups
 
 NOT SO QUICK INSTALLATION
 =========================
@@ -368,6 +395,13 @@ You may use AjaxSelectAdmin as a mixin class and multiple inherit if you have an
         form = super(YourAdminClass, self).get_form(request, obj, **kwargs)
         autoselect_fields_check_can_add(form, self.model, request.user)
         return form
+
+If you are using ajax select fields on an Inline form in Django Admin, you should override get_formset to check permission and include the add button when appropriate:
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(YourAdminClass, self).get_form(request, obj, **kwargs)
+        autoselect_fields_check_can_add(formset.form, self.model, request.user)
+        return formset
 
 Note that ajax_selects does not need to be in an admin.  Popups will still use an admin view (the registered admin for the model being added), even if the form from where the popup was launched does not.
 

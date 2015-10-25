@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.utils.html import escape
 from example.models import Person, Group, Song
 from ajax_select import LookupChannel
+import ajax_select
 
 
 class PersonLookup(LookupChannel):
@@ -67,6 +68,8 @@ class SongLookup(LookupChannel):
         return "%s<div><i>by %s</i></div>" % (escape(obj.title), escape(obj.group.name))
 
 
+# Here using decorator syntax rather than settings.AJAX_LOOKUP_CHANNELS
+@ajax_select.register('cliche')
 class ClicheLookup(LookupChannel):
 
     """ an autocomplete lookup does not need to search models
