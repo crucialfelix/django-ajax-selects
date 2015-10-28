@@ -570,6 +570,29 @@ There is no remove as there is no kill/delete button in a simple auto-complete.
 The user may clear the text themselves but there is no javascript involved. Its just a text field.
 
 
+Testing
+------------
+
+For any pull requests you should run the unit tests first. Travis CI will also run all tests across all supported versions against your pull request and github will show you the failures.
+
+Its much faster to run them yourself locally.
+
+    pip install -r requirements-test.txt
+
+This will run tox:
+
+    make test
+
+    # or just
+    tox
+
+With all supported combinations of Django and Python.
+
+You will need to have different Python interpreters installed which you can do with:
+
+https://github.com/yyuu/pyenv
+
+
 Contributors
 ------------
 
