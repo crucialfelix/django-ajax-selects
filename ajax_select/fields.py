@@ -64,7 +64,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                 obj = objs[0]
             except IndexError:
                 raise Exception("%s cannot find object:%s" % (lookup, value))
-            current_repr = lookup.format_item_display(obj)
+            current_repr = lookup.get_result(obj)
             initial = [current_repr,obj.pk]
 
         if self.show_help_text:
@@ -184,7 +184,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         # text repr of currently selected items
         initial = []
         for obj in objects:
-            display = lookup.format_item_display(obj)
+            display = lookup.get_result(obj)
             initial.append([display,obj.pk])
 
         if self.show_help_text:
