@@ -14,17 +14,17 @@ class PersonLookup(LookupChannel):
         return self.model.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name')
 
     def get_result(self, obj):
-        u""" result is the simple text that is the completion of what the person typed """
+        """ result is the simple text that is the completion of what the person typed """
         return obj.name
 
     def format_match(self, obj):
         """ (HTML) formatted item for display in the dropdown """
-        return u"%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+        return "%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
         # return self.format_item_display(obj)
 
     def format_item_display(self, obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
-        return u"%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+        return "%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
 
 
 class UnregisteredPersonLookup(LookupChannel):
@@ -35,14 +35,14 @@ class UnregisteredPersonLookup(LookupChannel):
         return self.model.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name')
 
     def get_result(self, obj):
-        u""" result is the simple text that is the completion of what the person typed """
+        """ result is the simple text that is the completion of what the person typed """
         return obj.name
 
     def format_match(self, obj):
         """ (HTML) formatted item for display in the dropdown """
-        return u"%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+        return "%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
         # return self.format_item_display(obj)
 
     def format_item_display(self, obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
-        return u"%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+        return "%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
