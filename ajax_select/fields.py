@@ -13,6 +13,7 @@ from django.template.loader import render_to_string
 from django.template.defaultfilters import force_escape
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
+from django.utils.six import text_type
 from django.utils.translation import ugettext as _
 try:
     import json
@@ -22,15 +23,6 @@ except ImportError:
 
 as_default_help = 'Enter text to search.'
 IS_PYTHON2 = sys.version_info[0] == 2
-
-
-def _as_pk(got):
-    # a unicode method that checks for integers
-    if (type(got) is unicode) and got.isnumeric():
-        if IS_PYTHON2:
-            return long(got)
-        return int(got)
-    return got
 
 
 def _media(self):
@@ -108,7 +100,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         return mark_safe(out)
 
     def value_from_datadict(self, data, files, name):
-        return _as_pk(data.get(name, None))
+        return data.get(name, None)
 
     def id_for_label(self, id_):
         return '%s_text' % id_
@@ -227,7 +219,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
     def value_from_datadict(self, data, files, name):
         # eg. 'members': ['|229|4688|190|']
-        return [_as_pk(val) for val in data.get(name, '').split('|') if val]
+        return [val for val in data.get(name, '').split('|') if val]
 
     def id_for_label(self, id_):
         return '%s_text' % id_
@@ -248,14 +240,14 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         if not (help_text is None):
             # '' will cause translation to fail
             # should be ''
-            if type(help_text) == str:
+            if isinstance(help_text, str):
                 help_text = force_text(help_text)
             # django admin appends "Hold down "Control",..." to the help text
             # regardless of which widget is used. so even when you specify an explicit
             # help text it appends this other default text onto the end.
             # This monkey patches the help text to remove that
             if help_text != '':
-                if not self._is_string(help_text):
+                if not isinstance(help_text, text_type):
                     # ideally this could check request.LANGUAGE_CODE
                     translated = help_text.translate(settings.LANGUAGE_CODE)
                 else:
@@ -289,16 +281,10 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
         super(AutoCompleteSelectMultipleField, self).__init__(*args, **kwargs)
 
-    @staticmethod
-    def _is_string(help_text):
-        if IS_PYTHON2:
-            return type(help_text) == unicode
-        return type(help_text) == str
-
     def clean(self, value):
         if not value and self.required:
             raise forms.ValidationError(self.error_messages['required'])
-        return value  # a list of IDs from widget value_from_datadict
+        return value  # a list of primary keys from widget value_from_datadict
 
     def check_can_add(self, user, model):
         _check_can_add(self, user, model)
@@ -429,7 +415,7 @@ def plugin_options(channel, channel_name, widget_plugin_options, initial):
     if not po.get('source'):
         po['source'] = reverse('ajax_lookup', kwargs={'channel': channel_name})
 
-    # allow html unless explictly false
+    # allow html unless explicitly false
     if po.get('html') is None:
         po['html'] = True
 
