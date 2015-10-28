@@ -53,9 +53,11 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  channel,
                  help_text='',
                  show_help_text=True,
+                 channel_options={},
                  plugin_options={},
                  *args,
                  **kwargs):
+        self.channel_options = channel_options
         self.plugin_options = plugin_options
         super(forms.widgets.TextInput, self).__init__(*args, **kwargs)
         self.channel = channel
@@ -70,7 +72,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
         current_repr = ''
         initial = None
-        lookup = get_lookup(self.channel)
+        lookup = get_lookup(self.channel, **self.channel_options)
         if value:
             objs = lookup.get_objects([value])
             try:
@@ -121,6 +123,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 channel=channel,
                 help_text=kwargs.get('help_text', _(as_default_help)),
                 show_help_text=kwargs.pop('show_help_text', True),
+                channel_options=kwargs.pop('channel_options', {}),
                 plugin_options=kwargs.pop('plugin_options', {})
             )
             kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
@@ -160,6 +163,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
                  channel,
                  help_text='',
                  show_help_text=True,
+                 channel_options={},
                  plugin_options={},
                  *args,
                  **kwargs):
@@ -168,6 +172,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
         self.help_text = help_text
         self.show_help_text = show_help_text
+        self.channel_options = channel_options
         self.plugin_options = plugin_options
 
     def render(self, name, value, attrs=None):
@@ -178,7 +183,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
-        lookup = get_lookup(self.channel)
+        lookup = get_lookup(self.channel, **self.channel_options)
 
         # eg. value = [3002L, 1194L]
         if value:
@@ -274,6 +279,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             'channel': channel,
             'help_text': help_text,
             'show_help_text': show_help_text,
+            'channel_options': kwargs.pop('channel_options', {}),
             'plugin_options': kwargs.pop('plugin_options', {})
         }
         kwargs['widget'] = AutoCompleteSelectMultipleWidget(**widget_kwargs)
