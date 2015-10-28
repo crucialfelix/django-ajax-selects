@@ -28,9 +28,6 @@ lint:
 	flake8 .
 
 test:
-	python runtests.py
-
-test-all:
 	tox
 
 coverage:
