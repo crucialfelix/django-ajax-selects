@@ -13,12 +13,8 @@ class AjaxSelectSite(object):
         self._registry = {}
 
     def register(self, lookup_labels):
-
         # channel data structure is { 'channel' : ( module.lookup, lookupclass ) }
         # or                        { 'channel' : { 'model': 'xxxxx', 'search_field': 'xxxx' }}
-        for channel_name in lookup_labels.keys():
-            if self.is_registered(channel_name):
-                raise AlreadyRegistered('The channel "%s" is already registered' % channel_name)
         self._registry.update(lookup_labels)
 
     def unregister(self, lookup_labels):
