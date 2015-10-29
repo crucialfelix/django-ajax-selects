@@ -45,9 +45,17 @@
       options.select = receiveResult;
       $text.autocomplete(options);
 
-      if (options.initial) {
-        addKiller(options.initial[0], options.initial[1]);
-      }
+      function reset(){
+        if (options.initial) {
+          addKiller(options.initial[0], options.initial[1]);
+          $this.val(options.initial[1]);
+        } else {
+          kill();
+        }
+      };
+
+      reset();
+      $this.closest('form').on('reset', reset);
 
       $this.bind('didAddPopup', function (event, pk, repr) {
         receiveResult(null, {item: {pk: pk, repr: repr}});
@@ -95,11 +103,20 @@
       options.select = receiveResult;
       $text.autocomplete(options);
 
-      if (options.initial) {
-        $.each(options.initial, function (i, its) {
-          addKiller(its[0], its[1]);
-        });
-      }
+      function reset(){
+        $deck.empty();
+        var query = "|";
+        if (options.initial) {
+          $.each(options.initial, function (i, its) {
+            addKiller(its[0], its[1]);
+            query += its[1] + "|";
+          });
+        }
+        $this.val(query);
+      };
+
+      reset();
+      $this.closest('form').on('reset', reset);
 
       $this.bind('didAddPopup', function (event, pk, repr) {
         receiveResult(null, {item: {pk: pk, repr: repr }});
