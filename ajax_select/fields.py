@@ -15,10 +15,7 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.six import text_type
 from django.utils.translation import ugettext as _
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
+import json
 
 
 as_default_help = 'Enter text to search.'

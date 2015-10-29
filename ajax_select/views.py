@@ -3,11 +3,8 @@ from ajax_select import registry
 from django.contrib.admin import site
 from django.db import models
 from django.http import HttpResponse
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
 from django.utils.encoding import force_text
+import json
 
 
 def ajax_lookup(request, channel):
