@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-import sys
 from ajax_select.registry import registry
 from django import forms
 from django.conf import settings
@@ -8,6 +7,7 @@ from django.core.urlresolvers import reverse
 try:
     from django.forms.utils import flatatt
 except ImportError:
+    # < django 1.7
     from django.forms.util import flatatt
 from django.template.loader import render_to_string
 from django.template.defaultfilters import force_escape
@@ -19,7 +19,6 @@ import json
 
 
 as_default_help = 'Enter text to search.'
-IS_PYTHON2 = sys.version_info[0] == 2
 
 
 def _media(self):
