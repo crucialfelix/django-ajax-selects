@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 import sys
-from ajax_select import get_lookup
+from ajax_select.registry import registry
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -70,7 +70,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
         current_repr = ''
         initial = None
-        lookup = get_lookup(self.channel)
+        lookup = registry.get(self.channel)
         if value:
             objs = lookup.get_objects([value])
             try:
@@ -128,7 +128,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
 
     def clean(self, value):
         if value:
-            lookup = get_lookup(self.channel)
+            lookup = registry.get(self.channel)
             objs = lookup.get_objects([value])
             if len(objs) != 1:
                 # someone else might have deleted it while you were editing
@@ -178,7 +178,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
-        lookup = get_lookup(self.channel)
+        lookup = registry.get(self.channel)
 
         # eg. value = [3002L, 1194L]
         if value:
@@ -321,7 +321,7 @@ class AutoCompleteWidget(forms.TextInput):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
-        lookup = get_lookup(self.channel)
+        lookup = registry.get(self.channel)
         if self.show_help_text:
             help_text = self.help_text
         else:
@@ -377,7 +377,7 @@ def _check_can_add(self, user, model):
     else using django's default perm check.
     if it can add, then enable the widget to show the + link
     """
-    lookup = get_lookup(self.channel)
+    lookup = registry.get(self.channel)
     if hasattr(lookup, 'can_add'):
         can_add = lookup.can_add(user, model)
     else:

@@ -96,10 +96,11 @@ In your admin.py:
         form = make_ajax_form(Label, {'owner': 'person'})
     admin.site.register(Label, LabelAdmin)
 
-example/lookups.py:
+`example/lookups.py`:
 
-    from ajax_select import LookupChannel
+    from ajax_select import register, LookupChannel
 
+    @register('songs')
     class SongLookup(LookupChannel):
 
         model = Song
@@ -107,33 +108,6 @@ example/lookups.py:
         def get_query(self, q, request):
             return Song.objects.filter(title__icontains=q).order_by('title')
 
-
-LOOKUP CHANNEL AUTODISCOVERY IN DJANGO 1.7+
-===================================
-# If using Django 1.7+, you can also register custom lookup channels
-# with a decorator syntax and have them auto-discovered at initialization time.
-# Auto-discovery will look for custom lookup channels defined
-# in a "lookups.py" module in your app(s).  This can be useful if you
-# have a large number of apps with ajax lookups.  Decorator-registered lookups
-# can be used alongside AJAX_LOOKUP_CHANNELS in settings.py, as long as you do not
-# use the same lookup channel label more than once.
-
-In your example/lookups.py:
-
-...
-from ajax_select import register, LookupChannel
-
-@register('lookup_label')
-class ExampleLookupChannel(LookupChannel):
-    model = ExampleModel
-    ...
-
--> equivalent to { 'lookup_label' : ( 'example.lookups', 'ExampleLookupChannel') } in settings.py
-
-# ! Please note that auto-discovery is not enabled in Django <=1.6, and
-# attempting to use the register decorator will result in an exception.
-# If using Django <=1.6, continue to use settings.AJAX_LOOKUP_CHANNELS to
-# register your custom lookups
 
 NOT SO QUICK INSTALLATION
 =========================
@@ -246,6 +220,26 @@ lookups.py
 ----------
 
 By convention this is where you would define custom lookup channels
+
+If you are using Django >= 1.7 then all `lookups.py` in all of your apps will be automatically imported on startup.
+
+Use the @register decorator to register your LookupChannels
+
+`example/lookups.py`:
+
+```python
+from ajax_select import register, LookupChannel
+
+@register('things')
+class ThingsLookupChannel(LookupChannel):
+
+    model = Things
+
+    def get_query(self, q, request):
+          return self.model.objects.filter(title__icontains=q).order_by('title')
+
+```
+
 
 Subclass `LookupChannel` and override any method you wish to customize.
 

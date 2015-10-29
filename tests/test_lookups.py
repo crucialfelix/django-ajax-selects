@@ -1,17 +1,34 @@
 
-# conflicting models
-# import sys; print(sys.path)
-# from .models import Person
-
 from django.test import TestCase
 import ajax_select
-from .lookups import PersonLookup, UnregisteredPersonLookup  # noqa
+
+try:
+    from django.apps import AppConfig  # noqa
+except ImportError:
+    can_autodiscover = False
+else:
+    can_autodiscover = True
 
 
-class TestPersonLookup(TestCase):
+class TestAutoDiscovery(TestCase):
 
-    def test_person_lookup_is_registered(self):
-        self.assertIsNotNone(ajax_select.site._registry.get('testperson'))
+    def test_lookup_py_is_autoloaded(self):
+        """Django >= 1.7 autoloads tests/lookups.py"""
+        is_registered = ajax_select.registry.is_registered('person')
+        if can_autodiscover:
+            self.assertTrue(is_registered)
+        else:
+            self.assertFalse(is_registered)
 
-    def test_unregistered_person_lookup_is_not_registered(self):
-        self.assertIsNone(ajax_select.site._registry.get('testunregisteredperson'))
+    def test_back_compatible_loads_by_settings(self):
+        """a module and class specified in settings"""
+        self.assertTrue(ajax_select.registry.is_registered('book'))
+
+    def test_autoconstruct_from_spec(self):
+        """a dict in settings specifying model and lookup fields"""
+        self.assertTrue(ajax_select.registry.is_registered('author'))
+
+    def test_unsetting_a_channel(self):
+        """settings can unset a channel that was specified in a lookups.py"""
+        self.assertFalse(ajax_select.registry.is_registered('user'))
+        self.assertFalse(ajax_select.registry.is_registered('was-never-a-channel'))

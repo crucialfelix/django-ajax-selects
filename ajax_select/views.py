@@ -1,5 +1,5 @@
 
-from ajax_select import get_lookup
+from ajax_select import registry
 from django.contrib.admin import site
 from django.db import models
 from django.http import HttpResponse
@@ -26,7 +26,7 @@ def ajax_lookup(request, channel):
             return HttpResponse('')  # suspicious
         query = request.POST['term']
 
-    lookup = get_lookup(channel)
+    lookup = registry.get(channel)
     if hasattr(lookup, 'check_auth'):
         lookup.check_auth(request)
 
