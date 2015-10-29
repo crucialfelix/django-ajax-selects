@@ -1,22 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-
-import unittest
-
+from django.test import TestCase
 from ajax_select import fields
-# from test_models import Book, Person, Author
 
 
-class TestAjaxSelectAutoCompleteSelectWidget(unittest.TestCase):
-
-    def setUp(self):
-        pass
+class TestAjaxSelectAutoCompleteSelectWidget(TestCase):
 
     def test_render(self):
         channel = None
         widget = fields.AutoCompleteSelectWidget(channel)
         widget
-
-    def tearDown(self):
-        pass

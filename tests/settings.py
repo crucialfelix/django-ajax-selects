@@ -24,3 +24,14 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware'
 )
 SECRET_KEY = 'inyd5fc5pymlsv@hwoc5+3_6*cm0erlxzv6i-wl0jm_kt-6rp9'
+
+AJAX_LOOKUP_CHANNELS = {
+    # tuple points to a module and class to load
+    'book': ('tests.other_lookups', 'BookLookup'),
+    # dict specifies an automatically constructed LookupChannel
+    'author': {'model': 'tests.Author', 'search_field': 'name'},
+    # unset a channel that a third-party app specified
+    'user': None,
+    'was-never-a-channel': None
+    # LookupChannels in lookups.py are auto-loaded
+}
