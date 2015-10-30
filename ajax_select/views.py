@@ -63,14 +63,11 @@ def add_popup(request, app_label, model):
 
     response = admin.add_view(request, request.path)
     if request.method == 'POST':
-        try:
-            # this detects TemplateResponse which are not yet rendered
-            # and are returned for form validation errors
-            if not response.is_rendered:
-                out = response.rendered_content
-            else:
-                out = response.content
-        except AttributeError:  # django < 1.5
+        # this detects TemplateResponse which are not yet rendered
+        # and are returned for form validation errors
+        if not response.is_rendered:
+            out = response.rendered_content
+        else:
             out = response.content
         if 'opener.dismissAddAnotherPopup' in out:
             return HttpResponse(out.replace('dismissAddAnotherPopup', 'didAddPopup'))
