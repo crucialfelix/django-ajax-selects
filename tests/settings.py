@@ -5,7 +5,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
     }
 }
-ROOT_URLCONF = "ajax_select.urls"
+ROOT_URLCONF = "tests.urls"
 INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -23,6 +23,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware'
 )
+STATIC_URL = '/static/'
 SECRET_KEY = 'inyd5fc5pymlsv@hwoc5+3_6*cm0erlxzv6i-wl0jm_kt-6rp9'
 
 AJAX_LOOKUP_CHANNELS = {

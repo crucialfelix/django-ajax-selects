@@ -62,32 +62,32 @@ class LookupChannelRegistry(object):
         arg_search_field:  the field to search against and to display in search results
         """
         from lookup_channel import LookupChannel
-        the_model = self.get_model(app_model)
+        app_label, model_name = app_model.split(".")
 
         class MadeLookupChannel(LookupChannel):
 
-            model = the_model
+            model = get_model(app_label, model_name)
             search_field = arg_search_field
 
         return MadeLookupChannel()
 
-    def get_model(self, app_model):
-        """
-        Get the model from 'app_label.ModelName'
-        """
-        app_label, model_name = app_model.split(".")
-        try:
-            # django >= 1.7
-            from django.apps import apps
-        except ImportError:
-            # django < 1.7
-            from django.db import models
-            return models.get_model(app_label, model_name)
-        else:
-            return apps.get_model(app_label, model_name)
-
 
 registry = LookupChannelRegistry()
+
+
+def get_model(app_label, model_name):
+    """
+    Get the model from 'app_label' 'ModelName'
+    """
+    try:
+        # django >= 1.7
+        from django.apps import apps
+    except ImportError:
+        # django < 1.7
+        from django.db import models
+        return models.get_model(app_label, model_name)
+    else:
+        return apps.get_model(app_label, model_name)
 
 
 def register(label):

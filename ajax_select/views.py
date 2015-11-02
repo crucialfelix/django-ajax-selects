@@ -1,7 +1,8 @@
 
 from ajax_select import registry
+from ajax_select.registry import get_model
 from django.contrib.admin import site
-from django.db import models
+from django.contrib.admin.options import IS_POPUP_VAR
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 import json
@@ -55,20 +56,37 @@ def add_popup(request, app_label, model):
         and instead of calling django's dismissAddAnontherPopup(win,newId,newRepr)
         it calls didAddPopup(win,newId,newRepr) which was added inline with bootstrap.html
     """
-    themodel = models.get_model(app_label, model)
+
+    themodel = get_model(app_label, model)
     admin = site._registry[themodel]
 
     # TODO : should detect where we really are
-    admin.admin_site.root_path = "/ajax_select/"
+    # admin.admin_site.root_path = "/ajax_select/"
+
+    # Force the add_view to always recognise that it is being
+    # rendered in a pop up context
+    if request.method == 'GET':
+        get = request.GET.copy()
+        get[IS_POPUP_VAR] = 1
+        request.GET = get
+    elif request.method == 'POST':
+        post = request.POST.copy()
+        post[IS_POPUP_VAR] = 1
+        request.POST = post
 
     response = admin.add_view(request, request.path)
-    if request.method == 'POST':
-        # this detects TemplateResponse which are not yet rendered
-        # and are returned for form validation errors
-        if not response.is_rendered:
-            out = response.rendered_content
-        else:
-            out = response.content
-        if 'opener.dismissAddAnotherPopup' in out:
-            return HttpResponse(out.replace('dismissAddAnotherPopup', 'didAddPopup'))
+
+    if request.method == 'POST' and (response.status_code == 200):
+
+        def fiddle(response):
+            content = response.content.decode('UTF-8')
+            # django >= 1.8
+            fiddled = content.replace('dismissAddRelatedObjectPopup', 'didAddPopup')
+            # django < 1.8
+            fiddled = fiddled.replace('dismissAddAnotherPopup', 'didAddPopup')
+            response.content = fiddled.encode('UTF-8')
+            return response
+
+        response.add_post_render_callback(fiddle)
+
     return response
