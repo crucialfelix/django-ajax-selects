@@ -1,11 +1,11 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+from ajax_select import views
 
-
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^ajax_lookup/(?P<channel>[-\w]+)$',
-        'ajax_select.views.ajax_lookup',
+        views.ajax_lookup,
         name='ajax_lookup'),
     url(r'^add_popup/(?P<app_label>\w+)/(?P<model>\w+)$',
-        'ajax_select.views.add_popup',
+        views.add_popup,
         name='add_popup')
-)
+]
