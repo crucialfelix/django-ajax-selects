@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 from django.forms.models import ModelForm
 from ajax_select import make_ajax_field
 from example.models import Release
@@ -23,4 +24,4 @@ class ReleaseForm(ModelForm):
     songs = make_ajax_field(Release, 'songs', 'song', help_text="", show_help_text=True)
 
     # these are from a fixed array defined in lookups.py
-    title = make_ajax_field(Release, 'title', 'cliche', help_text=u"Autocomplete will suggest clichés about cats.")
+    title = make_ajax_field(Release, 'title', 'cliche', help_text="Autocomplete will suggest clichés about cats.")

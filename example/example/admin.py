@@ -58,6 +58,11 @@ admin.site.register(Group, GroupAdmin)
 class SongAdmin(AjaxSelectAdmin):
 
     form = make_ajax_form(Song, {'group': 'group', 'title': 'cliche'})
+    # django bug:
+    # readonly_fields = ('group',)
+    # django displays group twice if its listed as a readonly_field
+    # and throws a validation error on save
+    # but doesn't show any error message to the user
 
 admin.site.register(Song, SongAdmin)
 
@@ -79,8 +84,8 @@ class BookInline(AjaxSelectAdminTabularInline):
     form = make_ajax_form(Book, {
                 'about_group': 'group',
                 'mentions_persons': 'person'
-                },
-                show_help_text=True)
+            },
+            show_help_text=True)
     extra = 2
 
     # to enable the + add option
