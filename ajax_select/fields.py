@@ -414,21 +414,14 @@ def plugin_options(lookup, channel_name, widget_plugin_options, initial):
         po['initial'] = initial
     po.update(getattr(lookup, 'plugin_options', {}))
     po.update(widget_plugin_options)
-    if not po.get('min_length'):
-        # backward compatibility: honor the channel's min_length attribute
-        # will deprecate that some day and prefer to use plugin_options
-        po['min_length'] = getattr(lookup, 'min_length', 1)
     if not po.get('source'):
         po['source'] = reverse('ajax_lookup', kwargs={'channel': channel_name})
 
-    # allow html unless explicitly false
+    # allow html unless explicitly set
     if po.get('html') is None:
         po['html'] = True
 
     return {
         'plugin_options': mark_safe(json.dumps(po)),
-        'data_plugin_options': force_escape(json.dumps(po)),
-        # continue to support any custom templates that still expect these
-        'lookup_url': po['source'],
-        'min_length': po['min_length']
+        'data_plugin_options': force_escape(json.dumps(po))
     }
