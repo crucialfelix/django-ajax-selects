@@ -30,12 +30,12 @@ class LookupChannelRegistry(object):
         {'channel': ('module.of.lookups', 'MyLookupClass')}
         {'channel': {'model': 'MyModelToBeLookedUp', 'search_field': 'field_to_search'}}
         """
-        for label, spec in lookup_specs.items():
+        for channel, spec in lookup_specs.items():
             if spec is None:  # unset
-                if label in self._registry:
-                    del self._registry[label]
+                if channel in self._registry:
+                    del self._registry[channel]
             else:
-                self._registry[label] = spec
+                self._registry[channel] = spec
 
     def get(self, channel):
         """
@@ -122,17 +122,18 @@ def register(channel):
     @register('agent')
     class AgentLookup(LookupClass):
 
-        def get_query(self)
-        def format_item(self)
-        ... etc
+        def get_query(self):
+            ...
+        def format_item(self):
+            ...
     ```
     """
 
     def _wrapper(lookup_class):
-        if not label:
+        if not channel:
             raise ValueError('Lookup Channel must have a channel name')
 
-        registry.register({label: lookup_class})
+        registry.register({channel: lookup_class})
 
         return lookup_class
 

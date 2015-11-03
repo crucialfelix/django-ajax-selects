@@ -397,17 +397,17 @@ def autoselect_fields_check_can_add(form, model, user):
             form_field.check_can_add(user, db_field.rel.to)
 
 
-def plugin_options(channel, channel_name, widget_plugin_options, initial):
+def plugin_options(lookup, channel_name, widget_plugin_options, initial):
     """ Make a JSON dumped dict of all options for the jquery ui plugin itself """
     po = {}
     if initial:
         po['initial'] = initial
-    po.update(getattr(channel, 'plugin_options', {}))
+    po.update(getattr(lookup, 'plugin_options', {}))
     po.update(widget_plugin_options)
     if not po.get('min_length'):
         # backward compatibility: honor the channel's min_length attribute
         # will deprecate that some day and prefer to use plugin_options
-        po['min_length'] = getattr(channel, 'min_length', 1)
+        po['min_length'] = getattr(lookup, 'min_length', 1)
     if not po.get('source'):
         po['source'] = reverse('ajax_lookup', kwargs={'channel': channel_name})
 
