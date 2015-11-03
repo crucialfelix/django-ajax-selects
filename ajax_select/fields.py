@@ -139,6 +139,10 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def check_can_add(self, user, model):
         _check_can_add(self, user, model)
 
+    def has_changed(self, initial_value, data_value):
+        # 1 vs u'1'
+        return text_type(initial_value) != text_type(data_value)
+
 
 ####################################################################################
 
@@ -285,6 +289,11 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
     def check_can_add(self, user, model):
         _check_can_add(self, user, model)
 
+    def has_changed(self, initial_value, data_value):
+        # [1, 2] vs [u'1', u'2']
+        ivs = [text_type(v) for v in initial_value]
+        dvs = [text_type(v) for v in data_value]
+        return ivs != dvs
 
 ####################################################################################
 
