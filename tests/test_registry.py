@@ -4,7 +4,7 @@ import ajax_select
 from ajax_select.registry import can_autodiscover
 
 
-class TestAutoDiscovery(TestCase):
+class TestRegistry(TestCase):
 
     def test_lookup_py_is_autoloaded(self):
         """Django >= 1.7 autoloads tests/lookups.py"""
