@@ -19,6 +19,4 @@ try:
 except ImportError:
     # Previous django versions should load now
     # using settings.AJAX_LOOKUP_CHANNELS
-    from django.conf import settings
-    if hasattr(settings, 'AJAX_LOOKUP_CHANNELS'):
-        registry.register(settings.AJAX_LOOKUP_CHANNELS)
+    registry.load_channels()

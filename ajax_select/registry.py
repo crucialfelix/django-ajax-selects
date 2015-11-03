@@ -1,4 +1,5 @@
 from django.core.exceptions import ImproperlyConfigured
+from django.conf import settings
 
 
 class LookupChannelRegistry(object):
@@ -10,6 +11,18 @@ class LookupChannelRegistry(object):
     and any lookups that are explicitly declared in settings.AJAX_LOOKUP_CHANNELS
     """
     _registry = {}
+
+    def load_channels(self):
+        self._registry = {}
+        try:
+            from django.utils.module_loading import autodiscover_modules
+        except ImportError:
+            pass
+        else:
+            autodiscover_modules('lookups')
+
+        if hasattr(settings, 'AJAX_LOOKUP_CHANNELS'):
+            self.register(settings.AJAX_LOOKUP_CHANNELS)
 
     def register(self, lookup_specs):
         """
@@ -90,7 +103,15 @@ def get_model(app_label, model_name):
         return apps.get_model(app_label, model_name)
 
 
-def register(label):
+def can_autodiscover():
+    try:
+        from django.apps import AppConfig  # noqa
+    except ImportError:
+        return False
+    return True
+
+
+def register(channel):
     """
     Decorator to register a LookupClass
 

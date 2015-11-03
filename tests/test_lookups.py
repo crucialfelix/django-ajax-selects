@@ -1,13 +1,7 @@
 
 from django.test import TestCase
 import ajax_select
-
-try:
-    from django.apps import AppConfig  # noqa
-except ImportError:
-    can_autodiscover = False
-else:
-    can_autodiscover = True
+from ajax_select.registry import can_autodiscover
 
 
 class TestAutoDiscovery(TestCase):
@@ -15,9 +9,10 @@ class TestAutoDiscovery(TestCase):
     def test_lookup_py_is_autoloaded(self):
         """Django >= 1.7 autoloads tests/lookups.py"""
         is_registered = ajax_select.registry.is_registered('person')
-        if can_autodiscover:
+        if can_autodiscover():
             self.assertTrue(is_registered)
         else:
+            # person is not in settings and this django will not autoload lookups.py
             self.assertFalse(is_registered)
 
     def test_back_compatible_loads_by_settings(self):
@@ -32,3 +27,13 @@ class TestAutoDiscovery(TestCase):
         """settings can unset a channel that was specified in a lookups.py"""
         self.assertFalse(ajax_select.registry.is_registered('user'))
         self.assertFalse(ajax_select.registry.is_registered('was-never-a-channel'))
+
+    # def test_reimporting_lookup(self):
+    #     """
+    #     Importing a lookup should not re-register it after app launch is completed.
+    #     """
+    #     # importing this file will cause the @register to be called
+    #     from tests import lookups  # noqa
+    #     # should not have over-ridden what is in settings
+    #     # registry is already frozen
+    #     self.assertFalse(ajax_select.registry.is_registered('user'))
