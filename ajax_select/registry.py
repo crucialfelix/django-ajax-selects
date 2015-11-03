@@ -43,7 +43,7 @@ class LookupChannelRegistry(object):
 
         @param channel {string} - name that the lookup channel was registered at
         """
-        from lookup_channel import LookupChannel
+        from ajax_select import LookupChannel
 
         try:
             lookup_spec = self._registry[channel]
@@ -53,18 +53,24 @@ class LookupChannelRegistry(object):
 
         if (type(lookup_spec) is type) and issubclass(lookup_spec, LookupChannel):
             return lookup_spec()
+            # damnit python.
+            # ideally this would match regardless of how you imported the parent class
+            # but these are different classes:
+            # from ajax_select.lookup_channel import LookupChannel
+            # from ajax_select import LookupChannel
         elif isinstance(lookup_spec, dict):
             # 'channel' : dict(model='app.model', search_field='title' )
             #  generate a simple channel dynamically
             return self.make_channel(lookup_spec['model'], lookup_spec['search_field'])
-        else:
+        elif isinstance(lookup_spec, tuple):
             # a tuple
             # 'channel' : ('app.module','LookupClass')
             #  from app.module load LookupClass and instantiate
             lookup_module = __import__(lookup_spec[0], {}, {}, [''])
             lookup_class = getattr(lookup_module, lookup_spec[1])
-
             return lookup_class()
+        else:
+            raise Exception("Invalid lookup spec: %s" % lookup_spec)
 
     def is_registered(self, channel):
         return channel in self._registry
@@ -74,7 +80,7 @@ class LookupChannelRegistry(object):
         app_model:   app_name.ModelName
         arg_search_field:  the field to search against and to display in search results
         """
-        from lookup_channel import LookupChannel
+        from ajax_select import LookupChannel
         app_label, model_name = app_model.split(".")
 
         class MadeLookupChannel(LookupChannel):
