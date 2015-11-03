@@ -110,16 +110,15 @@ class AutoCompleteSelectField(forms.fields.CharField):
 
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
-        widget = kwargs.get("widget", False)
 
-        if not widget or not isinstance(widget, AutoCompleteSelectWidget):
-            widget_kwargs = dict(
-                channel=channel,
-                help_text=kwargs.get('help_text', _(as_default_help)),
-                show_help_text=kwargs.pop('show_help_text', True),
-                plugin_options=kwargs.pop('plugin_options', {})
-            )
-            kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
+        widget_kwargs = dict(
+            channel=channel,
+            help_text=kwargs.get('help_text', _(as_default_help)),
+            show_help_text=kwargs.pop('show_help_text', True),
+            plugin_options=kwargs.pop('plugin_options', {})
+        )
+        widget_kwargs.update(kwargs.pop('widget_options', {}))
+        kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
         super(AutoCompleteSelectField, self).__init__(max_length=255, *args, **kwargs)
 
     def clean(self, value):
@@ -272,6 +271,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             'show_help_text': show_help_text,
             'plugin_options': kwargs.pop('plugin_options', {})
         }
+        widget_kwargs.update(kwargs.pop('widget_options', {}))
         kwargs['widget'] = AutoCompleteSelectMultipleWidget(**widget_kwargs)
         kwargs['help_text'] = help_text
 
@@ -354,6 +354,7 @@ class AutoCompleteField(forms.CharField):
             show_help_text=kwargs.pop('show_help_text', True),
             plugin_options=kwargs.pop('plugin_options', {})
         )
+        widget_kwargs.update(kwargs.pop('widget_options', {}))
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
         widget = AutoCompleteWidget(channel, **widget_kwargs)
