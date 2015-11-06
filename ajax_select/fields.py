@@ -91,7 +91,9 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'add_link': self.add_link,
         }
         context.update(plugin_options(lookup, self.channel, self.plugin_options, initial))
-        out = render_to_string(('autocompleteselect_%s.html' % self.channel, 'autocompleteselect.html'), context)
+        templates = ('ajax_select/autocompleteselect_%s.html' % self.channel,
+                    'ajax_select/autocompleteselect.html')
+        out = render_to_string(templates, context)
         return mark_safe(out)
 
     def value_from_datadict(self, data, files, name):
@@ -210,9 +212,9 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'add_link': self.add_link,
         }
         context.update(plugin_options(lookup, self.channel, self.plugin_options, initial))
-        out = render_to_string(
-            ('autocompleteselectmultiple_%s.html' % self.channel, 'autocompleteselectmultiple.html'),
-            context)
+        templates = ('ajax_select/autocompleteselectmultiple_%s.html' % self.channel,
+                    'ajax_select/autocompleteselectmultiple.html')
+        out = render_to_string(templates, context)
         return mark_safe(out)
 
     def value_from_datadict(self, data, files, name):
@@ -341,9 +343,8 @@ class AutoCompleteWidget(forms.TextInput):
             'func_slug': self.html_id.replace("-", ""),
         }
         context.update(plugin_options(lookup, self.channel, self.plugin_options, initial))
-
-        templates = ('autocomplete_%s.html' % self.channel,
-                     'autocomplete.html')
+        templates = ('ajax_select/autocomplete_%s.html' % self.channel,
+                     'ajax_select/autocomplete.html')
         return mark_safe(render_to_string(templates, context))
 
 
