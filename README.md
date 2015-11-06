@@ -7,6 +7,15 @@ Edit `ForeignKey`, `ManyToManyField` and `CharField` in Django Admin using jQuer
 <img src='https://raw.githubusercontent.com/crucialfelix/django-ajax-selects/develop/docs/source/_static/kiss-all.png
 '/>
 
+
+Development version
+-------------------
+
+NOTE: this is the README for the current development version.
+
+The latest current stable release is visible on the master branch: https://github.com/crucialfelix/django-ajax-selects/tree/master
+
+
 Documentation
 ------------------
 
