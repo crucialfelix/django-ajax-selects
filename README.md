@@ -1,12 +1,10 @@
 
 Edit `ForeignKey`, `ManyToManyField` and `CharField` in Django Admin using jQuery UI AutoComplete.
 
-<img src='https://raw.githubusercontent.com/crucialfelix/django-ajax-selects/develop/docs/source/_static/kiss.png
-'/>
 
-<img src='https://raw.githubusercontent.com/crucialfelix/django-ajax-selects/develop/docs/source/_static/kiss-all.png
-'/>
+![selecting](/docs/source/_static/kiss.png?raw=true)
 
+![selected](/docs/source/_static/kiss-all.png?raw=true)
 
 Development version
 -------------------
