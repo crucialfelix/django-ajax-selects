@@ -75,10 +75,6 @@ def make_ajax_field(related_model, fieldname_on_model, channel, show_help_text=F
             This setting will show the help text inside the widget itself.
         kwargs: optional args
 
-    # will support previous arg name for several versions before deprecating
-    # TODO remove this now
-    if 'show_m2m_help' in kwargs:
-        show_help_text = kwargs.pop('show_m2m_help')
             - help_text: default is the model db field's help_text.
                             None will disable all help text
             - label: default is the model db field's verbose name
