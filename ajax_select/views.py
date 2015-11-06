@@ -10,7 +10,15 @@ import json
 
 def ajax_lookup(request, channel):
 
-    """ this view supplies results for foreign keys and many to many fields """
+    """Load the named lookup channel and lookup matching models.
+
+    GET or POST should contain 'term'
+
+    Returns:
+        HttpResponse - JSON: `[{pk: value: match: repr:}, ...]`
+    Raises:
+        PermissionDenied - depending on the LookupChannel's implementation of check_auth
+    """
 
     # it should come in as GET unless global $.ajaxSetup({type:"POST"}) has been set
     # in which case we'll support POST
@@ -46,15 +54,20 @@ def ajax_lookup(request, channel):
 
 
 def add_popup(request, app_label, model):
-    """ this presents the admin site popup add view (when you click the green +)
+    """Presents the admin site popup add view (when you click the green +).
 
-        make sure that you have added ajax_select.urls to your urls.py:
-            (r'^ajax_select/', include('ajax_select.urls')),
-        this URL is expected in the code below, so it won't work under a different path
+    It serves the admin.add_view under a different URL and does some magic fiddling
+    to close the popup window after saving and call back to the opening window.
 
-        this view then hijacks the result that the django admin returns
-        and instead of calling django's dismissAddAnontherPopup(win,newId,newRepr)
-        it calls didAddPopup(win,newId,newRepr) which was added inline with bootstrap.html
+    make sure that you have added ajax_select.urls to your urls.py::
+        (r'^ajax_select/', include('ajax_select.urls')),
+
+    this URL is expected in the code below, so it won't work under a different path
+    TODO - check if this is still true.
+
+    This view then hijacks the result that the django admin returns
+    and instead of calling django's dismissAddAnontherPopup(win,newId,newRepr)
+    it calls didAddPopup(win,newId,newRepr) which was added inline with bootstrap.html
     """
 
     themodel = get_model(app_label, model)

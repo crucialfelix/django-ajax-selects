@@ -5,10 +5,10 @@ from django.conf import settings
 class LookupChannelRegistry(object):
 
     """
-    Registry for lookup channels activated for your django project ("site").
+    Registry for LookupChannels activated for your django project.
 
     This includes any installed apps that contain lookup.py modules (django 1.7+)
-    and any lookups that are explicitly declared in settings.AJAX_LOOKUP_CHANNELS
+    and any lookups that are explicitly declared in `settings.AJAX_LOOKUP_CHANNELS`
     """
     _registry = {}
 
@@ -25,10 +25,13 @@ class LookupChannelRegistry(object):
             self.register(settings.AJAX_LOOKUP_CHANNELS)
 
     def register(self, lookup_specs):
-        """
-        lookup_specs is a dict with one or more LookupChannel specifications
-        {'channel': ('module.of.lookups', 'MyLookupClass')}
-        {'channel': {'model': 'MyModelToBeLookedUp', 'search_field': 'field_to_search'}}
+        """Register a set of lookup definitions.
+
+        Args:
+            lookup_specs (dict): One or more LookupChannel specifications
+                - `{'channel': LookupChannelSubclass}`
+                - `{'channel': ('module.of.lookups', 'MyLookupClass')}`
+                - `{'channel': {'model': 'MyModelToBeLookedUp', 'search_field': 'field_to_search'}}`
         """
         for channel, spec in lookup_specs.items():
             if spec is None:  # unset
@@ -38,10 +41,15 @@ class LookupChannelRegistry(object):
                 self._registry[channel] = spec
 
     def get(self, channel):
-        """
-        Find the LookupChannel for the named channel.
+        """Find the LookupChannel class for the named channel and instantiate it.
 
-        @param channel {string} - name that the lookup channel was registered at
+        Args:
+            channel (string):  - name that the lookup channel was registered at
+        Returns:
+            LookupChannel
+        Raises:
+            ImproperlyConfigured - if channel is not found.
+            Exception - invalid lookup_spec was stored in registery
         """
         from ajax_select import LookupChannel
 
@@ -76,9 +84,13 @@ class LookupChannelRegistry(object):
         return channel in self._registry
 
     def make_channel(self, app_model, arg_search_field):
-        """
-        app_model:   app_name.ModelName
-        arg_search_field:  the field to search against and to display in search results
+        """Automatically make a LookupChannel.
+
+        Args:
+            app_model (str):   app_name.ModelName
+            arg_search_field (str):  the field to search against and to display in search results
+        Returns:
+            LookupChannel
         """
         from ajax_select import LookupChannel
         app_label, model_name = app_model.split(".")
@@ -95,9 +107,7 @@ registry = LookupChannelRegistry()
 
 
 def get_model(app_label, model_name):
-    """
-    Get the model from 'app_label' 'ModelName'
-    """
+    """Loads the model given an 'app_label' 'ModelName'"""
     try:
         # django >= 1.7
         from django.apps import apps
@@ -118,21 +128,19 @@ def can_autodiscover():
 
 
 def register(channel):
-    """
-    Decorator to register a LookupClass
+    """Decorator to register a LookupClass.
 
+    Example::
+        from ajax_select import LookupChannel, register
 
-    ```
-    from ajax_select import LookupChannel, register
+        @register('agent')
+        class AgentLookup(LookupClass):
 
-    @register('agent')
-    class AgentLookup(LookupClass):
+            def get_query(self):
+                ...
+            def format_item(self):
+                ...
 
-        def get_query(self):
-            ...
-        def format_item(self):
-            ...
-    ```
     """
 
     def _wrapper(lookup_class):
