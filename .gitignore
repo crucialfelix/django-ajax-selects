@@ -4,3 +4,4 @@ example/AJAXSELECTS/*
 .tox
 htmlcov
 .coverage
+docs/_build

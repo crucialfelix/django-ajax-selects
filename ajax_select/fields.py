@@ -39,7 +39,7 @@ def _media(self):
 
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
-    """  widget to select a model and return it as text """
+    """Widget to search for a model and return it as text for use in a CharField."""
 
     media = property(_media)
 
@@ -59,7 +59,6 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         self.show_help_text = show_help_text
 
     def render(self, name, value, attrs=None):
-
         value = value or ''
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
@@ -104,7 +103,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
 class AutoCompleteSelectField(forms.fields.CharField):
 
-    """  form field to select a model for a ForeignKey db field """
+    """Form field to select a Model for a ForeignKey db field."""
 
     channel = None
 
@@ -149,7 +148,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
 
 class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
-    """ widget to select multiple models """
+    """Widget to select multiple models for a ManyToMany db field."""
 
     media = property(_media)
 
@@ -350,8 +349,7 @@ class AutoCompleteWidget(forms.TextInput):
 
 class AutoCompleteField(forms.CharField):
     """
-    Field uses an AutoCompleteWidget to lookup possible completions
-    using a channel and stores raw text (not a foreign key)
+    A CharField that uses an AutoCompleteWidget to lookup matching and stores the result as plain text.
     """
     channel = None
 
@@ -376,30 +374,33 @@ class AutoCompleteField(forms.CharField):
 
 ####################################################################################
 
-def _check_can_add(self, user, model):
+def _check_can_add(self, user, related_model):
     """
-    check if the user can add the model, deferring first to
-    the channel if it implements can_add()
-    else using django's default perm check.
-    if it can add, then enable the widget to show the + link
+    Check if the User can create a related_model.
+
+    If the LookupChannel implements check_can_add() then use this.
+
+    Else uses Django's default permission system.
+
+    If it can add, then enable the widget to show the green + link
     """
     lookup = registry.get(self.channel)
     if hasattr(lookup, 'can_add'):
-        can_add = lookup.can_add(user, model)
+        can_add = lookup.can_add(user, related_model)
     else:
-        ctype = ContentType.objects.get_for_model(model)
+        ctype = ContentType.objects.get_for_model(related_model)
         can_add = user.has_perm("%s.add_%s" % (ctype.app_label, ctype.model))
     if can_add:
         self.widget.add_link = reverse('add_popup', kwargs={
-            'app_label': model._meta.app_label,
-            'model': model._meta.object_name.lower()
+            'app_label': related_model._meta.app_label,
+            'model': related_model._meta.object_name.lower()
         })
 
 
 def autoselect_fields_check_can_add(form, model, user):
     """
-    check the form's fields for any autoselect fields and enable their
-    widgets with + sign add links if permissions allow
+    Check the form's fields for any autoselect fields and enable their
+    widgets with green + button if permissions allow then to create the related_model.
     """
     for name, form_field in form.declared_fields.items():
         if isinstance(form_field, (AutoCompleteSelectMultipleField, AutoCompleteSelectField)):
@@ -408,7 +409,7 @@ def autoselect_fields_check_can_add(form, model, user):
 
 
 def plugin_options(lookup, channel_name, widget_plugin_options, initial):
-    """ Make a JSON dumped dict of all options for the jquery ui plugin itself """
+    """ Make a JSON dumped dict of all options for the jQuery ui plugin."""
     po = {}
     if initial:
         po['initial'] = initial
