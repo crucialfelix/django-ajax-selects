@@ -1,6 +1,9 @@
 
 Edit `ForeignKey`, `ManyToManyField` and `CharField` in Django Admin using jQuery UI AutoComplete.
 
+[![Build Status](https://travis-ci.org/crucialfelix/django-ajax-selects.svg?branch=master)](https://travis-ci.org/crucialfelix/django-ajax-selects) [![PyPI version](https://badge.fury.io/py/django-ajax-selects.svg)](https://badge.fury.io/py/django-ajax-selects)
+
+---
 
 ![selecting](/docs/source/_static/kiss.png?raw=true)
 
@@ -60,22 +63,22 @@ class DocumentForm(ModelForm):
 Fully customizable
 ------------------
 
-- search query
-- query other resources besides Django ORM
-- format results with HTML
-- custom styling
-- customize security policy
-- customize UI
-- integrate with other UI elements on page using the javascript API
-- works in Admin as well as in normal views
+- Customize search query
+- Query other resources besides Django ORM
+- Format results with HTML
+- Customize styling
+- Customize security policy
+- Add additional custom UI alongside widget
+- Integrate with other UI elements elsewhere on the page using the javascript API
+- Works in Admin as well as in normal views
 
 
 Assets included by default
 -------------------
 
-- ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
-- code.jquery.com/ui/1.10.3/jquery-ui.js
-- code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css
+- //ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
+- //code.jquery.com/ui/1.10.3/jquery-ui.js
+- //code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css
 
 Compatibility
 -------------
@@ -95,5 +98,5 @@ License
 -------
 
 Dual licensed under the MIT and GPL licenses:
-   http://www.opensource.org/licenses/mit-license.php
-   http://www.gnu.org/licenses/gpl.html
+- http://www.opensource.org/licenses/mit-license.php
+- http://www.gnu.org/licenses/gpl.html
