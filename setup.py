@@ -9,9 +9,9 @@ except ImportError:
 
 setup(
     name='django-ajax-selects',
-    version='1.3.6',
-    description='jQuery-UI powered auto-complete fields for editing ForeignKey, ManyToManyField and CharField',
-    author='crucialfelix',
+    version='1.4.0',
+    description='Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.',
+    author='Chris Sattinger',
     author_email='crucialfelix@gmail.com',
     url='https://github.com/crucialfelix/django-ajax-selects/',
     packages=['ajax_select'],
@@ -43,26 +43,18 @@ setup(
         "Framework :: Django",
     ],
     long_description="""\
-Enables editing of `ForeignKey`, `ManyToManyField` and `CharField` using jQuery UI AutoComplete.
+Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.
 
-1. The user types a search term into the text field
-2. An ajax request is sent to the server.
-3. The dropdown menu is populated with results.
-4. User selects by clicking or using arrow keys
-5. Selected result displays in the "deck" area directly below the input field.
-6. User can click trashcan icon to remove a selected item
+- Customize search query
+- Query other resources besides Django ORM
+- Format results with HTML
+- Customize styling
+- Customize security policy
+- Add additional custom UI alongside widget
+- Integrate with other UI elements elsewhere on the page using the javascript API
+- Works in Admin as well as in normal views
 
-+ Django 1.6+
-+ Optional boostrap mode allows easy installation by automatic inclusion of jQueryUI from the googleapis CDN
-+ Compatible with staticfiles, appmedia, django-compressor etc
-+ Popup to add a new item is supported
-+ Admin inlines now supported
-+ Ajax Selects works in the admin and also in public facing forms.
-+ Rich formatting can be easily defined for the dropdown display and the selected "deck" display.
-+ Templates and CSS are fully customizable
-+ JQuery triggers enable you to add javascript to respond when items are added or removed,
-  so other interface elements on the page can react
-+ Default (but customizable) security prevents griefers from pilfering your data via JSON requests
-
+- Django >=1.5, <=1.9
+- Python >=2.7, <=3.4
 """
 )

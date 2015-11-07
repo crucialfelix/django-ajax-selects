@@ -1,4 +1,2 @@
 recursive-include tests *.py
-recursive-include example *.py *.sh *.txt
-prune example/AJAXSELECTS
-prune example/ajax_select
+include README.md
