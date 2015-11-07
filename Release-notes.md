@@ -1,4 +1,69 @@
 
+Version 1.4.0
+=============
+
+- Autodiscover of lookups.py for Django 1.7+
+- Simpler configuration
+- Fix support for Django 1.8, Python 3
+- Support for Django 1.9b1
+- Add full testing matrix
+- New clearer multi-page documentation
+- Extensive docstrings
+- Support form reset button
+
+fix: changed_data always includes AutoComplete fields
+
+Breaking Changes
+----------------
+
+### Custom templates
+
+Move your custom templates from:
+
+    yourapp/templates/channel_autocomplete.html
+    yourapp/templates/channel_autocompleteselect.html
+    yourapp/templates/channel_autocompleteselectmultiple.html
+
+to:
+
+    yourapp/templates/ajax_select/channel_autocomplete.html
+    yourapp/templates/ajax_select/channel_autocompleteselect.html
+    yourapp/templates/ajax_select/channel_autocompleteselectmultiple.html
+
+And change your extends from:
+
+    {% extends "autocompleteselect.html" %}
+
+to:
+
+    {% extends "ajax_select/autocompleteselect.html" %}
+
+### No more conversion of values by Widget
+
+Previous releases would try to convert the primary key submitted from the Widget into either an integer or string,
+depending on what it looked like. This was to support databases with non-integer primary keys.
+
+Its best that the Widget does not involve itself with the database types, it should only process its input.
+
+Django's ORM converts strings to integers. If for some reason your database is getting the wrong type for a PK,
+then you should handle this conversion in your Form's clean_fieldname method.
+
+### Removed deprecated options
+
+`make_ajax_field`: dropped backward compat support for `show_m2m_help` option.
+Use `show_help_text`.
+
+remove deprecated `min_length` template var - use `plugin_options['min_length']`
+remove deprecated `lookup_url` template var - use `plugin_options['source']`
+
+
+### settings
+
+LookupChannels are still loaded from `settings.AJAX_LOOKUP_CHANNELS` as previously.
+
+If you are on Django >= 1.7 you may switch to using the @register decorator and you can probably remove `AJAX_LOOKUP_CHANNELS` entirely.
+
+
 Version 1.3.6
 =============
 

@@ -1,7 +1,7 @@
 
 from django.contrib import admin
 from ajax_select import make_ajax_form
-from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
+from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline, AjaxSelectAdminStackedInline
 from example.forms import ReleaseForm
 from example.models import Person, Label, Group, Song, Release, Book, Author
 
@@ -31,10 +31,26 @@ class LabelAdmin(AjaxSelectAdmin):
 admin.site.register(Label, LabelAdmin)
 
 
+class ReleaseInline(AjaxSelectAdminStackedInline):
+
+    # Example of the stacked inline
+
+    model = Release
+    form = make_ajax_form(Release, {
+        'group': 'group',
+        'label': 'label',
+        'songs': 'song',
+    })
+    extra = 1
+
+
 class GroupAdmin(AjaxSelectAdmin):
 
     # this shows a ManyToMany field
     form = make_ajax_form(Group, {'members': 'person'})
+    inlines = [
+        ReleaseInline
+    ]
 
 admin.site.register(Group, GroupAdmin)
 
@@ -42,6 +58,11 @@ admin.site.register(Group, GroupAdmin)
 class SongAdmin(AjaxSelectAdmin):
 
     form = make_ajax_form(Song, {'group': 'group', 'title': 'cliche'})
+    # django bug:
+    # readonly_fields = ('group',)
+    # django displays group twice if its listed as a readonly_field
+    # and throws a validation error on save
+    # but doesn't show any error message to the user
 
 admin.site.register(Song, SongAdmin)
 
@@ -63,8 +84,8 @@ class BookInline(AjaxSelectAdminTabularInline):
     form = make_ajax_form(Book, {
                 'about_group': 'group',
                 'mentions_persons': 'person'
-                },
-                show_help_text=True)
+            },
+            show_help_text=True)
     extra = 2
 
     # to enable the + add option

@@ -1,3 +1,2 @@
-recursive-include example *.py *.sh *.txt
-prune example/AJAXSELECTS
-prune example/ajax_select
+recursive-include tests *.py
+include README.md
