@@ -19,10 +19,10 @@ setup(
         [
             '*.py',
             '*.txt',
+            '*.md',
             'static/ajax_select/css/*',
             'static/ajax_select/images/*',
             'static/ajax_select/js/*',
-            'templates/*.html',
             'templates/ajax_select/*.html'
         ]
     },
