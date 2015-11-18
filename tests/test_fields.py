@@ -45,3 +45,8 @@ class TestAutoCompleteSelectMultipleField(TestCase):
         self.assertFalse(field.has_changed([1], ['1']))
         self.assertFalse(field.has_changed(['abc'], ['abc']))
         self.assertTrue(field.has_changed([1], ['2']))
+
+    def test_has_changed_blank_input(self):
+        field = fields.AutoCompleteSelectMultipleField('book')
+        self.assertTrue(field.has_changed(None, ['1']))
+        self.assertFalse(field.has_changed(None, []))
