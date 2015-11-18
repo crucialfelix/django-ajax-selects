@@ -1,6 +1,9 @@
-
-Version 1.4.0
+Release Notes
 =============
+
+
+1.4.0
+=====
 
 - Autodiscover of lookups.py for Django 1.7+
 - Simpler configuration
@@ -16,29 +19,30 @@ fix: changed_data always includes AutoComplete fields
 Breaking Changes
 ----------------
 
-### Custom templates
+**Custom templates**
 
-Move your custom templates from:
+Move your custom templates from::
 
     yourapp/templates/channel_autocomplete.html
     yourapp/templates/channel_autocompleteselect.html
     yourapp/templates/channel_autocompleteselectmultiple.html
 
-to:
+to::
 
     yourapp/templates/ajax_select/channel_autocomplete.html
     yourapp/templates/ajax_select/channel_autocompleteselect.html
     yourapp/templates/ajax_select/channel_autocompleteselectmultiple.html
 
-And change your extends from:
+And change your extends from::
 
     {% extends "autocompleteselect.html" %}
 
-to:
+to::
 
     {% extends "ajax_select/autocompleteselect.html" %}
 
-### No more conversion of values by Widget
+
+**No more conversion of values by Widget**
 
 Previous releases would try to convert the primary key submitted from the Widget into either an integer or string,
 depending on what it looked like. This was to support databases with non-integer primary keys.
@@ -48,7 +52,7 @@ Its best that the Widget does not involve itself with the database types, it sho
 Django's ORM converts strings to integers. If for some reason your database is getting the wrong type for a PK,
 then you should handle this conversion in your Form's clean_fieldname method.
 
-### Removed deprecated options
+**Removed deprecated options**
 
 `make_ajax_field`: dropped backward compat support for `show_m2m_help` option.
 Use `show_help_text`.
@@ -57,36 +61,36 @@ remove deprecated `min_length` template var - use `plugin_options['min_length']`
 remove deprecated `lookup_url` template var - use `plugin_options['source']`
 
 
-### settings
+**settings**
 
 LookupChannels are still loaded from `settings.AJAX_LOOKUP_CHANNELS` as previously.
 
 If you are on Django >= 1.7 you may switch to using the @register decorator and you can probably remove `AJAX_LOOKUP_CHANNELS` entirely.
 
 
-Version 1.3.6
+1.3.6
 =============
 
 Support for Django 1.8
 
-Version 1.3.5
+1.3.5
 =============
 
 Support for Django 1.7
 Support for non-integer primary keys
 
-Version 1.3.4
+1.3.4
 =============
 
 Fix protocols removing http/https in bootstrap
 
-Version 1.3.2
+1.3.2
 =============
 
 Fixed issues with bootstrap.js correctly detecting the presence of jQuery.ui.autocomplete
 
 
-Version 1.3
+1.3
 ===========
 
 + Support for Django 1.5 and 1.6
