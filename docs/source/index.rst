@@ -56,7 +56,7 @@ Fully customizable
 - integrate with other UI elements on page using the javascript API
 
 Assets included by default
--------------------
+--------------------------
 
 - ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
 - code.jquery.com/ui/1.10.3/jquery-ui.js
@@ -86,7 +86,7 @@ Index
    Ordered-ManyToMany
    Outside-of-Admin
    Example-app
-   Upgrading
+   Release-notes
    Contributing
    modules
 
