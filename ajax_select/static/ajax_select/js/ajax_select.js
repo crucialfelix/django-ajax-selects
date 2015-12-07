@@ -54,7 +54,11 @@
         }
       }
 
-      reset();
+      if (!$this.attr('data-changed')) {
+        reset()
+        $this.attr('data-changed', true)
+      }
+
       $this.closest('form').on('reset', reset);
 
       $this.bind('didAddPopup', function(event, pk, repr) {
@@ -115,7 +119,11 @@
         $this.val(query);
       }
 
-      reset();
+      if (!$this.attr('data-changed')) {
+        reset()
+        $this.attr('data-changed', true)
+      }
+
       $this.closest('form').on('reset', reset);
 
       $this.bind('didAddPopup', function(event, pk, repr) {
