@@ -55,8 +55,8 @@
       }
 
       if (!$this.attr('data-changed')) {
-        reset()
-        $this.attr('data-changed', true)
+        reset();
+        $this.attr('data-changed', true);
       }
 
       $this.closest('form').on('reset', reset);
@@ -120,8 +120,8 @@
       }
 
       if (!$this.attr('data-changed')) {
-        reset()
-        $this.attr('data-changed', true)
+        reset();
+        $this.attr('data-changed', true);
       }
 
       $this.closest('form').on('reset', reset);
