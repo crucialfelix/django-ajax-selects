@@ -97,7 +97,7 @@ class LookupChannel(object):
         pk_type = self.model._meta.pk.to_python
         ids = [pk_type(pk) for pk in ids]
         things = self.model.objects.in_bulk(ids)
-        return [things[aid] for aid in ids if aid in things]
+        return things.values()
 
     def can_add(self, user, other_model):
         """Check if the user has permission to add a ForeignKey or M2M model.
