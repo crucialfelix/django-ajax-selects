@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from ajax_select.registry import registry
+from ajax_select import UUIDAwareJSONEncoder
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -205,7 +206,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'html_id': self.html_id,
             'current': value,
             'current_ids': current_ids,
-            'current_reprs': mark_safe(json.dumps(initial)),
+            'current_reprs': mark_safe(json.dumps(initial, cls=UUIDAwareJSONEncoder)),
             'help_text': help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-", ""),
@@ -424,6 +425,6 @@ def plugin_options(lookup, channel_name, widget_plugin_options, initial):
         po['html'] = True
 
     return {
-        'plugin_options': mark_safe(json.dumps(po)),
-        'data_plugin_options': force_escape(json.dumps(po))
+        'plugin_options': mark_safe(json.dumps(po, cls=UUIDAwareJSONEncoder)),
+        'data_plugin_options': force_escape(json.dumps(po, cls=UUIDAwareJSONEncoder))
     }

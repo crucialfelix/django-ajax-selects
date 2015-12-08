@@ -1,5 +1,5 @@
 
-from ajax_select import registry
+from ajax_select import registry, UUIDAwareJSONEncoder
 from ajax_select.registry import get_model
 from django.contrib.admin import site
 from django.contrib.admin.options import IS_POPUP_VAR
@@ -48,7 +48,7 @@ def ajax_lookup(request, channel):
             'match': lookup.format_match(item),
             'repr': lookup.format_item_display(item)
         } for item in instances
-    ])
+    ], cls=UUIDAwareJSONEncoder)
 
     return HttpResponse(results, content_type='application/json')
 
