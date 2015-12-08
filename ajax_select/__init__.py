@@ -4,6 +4,8 @@ __author__ = "crucialfelix"
 __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "https://github.com/crucialfelix/django-ajax-selects/"
 
+from uuid import UUID
+from json import JSONEncoder
 from ajax_select.registry import registry, register  # noqa
 from ajax_select.helpers import make_ajax_form, make_ajax_field  # noqa
 from ajax_select.lookup_channel import LookupChannel  # noqa
@@ -20,3 +22,10 @@ except ImportError:
     # Previous django versions should load now
     # using settings.AJAX_LOOKUP_CHANNELS
     registry.load_channels()
+
+def UUIDAwareJSONEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, UUID):
+            return str(o)
+        else:
+            return super(UUIDAwareJSONEncoder, self).default(o)
