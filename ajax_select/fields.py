@@ -140,8 +140,10 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def check_can_add(self, user, model):
         _check_can_add(self, user, model)
 
-    def has_changed(self, initial_value, data_value):
+    def has_changed(self, initial, data):
         # 1 vs u'1'
+        initial_value = initial if initial is not None else ''
+        data_value = data if data is not None else ''
         return text_type(initial_value) != text_type(data_value)
 
 
