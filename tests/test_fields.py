@@ -36,6 +36,9 @@ class TestAutoCompleteSelectField(TestCase):
         self.assertFalse(field.has_changed(1, '1'))
         self.assertFalse(field.has_changed('abc', 'abc'))
         self.assertTrue(field.has_changed(1, '2'))
+        self.assertFalse(field.has_changed(None, ''))
+        self.assertFalse(field.has_changed(None, None))
+        self.assertFalse(field.has_changed('', None))
 
 
 class TestAutoCompleteSelectMultipleField(TestCase):
