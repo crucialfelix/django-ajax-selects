@@ -10,17 +10,10 @@ def ajax_lookup(request, channel):
 
     """ this view supplies results for foreign keys and many to many fields """
 
-    # it should come in as GET unless global $.ajaxSetup({type:"POST"}) has been set
-    # in which case we'll support POST
-    if request.method == "GET":
-        # we could also insist on an ajax request
-        if 'term' not in request.GET:
-            return HttpResponse('')
-        query = request.GET['term']
-    else:
-        if 'term' not in request.POST:
-            return HttpResponse('')  # suspicious
-        query = request.POST['term']
+    query = request.GET.get('term') or request.GET.get('q') or request.POST.get('term') or request.POST.get('q')
+
+    if query is None:
+        return HttpResponse('')
 
     lookup = get_lookup(channel)
     if hasattr(lookup, 'check_auth'):
