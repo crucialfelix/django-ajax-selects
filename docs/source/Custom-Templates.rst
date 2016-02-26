@@ -9,9 +9,9 @@ Each form field widget is rendered using a template:
 
 You may write a custom template for your channel:
 
-- yourapp/templates/ajax_select/{channel}_autocomplete.html
-- yourapp/templates/ajax_select/{channel}_autocompleteselect.html
-- yourapp/templates/ajax_select/{channel}_autocompleteselectmultiple.html
+- yourapp/templates/ajax_select/autocomplete_{channel}.html
+- yourapp/templates/ajax_select/autocompleteselect_{channel}.html
+- yourapp/templates/ajax_select/autocompleteselectmultiple_{channel}.html
 
 
 And customize these blocks::
