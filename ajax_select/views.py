@@ -13,7 +13,7 @@ def ajax_lookup(request, channel):
     query = request.GET.get('term') or request.GET.get('q') or request.POST.get('term') or request.POST.get('q')
 
     if query is None:
-        return HttpResponse('')
+        return HttpResponse('[]', content_type='application/json')
 
     lookup = get_lookup(channel)
     if hasattr(lookup, 'check_auth'):
