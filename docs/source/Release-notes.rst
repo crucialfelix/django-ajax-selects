@@ -1,6 +1,7 @@
 Release Notes
 =============
 
+See also CHANGELOG.md for github issues and bugfixes
 
 1.4.0
 =====

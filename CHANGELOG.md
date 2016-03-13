@@ -1,7 +1,20 @@
 # Change Log
 
-## [1.4.2](https://github.com/crucialfelix/django-ajax-selects/tree/1.4.2) (2016-01-18)
+## [1.4.3](https://github.com/crucialfelix/django-ajax-selects/tree/1.4.3) (2016-03-13)
+[Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.4.2...1.4.3)
 
+**Closed issues:**
+
+- Additional stacked inlines clear un-saved autocomplete fields [\#156](https://github.com/crucialfelix/django-ajax-selects/issues/156)
+- support request: ManyToOneRel doesn't have expected attributes [\#154](https://github.com/crucialfelix/django-ajax-selects/issues/154)
+
+**Merged pull requests:**
+
+- Stop using deprecated \_meta api. [\#160](https://github.com/crucialfelix/django-ajax-selects/pull/160) ([kramarz](https://github.com/kramarz))
+- Fixed file name in documentation for custom templates. [\#158](https://github.com/crucialfelix/django-ajax-selects/pull/158) ([sebslomski](https://github.com/sebslomski))
+- Fixes re-initialization upon adding inlines [\#157](https://github.com/crucialfelix/django-ajax-selects/pull/157) ([funkyfuture](https://github.com/funkyfuture))
+
+## [1.4.2](https://github.com/crucialfelix/django-ajax-selects/tree/1.4.2) (2016-01-18)
 [Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.4.1...1.4.2)
 
 **Fixed bugs:**
@@ -19,7 +32,7 @@
 
 **Closed issues:**
 
-- Templates not included in pypi 1.4.0 package [\#141](https://github.com/crucialfelix/django-ajax-selects/issues/141)
+- Templates not included in pypi1.4.0 package [\#141](https://github.com/crucialfelix/django-ajax-selects/issues/141)
 - Documentation seems to be broken on RTD [\#140](https://github.com/crucialfelix/django-ajax-selects/issues/140)
 
 ## [1.4.0](https://github.com/crucialfelix/django-ajax-selects/tree/1.4.0) (2015-11-07)
