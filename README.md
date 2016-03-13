@@ -77,7 +77,8 @@ Compatibility
 -------------
 
 - Django >=1.5, <=1.9
-- Python >=2.7, <=3.4
+- Python >=2.7, 3.3-3.5
+
 
 Contributors
 ------------
