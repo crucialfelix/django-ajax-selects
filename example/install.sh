@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # break on any error
 set -e
@@ -22,7 +22,11 @@ if [ ! -d ./ajax_select ]; then
 fi
 
 echo "Creating a sqllite database:"
-./manage.py syncdb
+./manage.py migrate
+
+echo "Create example migrations" 
+./manage.py makemigrations example
+./manage.py migrate example
 
 echo "\nto activate the virtualenv:\nsource AJAXSELECTS/bin/activate"
 
