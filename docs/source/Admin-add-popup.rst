@@ -48,7 +48,7 @@ You could implement a custom permission check in the `LookupChannel`::
 Inline forms in the Admin
 -------------------------
 
-If you are using ajax select fields on an Inline you can use these superclasses:
+If you are using ajax select fields on an Inline you can use these superclasses::
 
     from ajax_select.admin import AjaxSelectAdminTabularInline, AjaxSelectAdminStackedInline
     # or use this mixin if already have a superclass
