@@ -32,7 +32,7 @@ def ajax_lookup(request, channel):
 
     results = json.dumps([
         {
-            'pk': unicode(getattr(item, 'pk', None)),
+            lookup.id_field_name: unicode(getattr(item, 'pk', None)),
             'value': lookup.get_result(item),
             'match': lookup.format_match(item),
             'repr': lookup.format_item_display(item),

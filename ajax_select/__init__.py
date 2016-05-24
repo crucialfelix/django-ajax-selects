@@ -20,6 +20,7 @@ class LookupChannel(object):
     model = None
     plugin_options = {}
     min_length = 1
+    id_field_name = 'pk'
 
     def get_query(self,q,request):
         """ return a query set searching for the query string q
