@@ -63,7 +63,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'
-DATABASE_NAME = 'ajax_selects_example'
+DATABASE_NAME = 'ajax_selects_example_db'
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Not used with sqlite3.
@@ -72,7 +72,7 @@ DATABASE_PORT = ''             # Not used with sqlite3.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'ajax_selects_example'
+        'NAME': 'ajax_selects_example_db'
     }
 }
 
