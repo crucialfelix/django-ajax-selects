@@ -33,10 +33,4 @@ class TestViews(TestCase):
         })
         data = dict(name='Name')
         response = self.client.post(url, data)
-
         self.assertEqual(response.status_code, 200)
-        content = response.content.decode('UTF-8')
-
-        self.assertFalse('dismissAddRelatedObjectPopup' in content)
-        self.assertFalse('dismissAddAnotherPopup' in content)
-        self.assertTrue('didAddPopup' in content)
