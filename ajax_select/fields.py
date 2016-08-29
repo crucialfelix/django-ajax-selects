@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
+from django.db.models.query import QuerySet
 try:
     from django.forms.utils import flatatt
 except ImportError:
@@ -182,14 +183,13 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
         lookup = registry.get(self.channel)
 
-        # eg. value = [3002L, 1194L]
-        if value:
-            # |pk|pk| of current
-            current_ids = "|" + "|".join(str(pk) for pk in value) + "|"
+        if isinstance(value, QuerySet):
+            objects = value
         else:
-            current_ids = "|"
+            objects = lookup.get_objects(value)
 
-        objects = lookup.get_objects(value)
+        pks = [obj.pk for obj in objects]
+        current_ids = pack_ids(pks)
 
         # text repr of currently selected items
         initial = []
@@ -429,3 +429,11 @@ def plugin_options(lookup, channel_name, widget_plugin_options, initial):
         'plugin_options': mark_safe(json.dumps(po)),
         'data_plugin_options': force_escape(json.dumps(po))
     }
+
+
+def pack_ids(ids):
+    if ids:
+        # |pk|pk| of current
+        return "|" + "|".join(str(pk) for pk in ids) + "|"
+    else:
+        return "|"
