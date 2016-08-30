@@ -1,6 +1,6 @@
-'use strict';
 
 (function($) {
+  'use strict';
 
   $.fn.autocompleteselect = function(options) {
     return this.each(function() {

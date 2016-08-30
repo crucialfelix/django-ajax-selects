@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import json
 from ajax_select.registry import registry
 from django import forms
 from django.conf import settings
@@ -16,7 +17,6 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.six import text_type
 from django.utils.translation import ugettext as _
-import json
 
 
 as_default_help = 'Enter text to search.'
@@ -50,10 +50,10 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
                  channel,
                  help_text='',
                  show_help_text=True,
-                 plugin_options={},
+                 plugin_options=None,
                  *args,
                  **kwargs):
-        self.plugin_options = plugin_options
+        self.plugin_options = plugin_options or {}
         super(forms.widgets.TextInput, self).__init__(*args, **kwargs)
         self.channel = channel
         self.help_text = help_text
@@ -91,9 +91,10 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'func_slug': self.html_id.replace("-", ""),
             'add_link': self.add_link,
         }
-        context.update(plugin_options(lookup, self.channel, self.plugin_options, initial))
-        templates = ('ajax_select/autocompleteselect_%s.html' % self.channel,
-                    'ajax_select/autocompleteselect.html')
+        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
+        templates = (
+            'ajax_select/autocompleteselect_%s.html' % self.channel,
+            'ajax_select/autocompleteselect.html')
         out = render_to_string(templates, context)
         return mark_safe(out)
 
@@ -163,7 +164,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
                  channel,
                  help_text='',
                  show_help_text=True,
-                 plugin_options={},
+                 plugin_options=None,
                  *args,
                  **kwargs):
         super(AutoCompleteSelectMultipleWidget, self).__init__(*args, **kwargs)
@@ -171,7 +172,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
         self.help_text = help_text
         self.show_help_text = show_help_text
-        self.plugin_options = plugin_options
+        self.plugin_options = plugin_options or {}
 
     def render(self, name, value, attrs=None):
 
@@ -188,14 +189,13 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         else:
             objects = lookup.get_objects(value)
 
-        pks = [obj.pk for obj in objects]
-        current_ids = pack_ids(pks)
+        current_ids = pack_ids([obj.pk for obj in objects])
 
         # text repr of currently selected items
-        initial = []
-        for obj in objects:
-            display = lookup.format_item_display(obj)
-            initial.append([display, obj.pk])
+        initial = [
+            [lookup.format_item_display(obj), obj.pk]
+            for obj in objects
+        ]
 
         if self.show_help_text:
             help_text = self.help_text
@@ -213,7 +213,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'func_slug': self.html_id.replace("-", ""),
             'add_link': self.add_link,
         }
-        context.update(plugin_options(lookup, self.channel, self.plugin_options, initial))
+        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = ('ajax_select/autocompleteselectmultiple_%s.html' % self.channel,
                     'ajax_select/autocompleteselectmultiple.html')
         out = render_to_string(templates, context)
@@ -344,7 +344,7 @@ class AutoCompleteWidget(forms.TextInput):
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-", ""),
         }
-        context.update(plugin_options(lookup, self.channel, self.plugin_options, initial))
+        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = ('ajax_select/autocomplete_%s.html' % self.channel,
                      'ajax_select/autocomplete.html')
         return mark_safe(render_to_string(templates, context))
@@ -394,10 +394,9 @@ def _check_can_add(self, user, related_model):
         ctype = ContentType.objects.get_for_model(related_model)
         can_add = user.has_perm("%s.add_%s" % (ctype.app_label, ctype.model))
     if can_add:
-        self.widget.add_link = reverse('add_popup', kwargs={
-            'app_label': related_model._meta.app_label,
-            'model': related_model._meta.object_name.lower()
-        })
+        app_label = related_model._meta.app_label
+        model = related_model._meta.object_name.lower()
+        self.widget.add_link = reverse('admin:%s_%s_add' % (app_label, model)) + '?_popup=1'
 
 
 def autoselect_fields_check_can_add(form, model, user):
@@ -411,7 +410,7 @@ def autoselect_fields_check_can_add(form, model, user):
             form_field.check_can_add(user, db_field.rel.to)
 
 
-def plugin_options(lookup, channel_name, widget_plugin_options, initial):
+def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
     """ Make a JSON dumped dict of all options for the jQuery ui plugin."""
     po = {}
     if initial:
