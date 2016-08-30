@@ -7,12 +7,15 @@ should be unit tested in test_fields.py
 """
 from __future__ import unicode_literals
 from django.forms.models import ModelForm
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
+
 from tests.models import Book, Author, Person
 from ajax_select import fields
-from tests import lookups2  # noqa
 
 # ---------------  setup ----------------------------------- #
+
 
 class BookForm(ModelForm):
 
@@ -22,7 +25,7 @@ class BookForm(ModelForm):
 
     name = fields.AutoCompleteField('name')
     author = fields.AutoCompleteSelectField('author')
-    mentions_persons = fields.AutoCompleteSelectMultipleField('person2')
+    mentions_persons = fields.AutoCompleteSelectMultipleField('person')
 
 
 # ---------------  tests ----------------------------------- #
@@ -123,3 +126,54 @@ class TestBookForm(TestCase):
     #         saved = None
     #     self.assertTrue(saved is not None)
     #     self.assertEqual(saved.pk, book.pk)
+
+
+class TestAdmin(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@example.com', 'password')
+        self.client = Client()
+        ok = self.client.login(username='admin', password='password')
+        if not ok:
+            raise Exception("Failed to log in")
+
+
+class TestBookAdmin(TestAdmin):
+
+    """
+    Test the admins in tests/admin.py
+    """
+
+    def test_get_blank(self):
+        app_label = 'tests'
+        model = 'book'
+        response = self.client.get(reverse('admin:%s_%s_add' % (app_label, model)))
+        content = response.content
+        # print(content)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('/static/ajax_select/js/ajax_select.js' in content)
+        self.assertTrue('autocompleteselectmultiple' in content)
+        self.assertTrue('autocompleteselect' in content)
+        self.assertTrue('autocomplete' in content)
+        self.assertTrue('/admin/tests/author/add/?_popup=1' in content)
+        self.assertTrue('/admin/tests/person/add/?_popup=1' in content)
+
+
+class TestAuthorAdmin(TestAdmin):
+
+    """
+    Test an admin with inlines
+    """
+
+    def test_get_blank(self):
+        app_label = 'tests'
+        model = 'author'
+        response = self.client.get(reverse('admin:%s_%s_add' % (app_label, model)))
+        content = response.content
+        # print(content)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue('book_set-1-mentions_persons' in content)
