@@ -3,7 +3,13 @@ Outside of the Admin
 
 ajax_selects does not need to be in a Django admin.
 
-Popups will still use an admin view (the registered admin for the model being added), even if the form from where the popup was launched does not.
+When placing your form on the page be sure to include the static assets:
+
+    {{ form.meta }}
+
+This includes the javascript and css files.
+
+If you need to support "Add.."" popups then note that the popups will still use an admin view (the registered admin for the model being added), even if the form from where the popup was launched does not.
 
 In your view, after creating your ModelForm object::
 
