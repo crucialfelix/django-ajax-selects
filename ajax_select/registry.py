@@ -13,6 +13,10 @@ class LookupChannelRegistry(object):
     _registry = {}
 
     def load_channels(self):
+        """
+        Called when loading the application. Cannot be called a second time,
+        (eg. for testing) as Django will not re-import and re-register anything.
+        """
         self._registry = {}
         try:
             from django.utils.module_loading import autodiscover_modules

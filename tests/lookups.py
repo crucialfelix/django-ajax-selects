@@ -1,6 +1,11 @@
+"""
+Testing the register and autoloading.
+
+Should not be used by other tests.
+"""
 from django.utils.html import escape
 from django.contrib.auth.models import User
-from tests.models import Person
+from tests.models import Person, Author
 import ajax_select
 
 
@@ -38,3 +43,16 @@ class UserLookup(ajax_select.LookupChannel):
 
     def get_query(self, q, request):
         return self.model.objects.filter(email=q)
+
+
+@ajax_select.register('name')
+class NameLookup(ajax_select.LookupChannel):
+
+    def get_query(self, q, request):
+        return ['Joseph Simmons', 'Darryl McDaniels', 'Jam Master Jay']
+
+
+@ajax_select.register('author')
+class AuthorLookup(ajax_select.LookupChannel):
+
+    model = Author

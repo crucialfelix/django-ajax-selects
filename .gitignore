@@ -6,6 +6,6 @@ htmlcov
 .coverage
 docs/_build
 example/ajax_select
-example/ajax_selects_example
+example/ajax_selects_example_db
 dist
 MANIFEST

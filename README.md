@@ -76,7 +76,7 @@ Assets included by default
 Compatibility
 -------------
 
-- Django >=1.5, <=1.9
+- Django >=1.6, <=1.10
 - Python >=2.7, 3.3-3.5
 
 

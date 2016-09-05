@@ -3,6 +3,12 @@ Release Notes
 
 See also CHANGELOG.md for github issues and bugfixes
 
+1.5.0
+=====
+
+- Added Support for Django 1.10
+- Dropped Django 1.5
+
 1.4.0
 =====
 

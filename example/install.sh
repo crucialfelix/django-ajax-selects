@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 # break on any error
 set -e
 
 # creates a virtualenv
-virtualenv AJAXSELECTS
+virtualenv --no-site-packages AJAXSELECTS
 source AJAXSELECTS/bin/activate
 
 DJANGO=$1
@@ -21,16 +21,31 @@ if [ ! -d ./ajax_select ]; then
 	ln -s ../ajax_select/ ./ajax_select
 fi
 
+echo
 echo "Creating a sqllite database:"
-./manage.py syncdb
+./manage.py migrate
 
-echo "\nto activate the virtualenv:\nsource AJAXSELECTS/bin/activate"
+echo
+echo "Create example migrations"
+./manage.py makemigrations example
+./manage.py migrate example
 
-echo '\nto create an admin account:'
+echo
+echo "to activate the virtualenv:"
+echo "source AJAXSELECTS/bin/activate"
+
+echo
+echo 'to create an admin account:'
 echo './manage.py createsuperuser'
 
-echo "\nto run the testserver:\n./manage.py runserver"
-echo "\nthen open this url:\nhttp://127.0.0.1:8000/admin/"
-echo "\nto close the virtualenv or just close the shell:\ndeactivate"
+echo
+echo "to run the testserver:"
+echo "./manage.py runserver"
+echo
+echo "then open this url:"
+echo "http://127.0.0.1:8000/admin/"
+echo
+echo "to close the virtualenv or just close the shell:"
+echo "deactivate"
 
 exit 0

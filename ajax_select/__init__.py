@@ -8,7 +8,6 @@ from ajax_select.registry import registry, register  # noqa
 from ajax_select.helpers import make_ajax_form, make_ajax_field  # noqa
 from ajax_select.lookup_channel import LookupChannel  # noqa
 
-
 try:
     # django 1.7+ will use the new AppConfig api
     # It will load all your lookups.py modules
