@@ -1,5 +1,22 @@
 # Change Log
 
+## [1.5.0](https://github.com/crucialfelix/django-ajax-selects/tree/1.5.0) (2016-09-05)
+[Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.4.3...1.5.0)
+
+- Added Support for Django 1.10
+- Dropped Django 1.5
+
+**Closed issues:**
+
+- ValueError in Django 1.10 [\#177](https://github.com/crucialfelix/django-ajax-selects/issues/177)
+- Django 1.10 did add popup [\#174](https://github.com/crucialfelix/django-ajax-selects/issues/174)
+- Example not Working [\#161](https://github.com/crucialfelix/django-ajax-selects/issues/161)
+
+**Merged pull requests:**
+
+- Fix documentation to format code properly [\#165](https://github.com/crucialfelix/django-ajax-selects/pull/165) ([joshblum](https://github.com/joshblum))
+- install.sh not working [\#162](https://github.com/crucialfelix/django-ajax-selects/pull/162) ([hdzierz](https://github.com/hdzierz))
+
 ## [1.4.3](https://github.com/crucialfelix/django-ajax-selects/tree/1.4.3) (2016-03-13)
 [Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.4.2...1.4.3)
 
