@@ -134,26 +134,20 @@
 
   function addAutoComplete (inp, callback) {
     var $inp = $(inp),
-        html_id = inp.id,
-        prefix_id = html_id,
-        opts = JSON.parse($inp.attr('data-plugin-options')),
-        prefix = 0;
-
-    /* detects inline forms and converts the html_id if needed */
-    if (html_id.indexOf('__prefix__') !== -1) {
-      // Some dirty loop to find the appropriate element to apply the callback to
-      while ($('#' + html_id).length) {
-        html_id = prefix_id.replace(/__prefix__/, prefix++);
-      }
-      html_id = prefix_id.replace(/__prefix__/, prefix - 2);
-      // Ignore the first call to this function, the one that is triggered when
-      // page is loaded just because the 'empty' form is there.
-      if ($('#' + html_id + ', #' + html_id + '_text').hasClass('ui-autocomplete-input')) {
-        return;
-      }
+        opts = JSON.parse($inp.attr('data-plugin-options'));
+    // Do not activate empty-form inline rows.
+    // These are cloned into the form when adding another row and will be activated at that time.
+    if ($inp.attr('id').indexOf('__prefix__') !== -1) {
+      // console.log('skipping __prefix__ row', $inp);
+      return;
     }
-
+    if ($inp.data('_ajax_select_inited_')) {
+      // console.log('skipping already activated row', $inp);
+      return;
+    }
+    // console.log('activating', $inp);
     callback($inp, opts);
+    $inp.data('_ajax_select_inited_', true);
   }
 
   // allow html in the results menu
@@ -242,6 +236,7 @@
     // if dynamically injecting forms onto a page
     // you can trigger them to be ajax-selects-ified:
     $(window).trigger('init-autocomplete');
+    // When adding new rows in inline forms, reinitialize and activate newly added rows.
     $(document)
       .on('click', '.inline-group ul.tools a.add, .inline-group div.add-row a, .inline-group .tabular tr.add-row td a', function() {
         $(window).trigger('init-autocomplete');
