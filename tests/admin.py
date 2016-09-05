@@ -1,9 +1,8 @@
 
 from django.contrib import admin
-from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline, AjaxSelectAdminStackedInline
+from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
 from tests.models import Author, Book, Person
 from tests.test_integration import BookForm
-from tests import lookups2  # noqa
 
 
 class BookAdmin(AjaxSelectAdmin):
