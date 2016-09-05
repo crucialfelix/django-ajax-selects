@@ -9,7 +9,7 @@ except ImportError:
 
 setup(
     name='django-ajax-selects',
-    version='1.4.3',
+    version='1.5.0',
     description='Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.',
     author='Chris Sattinger',
     author_email='crucialfelix@gmail.com',
@@ -54,7 +54,7 @@ Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI A
 - Integrate with other UI elements elsewhere on the page using the javascript API
 - Works in Admin as well as in normal views
 
-- Django >=1.5, <=1.9
+- Django >=1.6, <=1.10
 - Python >=2.7, <=3.5
 """
 )
