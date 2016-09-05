@@ -12,4 +12,3 @@ class TestViews(TestCase):
             password='password')
         self.client = Client()
         self.client.login(username='admin', password='password')
-

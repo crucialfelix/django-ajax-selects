@@ -6,6 +6,7 @@ Specific errors that are discovered through these tests
 should be unit tested in test_fields.py
 """
 from __future__ import unicode_literals
+import django
 from django.forms.models import ModelForm
 from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
@@ -13,6 +14,10 @@ from django.contrib.auth.models import User
 
 from tests.models import Book, Author, Person
 from ajax_select import fields
+
+# Other versions will autoload
+if django.VERSION[1] < 7:
+    from tests import lookups  # noqa
 
 # ---------------  setup ----------------------------------- #
 
@@ -148,7 +153,7 @@ class TestBookAdmin(TestAdmin):
         app_label = 'tests'
         model = 'book'
         response = self.client.get(reverse('admin:%s_%s_add' % (app_label, model)))
-        content = response.content
+        content = str(response.content)
         # print(content)
 
         self.assertEqual(response.status_code, 200)
@@ -171,7 +176,7 @@ class TestAuthorAdmin(TestAdmin):
         app_label = 'tests'
         model = 'author'
         response = self.client.get(reverse('admin:%s_%s_add' % (app_label, model)))
-        content = response.content
+        content = str(response.content)
         # print(content)
 
         self.assertEqual(response.status_code, 200)
