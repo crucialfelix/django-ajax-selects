@@ -191,12 +191,14 @@
     // Call the original which sets the input (just the pk)
     // calls input.trigger('changed') if >= 1.10
     // and closes the window.
-    if (djangoDismissAddRelatedObjectPopup) {
+    var name = window.windowname_to_id(win.name),
+        $id_input = $('#' + name),
+        is_ajax_select = $id_input.attr('data-ajax-select') === "autocompleteselectmultiple";
+    if (djangoDismissAddRelatedObjectPopup && !is_ajax_select) {
       djangoDismissAddRelatedObjectPopup(win, newId, newRepr);
     } else {
       win.close();
     }
-    var name = window.windowname_to_id(win.name);
     // newRepr is django's repr of object
     // not the Lookup's formatting of it.
     $('#' + name).trigger('didAddPopup', [newId, newRepr]);
