@@ -1,10 +1,25 @@
 # Change Log
 
+## [1.5.1](https://github.com/crucialfelix/django-ajax-selects/tree/1.5.1) (2016-10-13)
+[Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.5.0...1.5.1)
+
+**Implemented enhancements:**
+
+- Prefer document.createElement to document.write [\#182](https://github.com/crucialfelix/django-ajax-selects/issues/182)
+
+**Fixed bugs:**
+
+- fix: add related for multiple select [\#184](https://github.com/crucialfelix/django-ajax-selects/pull/184) ([crucialfelix](https://github.com/crucialfelix))
+
 ## [1.5.0](https://github.com/crucialfelix/django-ajax-selects/tree/1.5.0) (2016-09-05)
 [Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.4.3...1.5.0)
 
 - Added Support for Django 1.10
 - Dropped Django 1.5
+
+**Fixed bugs:**
+
+- Initial fields are duplicated when new row added. [\#94](https://github.com/crucialfelix/django-ajax-selects/issues/94)
 
 **Closed issues:**
 
