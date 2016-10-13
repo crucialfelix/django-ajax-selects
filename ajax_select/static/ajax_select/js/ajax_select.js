@@ -184,22 +184,24 @@
   /* Called by the popup create object when it closes.
    * For the popup this is opener.dismissAddRelatedObjectPopup
    * Django implements this in RelatedObjectLookups.js
+   * In django >= 1.10 we can rely on input.trigger('change')
+   * and avoid this hijacking.
    */
   var djangoDismissAddRelatedObjectPopup = window.dismissAddRelatedObjectPopup || window.dismissAddAnotherPopup;
   window.dismissAddRelatedObjectPopup = function(win, newId, newRepr) {
-    // This may be called for ajax-select inputs or for other inputs.
-    // Call the original which sets the input (just the pk)
-    // calls input.trigger('changed') if >= 1.10
-    // and closes the window.
-    if (djangoDismissAddRelatedObjectPopup) {
-      djangoDismissAddRelatedObjectPopup(win, newId, newRepr);
-    } else {
-      win.close();
-    }
+    // Iff this is an ajax-select input then close the window and
+    // trigger didAddPopup
     var name = window.windowname_to_id(win.name);
-    // newRepr is django's repr of object
-    // not the Lookup's formatting of it.
-    $('#' + name).trigger('didAddPopup', [newId, newRepr]);
+    var input = $('#' + name);
+    if (input.data('ajax-select')) {
+      win.close();
+      // newRepr is django's repr of object
+      // not the Lookup's formatting of it.
+      input.trigger('didAddPopup', [newId, newRepr]);
+    } else {
+      // Call the normal django set and close function.
+      djangoDismissAddRelatedObjectPopup(win, newId, newRepr);
+    }
   }
   // Django renamed this function in 1.8
   window.dismissAddAnotherPopup = window.dismissAddRelatedObjectPopup;
