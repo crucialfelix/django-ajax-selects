@@ -5,7 +5,7 @@ ajax_selects does not need to be in a Django admin.
 
 When placing your form on the page be sure to include the static assets:
 
-    {{ form.meta }}
+    {{ form.media }}
 
 This includes the javascript and css files.
 
