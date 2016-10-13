@@ -1,6 +1,6 @@
+window.addEventListener('load', function() {
 
-(function($) {
-  'use strict';
+  var $ = window.jQuery;
 
   $.fn.autocompleteselect = function(options) {
     return this.each(function() {
@@ -245,4 +245,4 @@
       });
   });
 
-})(window.jQuery);
+}, {once: true});
