@@ -46,4 +46,6 @@ def ajax_lookup(request, channel):
         } for item in instances
     ])
 
-    return HttpResponse(results, content_type='application/json')
+    response = HttpResponse(results, content_type='application/json')
+    response['Cache-Control'] = 'max-age=0, must-revalidate, no-store, no-cache;'
+    return response
