@@ -8,9 +8,7 @@
   }
 
   function loadJS(src) {
-    var script = document.createElement('script');
-    script.src = src;
-    document.head.appendChild(script);
+    document.write('<script type="text/javascript"  src="' + src + '"><\/script>');
   }
 
   function loadCSS(href) {

@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.5.2](https://github.com/crucialfelix/django-ajax-selects/tree/1.5.2) (2016-10-19)
+[Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.5.1...1.5.2)
+
+**Fixed bugs:**
+
+- Occasionally: $.ui.autocomplete is undefined [\#188](https://github.com/crucialfelix/django-ajax-selects/issues/188)
+
+**Closed issues:**
+
+- No cache management headers in HTTP response [\#187](https://github.com/crucialfelix/django-ajax-selects/issues/187)
+
 ## [1.5.1](https://github.com/crucialfelix/django-ajax-selects/tree/1.5.1) (2016-10-13)
 [Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.5.0...1.5.1)
 

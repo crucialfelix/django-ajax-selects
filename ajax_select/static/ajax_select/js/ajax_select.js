@@ -1,4 +1,4 @@
-window.addEventListener('load', function() {
+(function() {
 
   var $ = window.jQuery;
 
@@ -245,4 +245,4 @@ window.addEventListener('load', function() {
       });
   });
 
-}, {once: true});
+})();
