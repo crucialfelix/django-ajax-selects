@@ -70,6 +70,9 @@ class LookupChannel(object):
         if not request.user.is_staff:
             raise PermissionDenied
 
+    def get_link(self, obj):
+        return ''
+
 
 
 def make_ajax_form(model,fieldlist,superclass=ModelForm,show_help_text=False,**kwargs):

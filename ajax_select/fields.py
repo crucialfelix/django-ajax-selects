@@ -56,6 +56,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
         self.html_id = final_attrs.pop('id', name)
 
         current_repr = ''
+        current_link = ''
         initial = None
         lookup = get_lookup(self.channel)
         if value:
@@ -65,6 +66,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             except IndexError:
                 raise Exception("%s cannot find object:%s" % (lookup, value))
             current_repr = lookup.get_result(obj)
+            current_link = lookup.get_link(obj)
             initial = [current_repr,obj.pk]
 
         if self.show_help_text:
@@ -77,6 +79,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'html_id': self.html_id,
             'current_id': value,
             'current_repr': current_repr,
+            'current_link': current_link,
             'help_text': help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
