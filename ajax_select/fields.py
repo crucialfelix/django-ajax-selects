@@ -61,6 +61,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     def render(self, name, value, attrs=None):
         value = value or ''
+        attrs.pop('required')
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
 
