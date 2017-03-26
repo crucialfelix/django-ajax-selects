@@ -4,7 +4,10 @@ from ajax_select.registry import registry
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse  # < django 1.10
 from django.db.models.query import QuerySet
 try:
     from django.forms.utils import flatatt
@@ -61,7 +64,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     def render(self, name, value, attrs=None):
         value = value or ''
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(attrs or {})
         self.html_id = final_attrs.pop('id', name)
 
         current_repr = ''
@@ -179,7 +182,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         if value is None:
             value = []
 
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(attrs or {})
         self.html_id = final_attrs.pop('id', name)
 
         lookup = registry.get(self.channel)
@@ -326,7 +329,7 @@ class AutoCompleteWidget(forms.TextInput):
 
         initial = value or ''
 
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(attrs or {})
         self.html_id = final_attrs.pop('id', name)
 
         lookup = registry.get(self.channel)
