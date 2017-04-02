@@ -4,7 +4,10 @@ from ajax_select.registry import registry
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse  # < django 1.10
 from django.db.models.query import QuerySet
 try:
     from django.forms.utils import flatatt
@@ -61,7 +64,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     def render(self, name, value, attrs=None):
         value = value or ''
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(attrs or {})
         self.html_id = final_attrs.pop('id', name)
 
         current_repr = ''
@@ -179,7 +182,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         if value is None:
             value = []
 
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(attrs or {})
         self.html_id = final_attrs.pop('id', name)
 
         lookup = registry.get(self.channel)
@@ -326,7 +329,7 @@ class AutoCompleteWidget(forms.TextInput):
 
         initial = value or ''
 
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(attrs or {})
         self.html_id = final_attrs.pop('id', name)
 
         lookup = registry.get(self.channel)
@@ -407,7 +410,10 @@ def autoselect_fields_check_can_add(form, model, user):
     for name, form_field in form.declared_fields.items():
         if isinstance(form_field, (AutoCompleteSelectMultipleField, AutoCompleteSelectField)):
             db_field = model._meta.get_field(name)
-            form_field.check_can_add(user, db_field.rel.to)
+            try:
+                form_field.check_can_add(user, db_field.remote_field.model)
+            except AttributeError:
+                form_field.check_can_add(user, db_field.rel.to)  # Django < 1.9
 
 
 def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
