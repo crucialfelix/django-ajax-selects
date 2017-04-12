@@ -61,7 +61,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     def render(self, name, value, attrs=None):
         value = value or ''
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(self.attrs)
         self.html_id = final_attrs.pop('id', name)
 
         current_repr = ''
@@ -179,7 +179,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         if value is None:
             value = []
 
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(self.attrs)
         self.html_id = final_attrs.pop('id', name)
 
         lookup = registry.get(self.channel)
@@ -326,7 +326,7 @@ class AutoCompleteWidget(forms.TextInput):
 
         initial = value or ''
 
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(self.attrs)
         self.html_id = final_attrs.pop('id', name)
 
         lookup = registry.get(self.channel)
