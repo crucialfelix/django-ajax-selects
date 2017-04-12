@@ -95,7 +95,7 @@ class LookupChannel(object):
         """
         # return objects in the same order as passed in here
 
-        if self.model._meta.pk.is_relation:
+        if self.model._meta.pk.rel is not None:
             # Use the type of the field being referenced
             pk_type = self.model._meta.pk.target_field.to_python
         else:
