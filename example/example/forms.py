@@ -13,7 +13,7 @@ class ReleaseForm(ModelForm):
         exclude = []
 
     #           args:  this model, fieldname on this model, lookup_channel_name
-    group = make_ajax_field(Release, 'group', 'group', show_help_text=True)
+    group = make_ajax_field(Release, 'group', 'group', show_help_text=True, required=True)
 
     label = make_ajax_field(Release, 'label', 'label', help_text="Search for label by name")
 

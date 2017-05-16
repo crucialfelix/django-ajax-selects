@@ -62,6 +62,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
     def render(self, name, value, attrs=None):
         value = value or ''
         final_attrs = self.build_attrs(attrs)
+        final_attrs.pop('required', None)
         self.html_id = final_attrs.pop('id', name)
 
         current_repr = ''
@@ -180,6 +181,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             value = []
 
         final_attrs = self.build_attrs(attrs)
+        final_attrs.pop('required', None)
         self.html_id = final_attrs.pop('id', name)
 
         lookup = registry.get(self.channel)
@@ -328,6 +330,7 @@ class AutoCompleteWidget(forms.TextInput):
 
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
+        final_attrs.pop('required', None)
 
         lookup = registry.get(self.channel)
         if self.show_help_text:

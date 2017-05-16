@@ -18,6 +18,15 @@ class TestAutoCompleteSelectWidget(TestCase):
         out = widget.render('book', book.pk)
         self.assertTrue('autocompleteselect' in out)
 
+    def test_render_required_field(self):
+        field = fields.AutoCompleteSelectField('book', required=True)
+        widget = field.widget
+
+        book = Book.objects.create(name='book')
+        out = widget.render('book', book.pk)
+        self.assertTrue('autocompleteselect' in out)
+        self.assertTrue('required' not in out)
+
 
 class TestAutoCompleteSelectMultipleWidget(TestCase):
 
