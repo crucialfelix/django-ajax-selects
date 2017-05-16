@@ -61,7 +61,9 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
     def render(self, name, value, attrs=None):
         value = value or ''
-        final_attrs = self.build_attrs(attrs)
+
+        final_attrs = self.build_attrs(self.attrs)
+        final_attrs.update(attrs or {})
         final_attrs.pop('required', None)
         self.html_id = final_attrs.pop('id', name)
 
@@ -180,7 +182,8 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         if value is None:
             value = []
 
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(self.attrs)
+        final_attrs.update(attrs or {})
         final_attrs.pop('required', None)
         self.html_id = final_attrs.pop('id', name)
 
@@ -327,8 +330,8 @@ class AutoCompleteWidget(forms.TextInput):
     def render(self, name, value, attrs=None):
 
         initial = value or ''
-
-        final_attrs = self.build_attrs(attrs)
+        final_attrs = self.build_attrs(self.attrs)
+        final_attrs.update(attrs or {})
         self.html_id = final_attrs.pop('id', name)
         final_attrs.pop('required', None)
 
