@@ -5,9 +5,9 @@ from tests.models import Author, Book, Person
 from tests.test_integration import BookForm
 
 
+@admin.register(Book)
 class BookAdmin(AjaxSelectAdmin):
     form = BookForm
-admin.site.register(Book, BookAdmin)
 
 
 class BookInline(AjaxSelectAdminTabularInline):
@@ -17,15 +17,14 @@ class BookInline(AjaxSelectAdminTabularInline):
     extra = 2
 
 
+@admin.register(Author)
 class AuthorAdmin(AjaxSelectAdmin):
 
     inlines = [
         BookInline
     ]
 
-admin.site.register(Author, AuthorAdmin)
 
-
+@admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     pass
-admin.site.register(Person, PersonAdmin)
