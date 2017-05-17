@@ -3,7 +3,6 @@ sudo: false
 env:
   - TOX_ENV=py27-flake8
   - TOX_ENV=py34-flake8
-  - TOX_ENV=py36-flake8
   - TOX_ENV=py27-dj17
   - TOX_ENV=py27-dj18
   - TOX_ENV=py27-dj19
@@ -14,11 +13,6 @@ env:
   - TOX_ENV=py34-dj19
   - TOX_ENV=py34-dj110
   - TOX_ENV=py34-dj111
-  - TOX_ENV=py36-dj17
-  - TOX_ENV=py36-dj18
-  - TOX_ENV=py36-dj19
-  - TOX_ENV=py36-dj110
-  - TOX_ENV=py36-dj111
 install:
  - pip install -r requirements-test.txt
 script:
