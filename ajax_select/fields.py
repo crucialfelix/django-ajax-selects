@@ -4,19 +4,19 @@ from ajax_select.registry import registry
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
 from django.db.models.query import QuerySet
-try:
-    from django.forms.utils import flatatt
-except ImportError:
-    # < django 1.7
-    from django.forms.util import flatatt
-from django.template.loader import render_to_string
+from django.forms.utils import flatatt
 from django.template.defaultfilters import force_escape
+from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.six import text_type
 from django.utils.translation import ugettext as _
+try:
+    from django.urls import reverse
+except ImportError:
+    # < django 1.10
+    from django.core.urlresolvers import reverse
 
 
 as_default_help = 'Enter text to search.'
