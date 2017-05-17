@@ -86,23 +86,21 @@ class LookupChannel(object):
         return escape(force_text(obj))
 
     def get_objects(self, ids):
-        """This is used to retrieve the currently selected objects for either ManyToMany or ForeignKey.
-
-        Note that the order of the ids supplied for ManyToMany fields is dependent on how the
-        objects manager fetches it.
-        ie. what is returned by `YourModel.{fieldname}_set.all()`
-
-        In most situations (especially postgres) this order is indeterminate -- not the order that you originally
-        added them in the interface.
-        See :doc:`/Ordered-ManyToMany` for a solution to this.
+        """
+        This is used to retrieve the currently selected objects for either ManyToMany or ForeignKey.
 
         Args:
             ids (list): list of primary keys
         Returns:
             list: list of Model objects
         """
-        # return objects in the same order as passed in here
-        pk_type = self.model._meta.pk.to_python
+        if self.model._meta.pk.rel is not None:
+            # Use the type of the field being referenced
+            pk_type = self.model._meta.pk.target_field.to_python
+        else:
+            pk_type = self.model._meta.pk.to_python
+
+        # Return objects in the same order as passed in here
         ids = [pk_type(pk) for pk in ids]
         things = self.model.objects.in_bulk(ids)
         return [things[aid] for aid in ids if aid in things]
