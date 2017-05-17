@@ -35,12 +35,14 @@ def _media(self):
     return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
 
 
-####################################################################################
+###############################################################################
 
 
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
-    """Widget to search for a model and return it as text for use in a CharField."""
+    """
+    Widget to search for a model and return it as text for use in a CharField.
+    """
 
     media = property(_media)
 
@@ -134,7 +136,8 @@ class AutoCompleteSelectField(forms.fields.CharField):
             if len(objs) != 1:
                 # someone else might have deleted it while you were editing
                 # or your channel is faulty
-                # out of the scope of this field to do anything more than tell you it doesn't exist
+                # out of the scope of this field to do anything more than
+                # tell you it doesn't exist
                 raise forms.ValidationError("%s cannot find object: %s" % (lookup, value))
             return objs[0]
         else:
@@ -152,12 +155,14 @@ class AutoCompleteSelectField(forms.fields.CharField):
         return text_type(initial_value) != text_type(data_value)
 
 
-####################################################################################
+###############################################################################
 
 
 class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
-    """Widget to select multiple models for a ManyToMany db field."""
+    """
+    Widget to select multiple models for a ManyToMany db field.
+    """
 
     media = property(_media)
 
@@ -234,7 +239,9 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
 class AutoCompleteSelectMultipleField(forms.fields.CharField):
 
-    """ form field to select multiple models for a ManyToMany db field """
+    """
+    Form field to select multiple models for a ManyToMany db field.
+    """
 
     channel = None
 
@@ -250,8 +257,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
             if isinstance(help_text, str):
                 help_text = force_text(help_text)
             # django admin appends "Hold down "Control",..." to the help text
-            # regardless of which widget is used. so even when you specify an explicit
-            # help text it appends this other default text onto the end.
+            # regardless of which widget is used. so even when you specify an
+            # explicit help text it appends this other default text onto the end.
             # This monkey patches the help text to remove that
             if help_text != '':
                 if not isinstance(help_text, text_type):
@@ -303,14 +310,15 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         dvs = [text_type(v) for v in (data_value or [])]
         return ivs != dvs
 
-####################################################################################
+###############################################################################
 
 
 class AutoCompleteWidget(forms.TextInput):
 
     """
-    Widget to select a search result and enter the result as raw text in the text input field.
-    the user may also simply enter text and ignore any auto complete suggestions.
+    Widget to select a search result and enter the result as raw text in the
+    text input field. The user may also simply enter text and ignore any
+    auto complete suggestions.
     """
 
     media = property(_media)
@@ -358,7 +366,8 @@ class AutoCompleteWidget(forms.TextInput):
 
 class AutoCompleteField(forms.CharField):
     """
-    A CharField that uses an AutoCompleteWidget to lookup matching and stores the result as plain text.
+    A CharField that uses an AutoCompleteWidget to lookup matching
+    and stores the result as plain text.
     """
     channel = None
 
@@ -381,7 +390,7 @@ class AutoCompleteField(forms.CharField):
         super(AutoCompleteField, self).__init__(*args, **defaults)
 
 
-####################################################################################
+###############################################################################
 
 def _check_can_add(self, user, related_model):
     """
@@ -408,7 +417,8 @@ def _check_can_add(self, user, related_model):
 def autoselect_fields_check_can_add(form, model, user):
     """
     Check the form's fields for any autoselect fields and enable their
-    widgets with green + button if permissions allow then to create the related_model.
+    widgets with green + button if permissions allow then to create the
+    related_model.
     """
     for name, form_field in form.declared_fields.items():
         if isinstance(form_field, (AutoCompleteSelectMultipleField, AutoCompleteSelectField)):
