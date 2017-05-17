@@ -8,7 +8,8 @@ class LookupChannel(object):
     """
     Subclass this, setting the model and implementing methods to taste.
 
-    Attributes:
+    Attributes::
+
         model (Model): The Django Model that this lookup channel will search for.
         plugin_options (dict): Options passed to jQuery UI plugin that are specific to this channel.
         min_length (int): Minimum number of characters user types before a search is initiated.
@@ -29,12 +30,13 @@ class LookupChannel(object):
         """
         Return a QuerySet searching for the query string `q`.
 
-        Note that you may return any iterable so you can return a list or even use yield and turn this
-        method into a generator.
+        Note that you may return any iterable so you can return a list or even
+        use yield and turn this method into a generator.
 
         Args:
             q (str, unicode): The query string to search for.
-            request (Request): This can be used to customize the search by User or to use additional GET variables.
+            request (Request): This can be used to customize the search by User
+                or to use additional GET variables.
 
         Returns:
             (QuerySet, list, generator): iterable of related_models
@@ -43,12 +45,16 @@ class LookupChannel(object):
         return self.model.objects.filter(**kwargs).order_by(self.search_field)
 
     def get_result(self, obj):
-        """The text result of autocompleting the entered query.
+        """
+        The text result of autocompleting the entered query.
 
-        For a partial string that the user typed in, each matched result is here converted to the fully completed text.
+        For a partial string that the user typed in, each matched result is
+        here converted to the fully completed text.
 
-        This is currently displayed only for a moment in the text field after the user has selected the item.
-        Then the item is displayed in the item_display deck and the text field is cleared.
+        This is currently displayed only for a moment in the text field after
+        the user has selected the item.
+        Then the item is displayed in the item_display deck and the text field
+        is cleared.
 
         Args:
             obj (Model):
@@ -58,7 +64,8 @@ class LookupChannel(object):
         return escape(force_text(obj))
 
     def format_match(self, obj):
-        """(HTML) Format item for displaying in the dropdown.
+        """
+        (HTML) Format item for displaying in the dropdown.
 
         Args:
             obj (Model):
@@ -68,7 +75,8 @@ class LookupChannel(object):
         return escape(force_text(obj))
 
     def format_item_display(self, obj):
-        """ (HTML) format item for displaying item in the selected deck area.
+        """
+        (HTML) format item for displaying item in the selected deck area.
 
         Args:
             obj (Model):
@@ -78,29 +86,28 @@ class LookupChannel(object):
         return escape(force_text(obj))
 
     def get_objects(self, ids):
-        """This is used to retrieve the currently selected objects for either ManyToMany or ForeignKey.
-
-        Note that the order of the ids supplied for ManyToMany fields is dependent on how the
-        objects manager fetches it.
-        ie. what is returned by `YourModel.{fieldname}_set.all()`
-
-        In most situations (especially postgres) this order is indeterminate -- not the order that you originally
-        added them in the interface.
-        See :doc:`/Ordered-ManyToMany` for a solution to this.
+        """
+        This is used to retrieve the currently selected objects for either ManyToMany or ForeignKey.
 
         Args:
             ids (list): list of primary keys
         Returns:
             list: list of Model objects
         """
-        # return objects in the same order as passed in here
-        pk_type = self.model._meta.pk.to_python
+        if self.model._meta.pk.rel is not None:
+            # Use the type of the field being referenced
+            pk_type = self.model._meta.pk.target_field.to_python
+        else:
+            pk_type = self.model._meta.pk.to_python
+
+        # Return objects in the same order as passed in here
         ids = [pk_type(pk) for pk in ids]
         things = self.model.objects.in_bulk(ids)
         return [things[aid] for aid in ids if aid in things]
 
     def can_add(self, user, other_model):
-        """Check if the user has permission to add a ForeignKey or M2M model.
+        """
+        Check if the user has permission to add a ForeignKey or M2M model.
 
         This enables the green popup + on the widget.
         Default implentation is the standard django permission check.
@@ -116,14 +123,15 @@ class LookupChannel(object):
         return user.has_perm("%s.add_%s" % (ctype.app_label, ctype.model))
 
     def check_auth(self, request):
-        """By default only request.user.is_staff have access.
+        """
+        By default only request.user.is_staff have access.
 
         This ensures that nobody can get your data by simply knowing the lookup URL.
 
         This is called from the ajax_lookup view.
 
-        Public facing forms (outside of the Admin) should implement this to allow
-        non-staff to use this LookupChannel.
+        Public facing forms (outside of the Admin) should implement this to
+        allow non-staff to use this LookupChannel.
 
         Args:
             request (Request)

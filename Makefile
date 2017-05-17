@@ -21,7 +21,7 @@ clean-pyc:
 	find . -name '*~' -exec rm -f {} +
 
 lint:
-	flake8 .
+	flake8 ajax_select tests example
 
 test:
 	tox

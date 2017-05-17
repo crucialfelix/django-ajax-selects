@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.6.0](https://github.com/crucialfelix/django-ajax-selects/tree/1.6.0) (2017-05-17)
+[Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.5.2...1.6.0)
+
+Add support for Django 1.11
+Drop support for Django 1.6
+
+**Closed issues:**
+
+- LookupChannel.get\_objects fails for inherited models [\#153](https://github.com/crucialfelix/django-ajax-selects/issues/153)
+
+**Merged pull requests:**
+
+- Changed the build\_attrs to work with Django==1.11. [\#202](https://github.com/crucialfelix/django-ajax-selects/pull/202) ([xbello](https://github.com/xbello))
+
 ## [1.5.2](https://github.com/crucialfelix/django-ajax-selects/tree/1.5.2) (2016-10-19)
 [Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.5.1...1.5.2)
 

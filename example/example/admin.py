@@ -6,13 +6,12 @@ from example.forms import ReleaseForm
 from example.models import Person, Label, Group, Song, Release, Book, Author
 
 
+@admin.register(Person)
 class PersonAdmin(AjaxSelectAdmin):
-
     pass
 
-admin.site.register(Person, PersonAdmin)
 
-
+@admin.register(Label)
 class LabelAdmin(AjaxSelectAdmin):
     """ to get + popup buttons, subclass AjaxSelectAdmin
 
@@ -28,8 +27,6 @@ class LabelAdmin(AjaxSelectAdmin):
     #                     model, fieldlist,   [form superclass]
     form = make_ajax_form(Label, {'owner': 'person'})
 
-admin.site.register(Label, LabelAdmin)
-
 
 class ReleaseInline(AjaxSelectAdminStackedInline):
 
@@ -44,6 +41,7 @@ class ReleaseInline(AjaxSelectAdminStackedInline):
     extra = 1
 
 
+@admin.register(Group)
 class GroupAdmin(AjaxSelectAdmin):
 
     # this shows a ManyToMany field
@@ -52,9 +50,8 @@ class GroupAdmin(AjaxSelectAdmin):
         ReleaseInline
     ]
 
-admin.site.register(Group, GroupAdmin)
 
-
+@admin.register(Song)
 class SongAdmin(AjaxSelectAdmin):
 
     form = make_ajax_form(Song, {'group': 'group', 'title': 'cliche'})
@@ -64,16 +61,13 @@ class SongAdmin(AjaxSelectAdmin):
     # and throws a validation error on save
     # but doesn't show any error message to the user
 
-admin.site.register(Song, SongAdmin)
 
-
+@admin.register(Release)
 class ReleaseAdmin(AjaxSelectAdmin):
 
     # specify a form class manually (normal django way)
     # see forms.py
     form = ReleaseForm
-
-admin.site.register(Release, ReleaseAdmin)
 
 
 class BookInline(AjaxSelectAdminTabularInline):
@@ -98,10 +92,9 @@ class BookInline(AjaxSelectAdminTabularInline):
     #     return fs
 
 
+@admin.register(Author)
 class AuthorAdmin(AjaxSelectAdmin):
 
     inlines = [
         BookInline,
     ]
-
-admin.site.register(Author, AuthorAdmin)
