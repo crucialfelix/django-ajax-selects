@@ -375,6 +375,7 @@ class AutoCompleteField(forms.CharField):
         self.channel = channel
 
         widget_kwargs = dict(
+            channel=channel,
             help_text=kwargs.get('help_text', _(as_default_help)),
             show_help_text=kwargs.pop('show_help_text', True),
             plugin_options=kwargs.pop('plugin_options', {})
@@ -382,12 +383,14 @@ class AutoCompleteField(forms.CharField):
         widget_kwargs.update(kwargs.pop('widget_options', {}))
         if 'attrs' in kwargs:
             widget_kwargs['attrs'] = kwargs.pop('attrs')
-        widget = AutoCompleteWidget(channel, **widget_kwargs)
+        widget = AutoCompleteWidget(**widget_kwargs)
 
-        defaults = {'max_length': 255, 'widget': widget}
-        defaults.update(kwargs)
+        default_kwargs = {'max_length': 255}
+        default_kwargs.update(kwargs)
+        kwargs = default_kwargs
+        kwargs['widget'] = widget
 
-        super(AutoCompleteField, self).__init__(*args, **defaults)
+        super(AutoCompleteField, self).__init__(*args, **kwargs)
 
 
 ###############################################################################
