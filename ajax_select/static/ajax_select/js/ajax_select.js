@@ -9,6 +9,13 @@
           $text = $('#' + id + '_text'),
           $deck = $('#' + id + '_on_deck');
 
+      if ('killButton' in options) {
+        var killButtonTemplate = options.killButton
+        delete options.killButton
+      } else {
+        var killButtonTemplate = '<span class="ui-icon ui-icon-trash" id="{{ killId }}">X</span>'
+      }
+
       function receiveResult(event, ui) {
         if ($this.val()) {
           kill();
@@ -24,7 +31,7 @@
 
       function addKiller(repr, pk) {
         var killId = 'kill_' + pk + id,
-            killButton = '<span class="ui-icon ui-icon-trash" id="' + killId + '">X</span> ';
+            killButton = killButtonTemplate.replace('{{ killId }}', killId);
         if (repr) {
           $deck.empty();
           $deck.append('<div>' + killButton + repr + '</div>');
@@ -74,6 +81,13 @@
           $text = $('#' + id + '_text'),
           $deck = $('#' + id + '_on_deck');
 
+      if ('killButton' in options) {
+        var killButtonTemplate = options.killButton
+        delete options.killButton
+      } else {
+        var killButtonTemplate = '<span class="ui-icon ui-icon-trash" id="{{ killId }}">X</span>'
+      }
+
       function receiveResult(event, ui) {
         var pk = ui.item.pk,
             prev = $this.val();
@@ -90,7 +104,7 @@
 
       function addKiller(repr, pk) {
         var killId = 'kill_' + pk + id,
-            killButton = '<span class="ui-icon ui-icon-trash" id="' + killId + '">X</span> ';
+            killButton = killButtonTemplate.replace('{{ killId }}', killId);
         $deck.append('<div id="' + id + '_on_deck_' + pk + '">' + killButton + repr + ' </div>');
 
         $('#' + killId).click(function() {
