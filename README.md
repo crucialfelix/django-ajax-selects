@@ -80,6 +80,11 @@ Compatibility
 - Python >=2.7, 3.3-3.5
 
 
+Running the tests
+-----------------
+
+Just install `requirements-test.txt`, then run `make test`.
+
 Contributors
 ------------
 
