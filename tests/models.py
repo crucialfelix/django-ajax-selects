@@ -11,6 +11,18 @@ class Person(models.Model):
         app_label = 'tests'
 
 
+class PersonWithTitle(Person):
+
+    """
+    Testing an inherited model (multi-table)
+    """
+
+    title = models.CharField(max_length=150)
+
+    class Meta:
+        app_label = 'tests'
+
+
 class Author(models.Model):
 
     name = models.CharField(max_length=50)

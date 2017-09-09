@@ -1,10 +1,12 @@
 from __future__ import unicode_literals
+
 import json
-from ajax_select.registry import registry
+
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.db.models.query import QuerySet
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Model
 from django.forms.utils import flatatt
 from django.template.defaultfilters import force_escape
 from django.template.loader import render_to_string
@@ -12,6 +14,9 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.six import text_type
 from django.utils.translation import ugettext as _
+
+from ajax_select.registry import registry
+
 try:
     from django.urls import reverse
 except ImportError:
@@ -96,7 +101,8 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'func_slug': self.html_id.replace("-", ""),
             'add_link': self.add_link,
         }
-        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
+        context.update(
+            make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = (
             'ajax_select/autocompleteselect_%s.html' % self.channel,
             'ajax_select/autocompleteselect.html')
@@ -127,7 +133,8 @@ class AutoCompleteSelectField(forms.fields.CharField):
         )
         widget_kwargs.update(kwargs.pop('widget_options', {}))
         kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
-        super(AutoCompleteSelectField, self).__init__(max_length=255, *args, **kwargs)
+        super(AutoCompleteSelectField, self).__init__(
+            max_length=255, *args, **kwargs)
 
     def clean(self, value):
         if value:
@@ -138,7 +145,8 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 # or your channel is faulty
                 # out of the scope of this field to do anything more than
                 # tell you it doesn't exist
-                raise forms.ValidationError("%s cannot find object: %s" % (lookup, value))
+                raise forms.ValidationError(
+                    "%s cannot find object: %s" % (lookup, value))
             return objs[0]
         else:
             if self.required:
@@ -194,10 +202,11 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
         lookup = registry.get(self.channel)
 
-        if isinstance(value, QuerySet):
-            objects = value
+        values = list(value)
+        if all([isinstance(v, Model) for v in values]):
+            objects = values
         else:
-            objects = lookup.get_objects(value)
+            objects = lookup.get_objects(values)
 
         current_ids = pack_ids([obj.pk for obj in objects])
 
@@ -217,15 +226,18 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'html_id': self.html_id,
             'current': value,
             'current_ids': current_ids,
-            'current_reprs': mark_safe(json.dumps(initial)),
+            'current_reprs': mark_safe(
+                json.dumps(initial, cls=DjangoJSONEncoder)
+            ),
             'help_text': help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-", ""),
             'add_link': self.add_link,
         }
-        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
+        context.update(
+            make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = ('ajax_select/autocompleteselectmultiple_%s.html' % self.channel,
-                    'ajax_select/autocompleteselectmultiple.html')
+                     'ajax_select/autocompleteselectmultiple.html')
         out = render_to_string(templates, context)
         return mark_safe(out)
 
@@ -269,7 +281,8 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
                 dh = 'Hold down "Control", or "Command" on a Mac, to select more than one.'
                 django_default_help = _(dh).translate(settings.LANGUAGE_CODE)
                 if django_default_help in translated:
-                    cleaned_help = translated.replace(django_default_help, '').strip()
+                    cleaned_help = translated.replace(
+                        django_default_help, '').strip()
                     # probably will not show up in translations
                     if cleaned_help:
                         help_text = cleaned_help
@@ -358,13 +371,15 @@ class AutoCompleteWidget(forms.TextInput):
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-", ""),
         }
-        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
+        context.update(
+            make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = ('ajax_select/autocomplete_%s.html' % self.channel,
                      'ajax_select/autocomplete.html')
         return mark_safe(render_to_string(templates, context))
 
 
 class AutoCompleteField(forms.CharField):
+
     """
     A CharField that uses an AutoCompleteWidget to lookup matching
     and stores the result as plain text.
@@ -411,7 +426,8 @@ def _check_can_add(self, user, related_model):
     if can_add:
         app_label = related_model._meta.app_label
         model = related_model._meta.object_name.lower()
-        self.widget.add_link = reverse('admin:%s_%s_add' % (app_label, model)) + '?_popup=1'
+        self.widget.add_link = reverse(
+            'admin:%s_%s_add' % (app_label, model)) + '?_popup=1'
 
 
 def autoselect_fields_check_can_add(form, model, user):
@@ -441,8 +457,10 @@ def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
         po['html'] = True
 
     return {
-        'plugin_options': mark_safe(json.dumps(po)),
-        'data_plugin_options': force_escape(json.dumps(po))
+        'plugin_options': mark_safe(json.dumps(po, cls=DjangoJSONEncoder)),
+        'data_plugin_options': force_escape(
+            json.dumps(po, cls=DjangoJSONEncoder)
+        )
     }
 
 
