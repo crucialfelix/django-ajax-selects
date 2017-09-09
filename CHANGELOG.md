@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.6.1](https://github.com/crucialfelix/django-ajax-selects/tree/1.6.1) (2017-09-09)
+[Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.6.0...1.6.1)
+
+**Fixed bugs:**
+
+- Fix Lookup.get\_objects for inherited models [\#212](https://github.com/crucialfelix/django-ajax-selects/pull/212) ([crucialfelix](https://github.com/crucialfelix))
+
+**Merged pull requests:**
+
+- Use DjangoJSONEncoder - which handles additional django types [\#206](https://github.com/crucialfelix/django-ajax-selects/pull/206) ([mzdeb](https://github.com/mzdeb))
+
 ## [1.6.0](https://github.com/crucialfelix/django-ajax-selects/tree/1.6.0) (2017-05-17)
 [Full Changelog](https://github.com/crucialfelix/django-ajax-selects/compare/1.5.2...1.6.0)
 
