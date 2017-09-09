@@ -3,10 +3,12 @@ Testing the register and autoloading.
 
 Should not be used by other tests.
 """
-from django.utils.html import escape
 from django.contrib.auth.models import User
-from tests.models import Person, Author
+from django.utils.html import escape
+
 import ajax_select
+
+from tests.models import Author, Person, PersonWithTitle
 
 
 @ajax_select.register('person')
@@ -25,6 +27,18 @@ class PersonLookup(ajax_select.LookupChannel):
 
     def format_item_display(self, obj):
         return "%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+
+
+@ajax_select.register('person-with-title')
+class PersonWithTitleLookup(ajax_select.LookupChannel):
+
+    model = PersonWithTitle
+
+    def get_query(self, q, request):
+        return self.model.objects.filter(title__icontains=q)
+
+    def get_result(self, obj):
+        return "{} {}".format(obj.name, obj.title)
 
 
 @ajax_select.register('user')
