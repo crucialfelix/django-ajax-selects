@@ -9,23 +9,23 @@ except ImportError:
 
 setup(
     name='django-ajax-selects',
-    version='1.6.0',
+    version='1.6.1',
     description='Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.',
     author='Chris Sattinger',
     author_email='crucialfelix@gmail.com',
     url='https://github.com/crucialfelix/django-ajax-selects/',
     packages=['ajax_select'],
     package_data={'ajax_select':
-        [
-            '*.py',
-            '*.txt',
-            '*.md',
-            'static/ajax_select/css/*',
-            'static/ajax_select/images/*',
-            'static/ajax_select/js/*',
-            'templates/ajax_select/*.html'
-        ]
-    },
+                  [
+                      '*.py',
+                      '*.txt',
+                      '*.md',
+                      'static/ajax_select/css/*',
+                      'static/ajax_select/images/*',
+                      'static/ajax_select/js/*',
+                      'templates/ajax_select/*.html'
+                  ]
+                  },
     include_package_data=True,
     zip_safe=False,
     license="MIT",
