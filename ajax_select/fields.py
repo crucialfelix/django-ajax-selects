@@ -40,6 +40,14 @@ def _media(self):
     return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
 
 
+json_encoder = DjangoJSONEncoder
+try:
+    if settings.AJAX_SELECT_JSON_ENCODER:
+        from django.utils.module_loading import import_string
+        json_encoder = import_string(settings.AJAX_SELECT_JSON_ENCODER)
+except AttributeError:
+    pass
+
 ###############################################################################
 
 
@@ -227,7 +235,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'current': value,
             'current_ids': current_ids,
             'current_reprs': mark_safe(
-                json.dumps(initial, cls=DjangoJSONEncoder)
+                json.dumps(initial, cls=json_encoder)
             ),
             'help_text': help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
@@ -457,9 +465,9 @@ def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
         po['html'] = True
 
     return {
-        'plugin_options': mark_safe(json.dumps(po, cls=DjangoJSONEncoder)),
+        'plugin_options': mark_safe(json.dumps(po, cls=json_encoder)),
         'data_plugin_options': force_escape(
-            json.dumps(po, cls=DjangoJSONEncoder)
+            json.dumps(po, cls=json_encoder)
         )
     }
 
