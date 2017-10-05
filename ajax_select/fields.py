@@ -14,6 +14,7 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.six import text_type
 from django.utils.translation import ugettext as _
+from django.utils.module_loading import import_string
 
 from ajax_select.registry import registry
 
@@ -40,13 +41,8 @@ def _media(self):
     return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
 
 
-json_encoder = DjangoJSONEncoder
-try:
-    if settings.AJAX_SELECT_JSON_ENCODER:
-        from django.utils.module_loading import import_string
-        json_encoder = import_string(settings.AJAX_SELECT_JSON_ENCODER)
-except AttributeError:
-    pass
+json_encoder = import_string(getattr(settings, 'AJAX_SELECT_JSON_ENCODER', 'django.core.serializers.json.DjangoJSONEncoder'))
+
 
 ###############################################################################
 
