@@ -5,7 +5,6 @@ import json
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 from django.forms.utils import flatatt
 from django.template.defaultfilters import force_escape
@@ -41,7 +40,8 @@ def _media(self):
     return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
 
 
-json_encoder = import_string(getattr(settings, 'AJAX_SELECT_JSON_ENCODER', 'django.core.serializers.json.DjangoJSONEncoder'))
+json_encoder = import_string(getattr(settings, 'AJAX_SELECT_JSON_ENCODER',
+                                     'django.core.serializers.json.DjangoJSONEncoder'))
 
 
 ###############################################################################
