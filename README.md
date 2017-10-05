@@ -43,6 +43,8 @@ Add field to a form:
 
 ```python
 # yourapp/forms.py
+from ajax_select.fields import AutoCompleteSelectMultipleField
+
 class DocumentForm(ModelForm):
 
     class Meta:
