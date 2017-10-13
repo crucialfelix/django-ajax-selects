@@ -1,4 +1,4 @@
-from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.db.models.fields.related import ForeignKey, ManyToManyField, ForeignObjectRel
 from django.forms.models import ModelForm
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
@@ -89,15 +89,17 @@ def make_ajax_field(related_model, fieldname_on_model, channel, show_help_text=F
 
     field = related_model._meta.get_field(fieldname_on_model)
     if 'label' not in kwargs:
-        kwargs['label'] = _(capfirst(force_text(field.verbose_name)))
+        kwargs['label'] = _(capfirst(force_text(
+            field.related_name if isinstance(field, ForeignObjectRel)
+            else field.verbose_name)))
 
-    if ('help_text' not in kwargs) and field.help_text:
+    if ('help_text' not in kwargs) and getattr(field, 'help_text', None):
         kwargs['help_text'] = field.help_text
     if 'required' not in kwargs:
-        kwargs['required'] = not field.blank
+        kwargs['required'] = not getattr(field, 'blank', True)
 
     kwargs['show_help_text'] = show_help_text
-    if isinstance(field, ManyToManyField):
+    if isinstance(field, (ManyToManyField, ForeignObjectRel)):
         f = AutoCompleteSelectMultipleField(
             channel,
             **kwargs)
