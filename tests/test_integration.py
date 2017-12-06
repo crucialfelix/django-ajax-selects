@@ -51,7 +51,7 @@ class TestBookForm(TestCase):
     def _make_instance(self):
         author = Author.objects.create(name="author")
         book = Book.objects.create(name="book", author=author)
-        book.mentions_persons = [Person.objects.create(name='person')]
+        book.mentions_persons.add(Person.objects.create(name='person'))
         return book
 
     def _book_data(self, book):
