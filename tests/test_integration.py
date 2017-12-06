@@ -9,11 +9,14 @@ from __future__ import unicode_literals
 import django
 from django.forms.models import ModelForm
 from django.test import TestCase, Client
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 from tests.models import Book, Author, Person
 from ajax_select import fields
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 # Other versions will autoload
 if django.VERSION[1] < 7:
