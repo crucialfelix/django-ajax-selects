@@ -1,7 +1,7 @@
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.forms.models import ModelForm
-from django.utils.text import capfirst
 from django.utils.encoding import force_text
+from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -84,8 +84,8 @@ def make_ajax_field(related_model, fieldname_on_model, channel, show_help_text=F
         (AutoCompleteField, AutoCompleteSelectField, AutoCompleteSelectMultipleField): field
     """
     from ajax_select.fields import AutoCompleteField, \
-                                   AutoCompleteSelectMultipleField, \
-                                   AutoCompleteSelectField
+        AutoCompleteSelectMultipleField, \
+        AutoCompleteSelectField
 
     field = related_model._meta.get_field(fieldname_on_model)
     if 'label' not in kwargs:

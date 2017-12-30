@@ -34,9 +34,6 @@ Use the @register decorator to register your LookupChannels by name
 
 If you are using Django >= 1.7 then all `lookups.py` in all of your apps will be automatically imported on startup.
 
-If Django < 1.7 then you can import each of your lookups in your views or urls.
-Or you can register them in settings (see below).
-
 Customize
 ---------
 
