@@ -64,7 +64,9 @@ class Release(models.Model):
     title = models.CharField(max_length=100)
     catalog = models.CharField(blank=True, max_length=100)
 
-    group = models.ForeignKey(Group, blank=True, null=True, verbose_name="Русский текст (group)", on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, blank=True, null=True,
+        verbose_name="Русский текст (group)",
+        on_delete=models.CASCADE)
     label = models.ForeignKey(Label, blank=False, null=False, on_delete=models.CASCADE)
     songs = models.ManyToManyField(Song, blank=True)
 
