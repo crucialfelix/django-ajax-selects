@@ -13,6 +13,7 @@ env:
   - TOX_ENV=py34-dj19
   - TOX_ENV=py34-dj110
   - TOX_ENV=py34-dj111
+  - TOX_ENV=py34-dj20
 install:
  - pip install -r requirements-test.txt
 script:

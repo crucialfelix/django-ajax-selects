@@ -9,11 +9,14 @@ from __future__ import unicode_literals
 import django
 from django.forms.models import ModelForm
 from django.test import TestCase, Client
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 from tests.models import Book, Author, Person
 from ajax_select import fields
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 # Other versions will autoload
 if django.VERSION[1] < 7:
@@ -48,7 +51,7 @@ class TestBookForm(TestCase):
     def _make_instance(self):
         author = Author.objects.create(name="author")
         book = Book.objects.create(name="book", author=author)
-        book.mentions_persons = [Person.objects.create(name='person')]
+        book.mentions_persons.add(Person.objects.create(name='person'))
         return book
 
     def _book_data(self, book):

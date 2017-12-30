@@ -35,7 +35,7 @@ class Book(models.Model):
 
     """ Book has no admin, its an inline in the Author admin"""
 
-    author = models.ForeignKey(Author, null=True)
+    author = models.ForeignKey(Author, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     mentions_persons = models.ManyToManyField(Person, help_text="MENTIONS PERSONS HELP TEXT")
 
