@@ -1,31 +1,27 @@
 #!/usr/bin/env python
 
-try:
-    from setuptools import setup
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup
+from setuptools import setup
 
 setup(
     name='django-ajax-selects',
-    version='1.6.1',
+    version='1.7.0',
     description='Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.',
     author='Chris Sattinger',
     author_email='crucialfelix@gmail.com',
     url='https://github.com/crucialfelix/django-ajax-selects/',
     packages=['ajax_select'],
-    package_data={'ajax_select':
-                  [
-                      '*.py',
-                      '*.txt',
-                      '*.md',
-                      'static/ajax_select/css/*',
-                      'static/ajax_select/images/*',
-                      'static/ajax_select/js/*',
-                      'templates/ajax_select/*.html'
-                  ]
-                  },
+    package_data={
+        'ajax_select':
+        [
+            '*.py',
+            '*.txt',
+            '*.md',
+            'static/ajax_select/css/*',
+            'static/ajax_select/images/*',
+            'static/ajax_select/js/*',
+            'templates/ajax_select/*.html'
+        ]
+    },
     include_package_data=True,
     zip_safe=False,
     license="MIT",
