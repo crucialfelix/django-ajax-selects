@@ -13,5 +13,5 @@ urlpatterns = [
         view=views.search_form,
         name='search_form'),
     url(r'^admin/lookups/', include(ajax_select_urls)),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

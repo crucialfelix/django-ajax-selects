@@ -1,7 +1,6 @@
 
 from django.test import TestCase
 import ajax_select
-from ajax_select.registry import can_autodiscover
 
 
 class TestRegistry(TestCase):
@@ -9,14 +8,7 @@ class TestRegistry(TestCase):
     def test_lookup_py_is_autoloaded(self):
         """Django >= 1.7 autoloads tests/lookups.py"""
         is_registered = ajax_select.registry.is_registered('person')
-        if can_autodiscover():
-            self.assertTrue(is_registered)
-        else:
-            # person is not in settings and this django will not autoload lookups.py
-            # self.assertFalse(is_registered)
-            # test_integration is more important and requires that lookup.py be loaded
-            # Will drop support for 1.6 soon anyway and we know that it does work
-            pass
+        self.assertTrue(is_registered)
 
     def test_back_compatible_loads_by_settings(self):
         """a module and class specified in settings"""
@@ -29,7 +21,8 @@ class TestRegistry(TestCase):
     def test_unsetting_a_channel(self):
         """settings can unset a channel that was specified in a lookups.py"""
         # self.assertFalse(ajax_select.registry.is_registered('user'))
-        self.assertFalse(ajax_select.registry.is_registered('was-never-a-channel'))
+        self.assertFalse(
+            ajax_select.registry.is_registered('was-never-a-channel'))
 
     # def test_reimporting_lookup(self):
     #     """

@@ -1,5 +1,7 @@
-from django.core.exceptions import ImproperlyConfigured
+from django.apps import apps
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.utils.module_loading import autodiscover_modules
 
 
 class LookupChannelRegistry(object):
@@ -17,13 +19,7 @@ class LookupChannelRegistry(object):
         Called when loading the application. Cannot be called a second time,
         (eg. for testing) as Django will not re-import and re-register anything.
         """
-        self._registry = {}
-        try:
-            from django.utils.module_loading import autodiscover_modules
-        except ImportError:
-            pass
-        else:
-            autodiscover_modules('lookups')
+        autodiscover_modules('lookups')
 
         if hasattr(settings, 'AJAX_LOOKUP_CHANNELS'):
             self.register(settings.AJAX_LOOKUP_CHANNELS)
@@ -112,23 +108,7 @@ registry = LookupChannelRegistry()
 
 def get_model(app_label, model_name):
     """Loads the model given an 'app_label' 'ModelName'"""
-    try:
-        # django >= 1.7
-        from django.apps import apps
-    except ImportError:
-        # django < 1.7
-        from django.db import models
-        return models.get_model(app_label, model_name)
-    else:
-        return apps.get_model(app_label, model_name)
-
-
-def can_autodiscover():
-    try:
-        from django.apps import AppConfig  # noqa
-    except ImportError:
-        return False
-    return True
+    return apps.get_model(app_label, model_name)
 
 
 def register(channel):

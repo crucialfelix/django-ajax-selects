@@ -5,7 +5,6 @@ import json
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 from django.forms.utils import flatatt
 from django.template.defaultfilters import force_escape
@@ -14,6 +13,7 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.six import text_type
 from django.utils.translation import ugettext as _
+from django.utils.module_loading import import_string
 
 from ajax_select.registry import registry
 
@@ -38,6 +38,10 @@ def _media(self):
     except AttributeError:
         pass
     return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
+
+
+json_encoder = import_string(getattr(settings, 'AJAX_SELECT_JSON_ENCODER',
+                                     'django.core.serializers.json.DjangoJSONEncoder'))
 
 
 ###############################################################################
@@ -227,7 +231,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'current': value,
             'current_ids': current_ids,
             'current_reprs': mark_safe(
-                json.dumps(initial, cls=DjangoJSONEncoder)
+                json.dumps(initial, cls=json_encoder)
             ),
             'help_text': help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
@@ -439,7 +443,10 @@ def autoselect_fields_check_can_add(form, model, user):
     for name, form_field in form.declared_fields.items():
         if isinstance(form_field, (AutoCompleteSelectMultipleField, AutoCompleteSelectField)):
             db_field = model._meta.get_field(name)
-            form_field.check_can_add(user, db_field.rel.to)
+            if hasattr(db_field, "remote_field"):
+                form_field.check_can_add(user, db_field.remote_field.model)
+            else:
+                form_field.check_can_add(user, db_field.rel.to)
 
 
 def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
@@ -457,9 +464,9 @@ def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
         po['html'] = True
 
     return {
-        'plugin_options': mark_safe(json.dumps(po, cls=DjangoJSONEncoder)),
+        'plugin_options': mark_safe(json.dumps(po, cls=json_encoder)),
         'data_plugin_options': force_escape(
-            json.dumps(po, cls=DjangoJSONEncoder)
+            json.dumps(po, cls=json_encoder)
         )
     }
 

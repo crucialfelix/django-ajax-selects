@@ -36,6 +36,7 @@ Include the urls in your project::
 
 Write a LookupChannel to specify the models, search queries, formatting etc. and register it with a channel name::
 
+      # app_name/lookup.py
       from ajax_select import register, LookupChannel
       from .models import Tag
 
@@ -56,6 +57,7 @@ For previous Djangos you can import them manually to your urls or views.
 Add ajax lookup fields in your admin.py::
 
     from django.contrib import admin
+    from ajax_select.admin import AjaxSelectAdmin
     from ajax_select import make_ajax_form
     from .models import Document
 
