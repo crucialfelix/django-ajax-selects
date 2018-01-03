@@ -44,14 +44,6 @@ ajax_select.lookup_channel module
     :undoc-members:
     :show-inheritance:
 
-ajax_select.models module
--------------------------
-
-.. automodule:: ajax_select.models
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 ajax_select.registry module
 ---------------------------
 
