@@ -1,3 +1,0 @@
-include *.txt *.md *.cfg *.py
-recursive-include ajax_select *.py *.txt *.html *.css *.js *.gif
-recursive-include tests *.py
