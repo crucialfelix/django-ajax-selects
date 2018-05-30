@@ -47,6 +47,10 @@ class DocumentForm(ModelForm):
     tags = AutoCompleteSelectMultipleField('tags')
 ```
 
+Important - for autocomplete to work outside of admin, you must include `{{ form.media }}` in your form and explicitly allow non-staff to use (if desired)  
+see: http://django-ajax-selects.readthedocs.io/en/latest/Outside-of-Admin.html  
+and: http://django-ajax-selects.readthedocs.io/en/latest/LookupChannel.html
+
 ## Fully customizable
 
 * Customize search query
