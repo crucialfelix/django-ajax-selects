@@ -47,6 +47,17 @@ class DocumentForm(ModelForm):
     tags = AutoCompleteSelectMultipleField('tags')
 ```
 
+This will now work in the Django Admin.
+
+To use a form outside, be sure to include `form.media` on the template where you place the form:
+
+```html
+{{ form.media }}
+{{ form }}
+```
+
+Read the full documention here: [outside of the admin](http://django-ajax-selects.readthedocs.io/en/latest/Outside-of-Admin.html)
+
 ## Fully customizable
 
 * Customize search query
