@@ -1,6 +1,6 @@
 coverage>=4.4.1
 coveralls>=1.1
 flake8>=3.3.0
-tox>=2.7.0
+tox>=2.8.0
 sphinx>=1.6.1
 sphinx_rtd_theme
