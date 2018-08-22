@@ -2,17 +2,18 @@ language: python
 sudo: false
 env:
   - TOX_ENV=py27-flake8
-  - TOX_ENV=py34-flake8
+  - TOX_ENV=py36-flake8
   - TOX_ENV=py27-dj18
   - TOX_ENV=py27-dj19
   - TOX_ENV=py27-dj110
   - TOX_ENV=py27-dj111
-  - TOX_ENV=py34-dj18
-  - TOX_ENV=py34-dj19
-  - TOX_ENV=py34-dj110
-  - TOX_ENV=py34-dj111
-  - TOX_ENV=py34-dj20
+  - TOX_ENV=py36-dj18
+  - TOX_ENV=py36-dj19
+  - TOX_ENV=py36-dj110
+  - TOX_ENV=py36-dj111
+  - TOX_ENV=py36-dj20
+  - TOX_ENV=py36-dj21
 install:
- - pip install -r requirements-test.txt
+  - pip install -r requirements-test.txt
 script:
   - tox -e $TOX_ENV
