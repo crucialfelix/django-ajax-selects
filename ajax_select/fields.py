@@ -206,7 +206,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
         lookup = registry.get(self.channel)
 
-        values = list(value)
+        values = value.split(',') if type(value) == str else list(value)
         if all([isinstance(v, Model) for v in values]):
             objects = values
         else:
