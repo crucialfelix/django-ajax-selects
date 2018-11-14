@@ -97,7 +97,7 @@ class LookupChannel(object):
         # Inherited models have a OneToOneField (rather than eg AutoField)
         if getattr(self.model._meta.pk, "remote_field", False):
             # Use the type of the field being referenced (2.0+)
-            pk_type = self.model._meta.pk.remote_field.field.to_python
+            pk_type = self.model._meta.pk.remote_field.field.target_field.to_python
         elif getattr(self.model._meta.pk, "rel", False):
             # Use the type of the field being referenced
             pk_type = self.model._meta.pk.rel.field.to_python
