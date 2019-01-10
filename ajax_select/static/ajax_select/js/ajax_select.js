@@ -146,6 +146,21 @@
       return;
     }
     // console.log('activating', $inp);
+
+    try {
+      if (eval("typeof " + opts.source) === "function") {
+        // console.log("this.id: " + $inp.attr('id') + ", opts.source (Callback):" + opts.source);
+        try {
+          opts.source = eval(opts.source);
+          // console.log("loaded successfully!");
+        } catch(err) {
+          console.error(err);
+        }
+      }
+    } catch(err) {
+      // console.log("this.id: " + $inp.attr('id') + ", opts.source (URL):" + opts.source);
+    }
+
     callback($inp, opts);
     $inp.data('_ajax_select_inited_', true);
   }
