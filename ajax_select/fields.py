@@ -31,10 +31,10 @@ def _media(self):
     # unless AJAX_SELECT_BOOTSTRAP == False
     # then load jquery and jquery ui + default css
     # where needed
-    js = ('ajax_select/js/bootstrap.js', 'ajax_select/js/ajax_select.js')
+    js = ( 'ajax_select/js/bootstrap.js', 'ajax_select/js/ajax_select.js', 'admin/js/jquery.init.js' )
     try:
         if not settings.AJAX_SELECT_BOOTSTRAP:
-            js = ('ajax_select/js/ajax_select.js',)
+            js = ('ajax_select/js/ajax_select.js', 'admin/js/jquery.init.js' )
     except AttributeError:
         pass
     return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
