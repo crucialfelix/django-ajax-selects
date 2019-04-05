@@ -1,19 +1,6 @@
 (function() {
 
-  function is_undefined( thing ) {
-    return typeof thing === 'undefined';
-  }
-
-  if ( is_undefined( window.jQuery ) == true )
-  {
-    var $ = django.jQuery;
-    console.log( "window.jQuery is undefined ( " + typeof window.jQuery + " ) - what does django.jQuery look like? ( " + typeof django.jQuery + " )" )
-  }
-  else
-  {
-    var $ = window.jQuery;
-    console.log( "window.jQuery is not undefined ( " + typeof window.jQuery + " ) - what does django.jQuery look like? ( " + typeof django.jQuery + " )" )
-  }
+  var $ = window.jQuery;
 
   $.fn.autocompleteselect = function(options) {
     return this.each(function() {

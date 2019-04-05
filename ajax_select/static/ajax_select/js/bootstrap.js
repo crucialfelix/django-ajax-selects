@@ -8,10 +8,7 @@
   }
 
   function loadJS(src) {
-    var script_tag = ""
-    script_tag = '<script type="text/javascript"  src="' + src + '"><\/script>';
-    console.log( "in loadJS(), loading " + script_tag )
-    document.write( script_tag );
+    document.write('<script type="text/javascript"  src="' + src + '"><\/script>');
   }
 
   function loadCSS(href) {
