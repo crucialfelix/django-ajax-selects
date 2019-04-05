@@ -1,6 +1,17 @@
 (function() {
 
-  var $ = window.jQuery;
+  function not(thing) {
+    return typeof thing === 'undefined';
+  }
+
+  if ( not( window.jquery ) )
+  {
+    var $ = django.jQuery;
+  }
+  else
+  {
+    var $ = window.jQuery;
+  }
 
   $.fn.autocompleteselect = function(options) {
     return this.each(function() {
