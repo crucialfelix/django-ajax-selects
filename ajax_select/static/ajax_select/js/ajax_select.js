@@ -4,7 +4,7 @@
     return typeof thing === 'undefined';
   }
 
-  if ( not( window.jquery ) )
+  if ( not( window.jQuery ) )
   {
     var $ = django.jQuery;
   }
