@@ -37,7 +37,10 @@ def _media(self):
         if ( settings.AJAX_SELECT_BOOTSTRAP == True ):
             js.append( 'ajax_select/js/bootstrap.js' )
     except AttributeError:
-        pass
+        # settings.AJAX_SELECT_BOOTSTRAP not set, default to bootstrapping.
+        js.append( 'ajax_select/js/bootstrap.js' )
+    #-- END try...except --#
+
     js.append( 'ajax_select/js/ajax_select.js' )
     return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
 
