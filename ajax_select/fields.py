@@ -31,14 +31,18 @@ def _media(self):
     # unless AJAX_SELECT_BOOTSTRAP == False
     # then load jquery and jquery ui + default css
     # where needed
-    js = ('ajax_select/js/bootstrap.js', 'ajax_select/js/ajax_select.js')
+    js = []
+    js.append( 'admin/js/jquery.init.js' )
     try:
-        if not settings.AJAX_SELECT_BOOTSTRAP:
-            js = ('ajax_select/js/ajax_select.js',)
+        if ( settings.AJAX_SELECT_BOOTSTRAP == True ):
+            js.append( 'ajax_select/js/bootstrap.js' )
     except AttributeError:
-        pass
-    return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
+        # settings.AJAX_SELECT_BOOTSTRAP not set, default to bootstrapping.
+        js.append( 'ajax_select/js/bootstrap.js' )
+    #-- END try...except --#
 
+    js.append( 'ajax_select/js/ajax_select.js' )
+    return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
 
 json_encoder = import_string(getattr(settings, 'AJAX_SELECT_JSON_ENCODER',
                                      'django.core.serializers.json.DjangoJSONEncoder'))
