@@ -28,17 +28,16 @@ as_default_help = 'Enter text to search.'
 
 
 def _media(self):
-    # unless AJAX_SELECT_BOOTSTRAP == False
-    # then load jquery and jquery ui + default css
-    # where needed
-    js = ('ajax_select/js/bootstrap.js', 'ajax_select/js/ajax_select.js')
-    try:
-        if not settings.AJAX_SELECT_BOOTSTRAP:
-            js = ('ajax_select/js/ajax_select.js',)
-    except AttributeError:
-        pass
-    return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
+    js = ['admin/js/jquery.init.js']
 
+    # Unless AJAX_SELECT_BOOTSTRAP == False
+    # then load include bootstrap which will load jquery and jquery ui + default css as needed
+    if getattr(settings, "AJAX_SELECT_BOOTSTRAP", True):
+        js.append('ajax_select/js/bootstrap.js')
+
+    js.append('ajax_select/js/ajax_select.js')
+
+    return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
 
 json_encoder = import_string(getattr(settings, 'AJAX_SELECT_JSON_ENCODER',
                                      'django.core.serializers.json.DjangoJSONEncoder'))
