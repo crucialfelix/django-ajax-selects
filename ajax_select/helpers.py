@@ -99,14 +99,14 @@ def make_ajax_field(related_model, fieldname_on_model, channel, show_help_text=F
     kwargs['show_help_text'] = show_help_text
     if isinstance(field, ManyToManyField):
         f = AutoCompleteSelectMultipleField(
-            channel,
-            **kwargs)
+                channel,
+                **kwargs)
     elif isinstance(field, ForeignKey):
         f = AutoCompleteSelectField(
-            channel,
-            **kwargs)
+                channel,
+                **kwargs)
     else:
         f = AutoCompleteField(
-            channel,
-            **kwargs)
+                channel,
+                **kwargs)
     return f

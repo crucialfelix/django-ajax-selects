@@ -1,4 +1,5 @@
 from django.conf.urls import url
+
 from ajax_select import views
 
 urlpatterns = [

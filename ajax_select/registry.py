@@ -5,7 +5,6 @@ from django.utils.module_loading import autodiscover_modules
 
 
 class LookupChannelRegistry(object):
-
     """
     Registry for LookupChannels activated for your django project.
 
@@ -57,7 +56,7 @@ class LookupChannelRegistry(object):
             lookup_spec = self._registry[channel]
         except KeyError:
             raise ImproperlyConfigured(
-                "No ajax_select LookupChannel named %(channel)r is registered." % {'channel': channel})
+                    "No ajax_select LookupChannel named %(channel)r is registered." % {'channel': channel})
 
         if (type(lookup_spec) is type) and issubclass(lookup_spec, LookupChannel):
             return lookup_spec()
@@ -96,7 +95,6 @@ class LookupChannelRegistry(object):
         app_label, model_name = app_model.split(".")
 
         class MadeLookupChannel(LookupChannel):
-
             model = get_model(app_label, model_name)
             search_field = arg_search_field
 
