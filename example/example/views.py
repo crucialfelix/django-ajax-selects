@@ -11,7 +11,8 @@ from ajax_select.fields import AutoCompleteField
 class SearchForm(forms.Form):
     q = AutoCompleteField('cliche',
                           required=True,
-                          help_text="Autocomplete will suggest clichés about cats, but you can enter anything you like.",
+                          help_text="Autocomplete will suggest clichés about cats, but "
+                                    "you can enter anything you like.",
                           label="Favorite Cliché",
                           attrs={'size': 100})
 
