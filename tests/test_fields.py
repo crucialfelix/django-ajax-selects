@@ -1,4 +1,5 @@
 from django.test import TestCase
+
 from ajax_select import fields
 from tests.models import Book
 

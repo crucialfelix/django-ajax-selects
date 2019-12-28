@@ -3,23 +3,22 @@
 from setuptools import setup
 
 setup(
-    name='django-ajax-selects',
-    version='1.7.1',
-    description='Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.',
-    author='Chris Sattinger',
-    author_email='crucialfelix@gmail.com',
-    url='https://github.com/crucialfelix/django-ajax-selects/',
-    packages=['ajax_select'],
+    name="django-ajax-selects",
+    version="1.8.0",
+    description="Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.",
+    author="Chris Sattinger",
+    author_email="crucialfelix@gmail.com",
+    url="https://github.com/crucialfelix/django-ajax-selects/",
+    packages=["ajax_select"],
     package_data={
-        'ajax_select':
-        [
-            '*.py',
-            '*.txt',
-            '*.md',
-            'static/ajax_select/css/*',
-            'static/ajax_select/images/*',
-            'static/ajax_select/js/*',
-            'templates/ajax_select/*.html'
+        "ajax_select": [
+            "*.py",
+            "*.txt",
+            "*.md",
+            "static/ajax_select/css/*",
+            "static/ajax_select/images/*",
+            "static/ajax_select/js/*",
+            "templates/ajax_select/*.html",
         ]
     },
     include_package_data=True,
@@ -30,7 +29,7 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "Development Status :: 5 - Production/Stable",
-        'Environment :: Web Environment',
+        "Environment :: Web Environment",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -50,7 +49,7 @@ Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI A
 - Integrate with other UI elements elsewhere on the page using the javascript API
 - Works in Admin as well as in normal views
 
-- Django >=1.8, <=2.1
-- Python >=2.7, <=3.7
-"""
+- Django >=1.8, <3.0
+- Python >=2.7, >=3.5
+""",
 )

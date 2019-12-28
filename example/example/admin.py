@@ -1,9 +1,9 @@
-
 from django.contrib import admin
-from ajax_select import make_ajax_form
-from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline, AjaxSelectAdminStackedInline
 from example.forms import ReleaseForm
-from example.models import Person, Label, Group, Song, Release, Book, Author
+from example.models import Author, Book, Group, Label, Person, Release, Song
+
+from ajax_select import make_ajax_form
+from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminStackedInline, AjaxSelectAdminTabularInline
 
 
 @admin.register(Person)
@@ -29,7 +29,6 @@ class LabelAdmin(AjaxSelectAdmin):
 
 
 class ReleaseInline(AjaxSelectAdminStackedInline):
-
     # Example of the stacked inline
 
     model = Release
@@ -43,7 +42,6 @@ class ReleaseInline(AjaxSelectAdminStackedInline):
 
 @admin.register(Group)
 class GroupAdmin(AjaxSelectAdmin):
-
     # this shows a ManyToMany field
     form = make_ajax_form(Group, {'members': 'person'})
     inlines = [
@@ -53,7 +51,6 @@ class GroupAdmin(AjaxSelectAdmin):
 
 @admin.register(Song)
 class SongAdmin(AjaxSelectAdmin):
-
     form = make_ajax_form(Song, {'group': 'group', 'title': 'cliche'})
     # django bug:
     # readonly_fields = ('group',)
@@ -64,22 +61,20 @@ class SongAdmin(AjaxSelectAdmin):
 
 @admin.register(Release)
 class ReleaseAdmin(AjaxSelectAdmin):
-
     # specify a form class manually (normal django way)
     # see forms.py
     form = ReleaseForm
 
 
 class BookInline(AjaxSelectAdminTabularInline):
-
     # AjaxSelectAdminTabularInline enables the + add option
 
     model = Book
     form = make_ajax_form(Book, {
-                'about_group': 'group',
-                'mentions_persons': 'person'
-            },
-            show_help_text=True)
+        'about_group': 'group',
+        'mentions_persons': 'person'
+    },
+                          show_help_text=True)
     extra = 2
 
     # to enable the + add option
@@ -94,7 +89,6 @@ class BookInline(AjaxSelectAdminTabularInline):
 
 @admin.register(Author)
 class AuthorAdmin(AjaxSelectAdmin):
-
     inlines = [
         BookInline,
     ]

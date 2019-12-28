@@ -1,14 +1,15 @@
 from __future__ import unicode_literals
-from django.utils.six import text_type
+
 from django.db.models import Q
 from django.utils.html import escape
-from example.models import Person, Group, Song
-from ajax_select import LookupChannel
+from django.utils.six import text_type
+from example.models import Group, Person, Song
+
 import ajax_select
+from ajax_select import LookupChannel
 
 
 class PersonLookup(LookupChannel):
-
     model = Person
 
     def get_query(self, q, request):
@@ -29,7 +30,6 @@ class PersonLookup(LookupChannel):
 
 
 class GroupLookup(LookupChannel):
-
     model = Group
 
     def get_query(self, q, request):
@@ -53,7 +53,6 @@ class GroupLookup(LookupChannel):
 
 
 class SongLookup(LookupChannel):
-
     model = Song
 
     def get_query(self, q, request):
@@ -72,7 +71,6 @@ class SongLookup(LookupChannel):
 # Here using decorator syntax rather than settings.AJAX_LOOKUP_CHANNELS
 @ajax_select.register('cliche')
 class ClicheLookup(LookupChannel):
-
     """ an autocomplete lookup does not need to search models
         though the words here could also be stored in a model and
         searched as in the lookups above

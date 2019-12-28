@@ -47,7 +47,6 @@ AJAX_LOOKUP_CHANNELS = {
     'song': ('example.lookups', 'SongLookup'),
 }
 
-
 # By default will use window.jQuery
 # or Django Admin's jQuery
 # or load one from google ajax apis
@@ -74,10 +73,10 @@ MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'
 DATABASE_NAME = 'ajax_selects_example_db'
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Not used with sqlite3.
-DATABASE_PORT = ''             # Not used with sqlite3.
+DATABASE_USER = ''  # Not used with sqlite3.
+DATABASE_PASSWORD = ''  # Not used with sqlite3.
+DATABASE_HOST = ''  # Not used with sqlite3.
+DATABASE_PORT = ''  # Not used with sqlite3.
 
 DATABASES = {
     'default': {
@@ -104,7 +103,6 @@ LANGUAGE_CODE = 'en-us'
 # to load the internationalization machinery.
 USE_I18N = True
 
-
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = ''
@@ -121,7 +119,6 @@ STATIC_URL = '/static/'
 
 # Make this unique, and don't share it with nobody.
 SECRET_KEY = '=9fhrrwrazha6r_m)r#+in*@n@i322ubzy4r+zz%wz$+y(=qpb'
-
 
 ROOT_URLCONF = 'example.urls'
 

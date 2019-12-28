@@ -2,7 +2,6 @@ from django.apps import AppConfig
 
 
 class AjaxSelectConfig(AppConfig):
-
     """
     Django 1.7+ enables initializing installed applications
     and autodiscovering modules.

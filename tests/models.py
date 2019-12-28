@@ -1,9 +1,7 @@
-
 from django.db import models
 
 
 class Person(models.Model):
-
     name = models.CharField(max_length=50)
     email = models.EmailField(null=True, blank=True)
 
@@ -12,7 +10,6 @@ class Person(models.Model):
 
 
 class PersonWithTitle(Person):
-
     """
     Testing an inherited model (multi-table)
     """
@@ -24,7 +21,6 @@ class PersonWithTitle(Person):
 
 
 class Author(models.Model):
-
     name = models.CharField(max_length=50)
 
     class Meta:
@@ -32,7 +28,6 @@ class Author(models.Model):
 
 
 class Book(models.Model):
-
     """ Book has no admin, its an inline in the Author admin"""
 
     author = models.ForeignKey(Author, null=True, on_delete=models.CASCADE)

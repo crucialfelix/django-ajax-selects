@@ -7,13 +7,11 @@ from django.contrib.auth.models import User
 from django.utils.html import escape
 
 import ajax_select
-
 from tests.models import Author, Person, PersonWithTitle
 
 
 @ajax_select.register('person')
 class PersonLookup(ajax_select.LookupChannel):
-
     model = Person
 
     def get_query(self, q, request):
@@ -31,7 +29,6 @@ class PersonLookup(ajax_select.LookupChannel):
 
 @ajax_select.register('person-with-title')
 class PersonWithTitleLookup(ajax_select.LookupChannel):
-
     model = PersonWithTitle
 
     def get_query(self, q, request):
@@ -43,7 +40,6 @@ class PersonWithTitleLookup(ajax_select.LookupChannel):
 
 @ajax_select.register('user')
 class UserLookup(ajax_select.LookupChannel):
-
     """
     Test if you can unset a lookup provided by a third-party application.
     In this case it exposes User without any auth checking
@@ -68,5 +64,4 @@ class NameLookup(ajax_select.LookupChannel):
 
 @ajax_select.register('author')
 class AuthorLookup(ajax_select.LookupChannel):
-
     model = Author

@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import json
-
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -10,10 +9,10 @@ from django.forms.utils import flatatt
 from django.template.defaultfilters import force_escape
 from django.template.loader import render_to_string
 from django.utils.encoding import force_text
+from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
 from django.utils.six import text_type
 from django.utils.translation import ugettext as _
-from django.utils.module_loading import import_string
 
 from ajax_select.registry import registry
 
@@ -23,20 +22,19 @@ except ImportError:
     # < django 1.10
     from django.core.urlresolvers import reverse
 
-
 as_default_help = 'Enter text to search.'
 
 
 def _media(self):
-    # unless AJAX_SELECT_BOOTSTRAP == False
-    # then load jquery and jquery ui + default css
-    # where needed
-    js = ('ajax_select/js/bootstrap.js', 'ajax_select/js/ajax_select.js')
-    try:
-        if not settings.AJAX_SELECT_BOOTSTRAP:
-            js = ('ajax_select/js/ajax_select.js',)
-    except AttributeError:
-        pass
+    js = ['admin/js/jquery.init.js']
+
+    # Unless AJAX_SELECT_BOOTSTRAP == False
+    # then load include bootstrap which will load jquery and jquery ui + default css as needed
+    if getattr(settings, "AJAX_SELECT_BOOTSTRAP", True):
+        js.append('ajax_select/js/bootstrap.js')
+
+    js.append('ajax_select/js/ajax_select.js')
+
     return forms.Media(css={'all': ('ajax_select/css/ajax_select.css',)}, js=js)
 
 
@@ -48,7 +46,6 @@ json_encoder = import_string(getattr(settings, 'AJAX_SELECT_JSON_ENCODER',
 
 
 class AutoCompleteSelectWidget(forms.widgets.TextInput):
-
     """
     Widget to search for a model and return it as text for use in a CharField.
     """
@@ -106,7 +103,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             'add_link': self.add_link,
         }
         context.update(
-            make_plugin_options(lookup, self.channel, self.plugin_options, initial))
+                make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = (
             'ajax_select/autocompleteselect_%s.html' % self.channel,
             'ajax_select/autocompleteselect.html')
@@ -121,7 +118,6 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
 
 
 class AutoCompleteSelectField(forms.fields.CharField):
-
     """Form field to select a Model for a ForeignKey db field."""
 
     channel = None
@@ -130,15 +126,15 @@ class AutoCompleteSelectField(forms.fields.CharField):
         self.channel = channel
 
         widget_kwargs = dict(
-            channel=channel,
-            help_text=kwargs.get('help_text', _(as_default_help)),
-            show_help_text=kwargs.pop('show_help_text', True),
-            plugin_options=kwargs.pop('plugin_options', {})
+                channel=channel,
+                help_text=kwargs.get('help_text', _(as_default_help)),
+                show_help_text=kwargs.pop('show_help_text', True),
+                plugin_options=kwargs.pop('plugin_options', {})
         )
         widget_kwargs.update(kwargs.pop('widget_options', {}))
         kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
         super(AutoCompleteSelectField, self).__init__(
-            max_length=255, *args, **kwargs)
+                max_length=255, *args, **kwargs)
 
     def clean(self, value):
         if value:
@@ -150,7 +146,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 # out of the scope of this field to do anything more than
                 # tell you it doesn't exist
                 raise forms.ValidationError(
-                    "%s cannot find object: %s" % (lookup, value))
+                        "%s cannot find object: %s" % (lookup, value))
             return objs[0]
         else:
             if self.required:
@@ -171,7 +167,6 @@ class AutoCompleteSelectField(forms.fields.CharField):
 
 
 class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
-
     """
     Widget to select multiple models for a ManyToMany db field.
     """
@@ -231,7 +226,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'current': value,
             'current_ids': current_ids,
             'current_reprs': mark_safe(
-                json.dumps(initial, cls=json_encoder)
+                    json.dumps(initial, cls=json_encoder)
             ),
             'help_text': help_text,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
@@ -239,7 +234,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             'add_link': self.add_link,
         }
         context.update(
-            make_plugin_options(lookup, self.channel, self.plugin_options, initial))
+                make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = ('ajax_select/autocompleteselectmultiple_%s.html' % self.channel,
                      'ajax_select/autocompleteselectmultiple.html')
         out = render_to_string(templates, context)
@@ -254,7 +249,6 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
 
 
 class AutoCompleteSelectMultipleField(forms.fields.CharField):
-
     """
     Form field to select multiple models for a ManyToMany db field.
     """
@@ -286,7 +280,7 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
                 django_default_help = _(dh).translate(settings.LANGUAGE_CODE)
                 if django_default_help in translated:
                     cleaned_help = translated.replace(
-                        django_default_help, '').strip()
+                            django_default_help, '').strip()
                     # probably will not show up in translations
                     if cleaned_help:
                         help_text = cleaned_help
@@ -327,11 +321,11 @@ class AutoCompleteSelectMultipleField(forms.fields.CharField):
         dvs = [text_type(v) for v in (data_value or [])]
         return ivs != dvs
 
+
 ###############################################################################
 
 
 class AutoCompleteWidget(forms.TextInput):
-
     """
     Widget to select a search result and enter the result as raw text in the
     text input field. The user may also simply enter text and ignore any
@@ -376,14 +370,13 @@ class AutoCompleteWidget(forms.TextInput):
             'func_slug': self.html_id.replace("-", ""),
         }
         context.update(
-            make_plugin_options(lookup, self.channel, self.plugin_options, initial))
+                make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = ('ajax_select/autocomplete_%s.html' % self.channel,
                      'ajax_select/autocomplete.html')
         return mark_safe(render_to_string(templates, context))
 
 
 class AutoCompleteField(forms.CharField):
-
     """
     A CharField that uses an AutoCompleteWidget to lookup matching
     and stores the result as plain text.
@@ -394,9 +387,9 @@ class AutoCompleteField(forms.CharField):
         self.channel = channel
 
         widget_kwargs = dict(
-            help_text=kwargs.get('help_text', _(as_default_help)),
-            show_help_text=kwargs.pop('show_help_text', True),
-            plugin_options=kwargs.pop('plugin_options', {})
+                help_text=kwargs.get('help_text', _(as_default_help)),
+                show_help_text=kwargs.pop('show_help_text', True),
+                plugin_options=kwargs.pop('plugin_options', {})
         )
         widget_kwargs.update(kwargs.pop('widget_options', {}))
         if 'attrs' in kwargs:
@@ -431,7 +424,7 @@ def _check_can_add(self, user, related_model):
         app_label = related_model._meta.app_label
         model = related_model._meta.object_name.lower()
         self.widget.add_link = reverse(
-            'admin:%s_%s_add' % (app_label, model)) + '?_popup=1'
+                'admin:%s_%s_add' % (app_label, model)) + '?_popup=1'
 
 
 def autoselect_fields_check_can_add(form, model, user):
@@ -466,7 +459,7 @@ def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
     return {
         'plugin_options': mark_safe(json.dumps(po, cls=json_encoder)),
         'data_plugin_options': force_escape(
-            json.dumps(po, cls=json_encoder)
+                json.dumps(po, cls=json_encoder)
         )
     }
 
