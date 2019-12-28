@@ -4,7 +4,6 @@ from django.utils.html import escape
 
 
 class LookupChannel(object):
-
     """
     Subclass this, setting the model and implementing methods to taste.
 

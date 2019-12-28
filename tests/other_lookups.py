@@ -5,5 +5,4 @@ from tests.models import Book
 
 
 class BookLookup(ajax_select.LookupChannel):
-
     model = Book

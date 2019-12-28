@@ -6,13 +6,15 @@ Specific errors that are discovered through these tests
 should be unit tested in test_fields.py
 """
 from __future__ import unicode_literals
-import django
-from django.forms.models import ModelForm
-from django.test import TestCase, Client
-from django.contrib.auth.models import User
 
-from tests.models import Book, Author, Person
+import django
+from django.contrib.auth.models import User
+from django.forms.models import ModelForm
+from django.test import Client, TestCase
+
 from ajax_select import fields
+from tests.models import Author, Book, Person
+
 try:
     from django.urls import reverse
 except ImportError:
@@ -26,7 +28,6 @@ if django.VERSION[1] < 7:
 
 
 class BookForm(ModelForm):
-
     class Meta:
         model = Book
         fields = ['name', 'author', 'mentions_persons']
@@ -147,7 +148,6 @@ class TestAdmin(TestCase):
 
 
 class TestBookAdmin(TestAdmin):
-
     """
     Test the admins in tests/admin.py
     """
@@ -170,7 +170,6 @@ class TestBookAdmin(TestAdmin):
 
 
 class TestAuthorAdmin(TestAdmin):
-
     """
     Test an admin with inlines
     """

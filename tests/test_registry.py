@@ -1,5 +1,5 @@
-
 from django.test import TestCase
+
 import ajax_select
 
 
@@ -22,7 +22,7 @@ class TestRegistry(TestCase):
         """settings can unset a channel that was specified in a lookups.py"""
         # self.assertFalse(ajax_select.registry.is_registered('user'))
         self.assertFalse(
-            ajax_select.registry.is_registered('was-never-a-channel'))
+                ajax_select.registry.is_registered('was-never-a-channel'))
 
     # def test_reimporting_lookup(self):
     #     """

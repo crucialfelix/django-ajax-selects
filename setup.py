@@ -3,42 +3,42 @@
 from setuptools import setup
 
 setup(
-    name='django-ajax-selects',
-    version='1.7.1',
-    description='Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.',
-    author='Chris Sattinger',
-    author_email='crucialfelix@gmail.com',
-    url='https://github.com/crucialfelix/django-ajax-selects/',
-    packages=['ajax_select'],
-    package_data={
-        'ajax_select':
-        [
-            '*.py',
-            '*.txt',
-            '*.md',
-            'static/ajax_select/css/*',
-            'static/ajax_select/images/*',
-            'static/ajax_select/js/*',
-            'templates/ajax_select/*.html'
-        ]
-    },
-    include_package_data=True,
-    zip_safe=False,
-    license="MIT",
-    classifiers=[
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-        "Development Status :: 5 - Production/Stable",
-        'Environment :: Web Environment',
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-        "Topic :: Software Development :: User Interfaces",
-        "Framework :: Django",
-    ],
-    long_description="""\
+        name='django-ajax-selects',
+        version='1.7.1',
+        description='Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.',
+        author='Chris Sattinger',
+        author_email='crucialfelix@gmail.com',
+        url='https://github.com/crucialfelix/django-ajax-selects/',
+        packages=['ajax_select'],
+        package_data={
+            'ajax_select':
+                [
+                    '*.py',
+                    '*.txt',
+                    '*.md',
+                    'static/ajax_select/css/*',
+                    'static/ajax_select/images/*',
+                    'static/ajax_select/js/*',
+                    'templates/ajax_select/*.html'
+                ]
+        },
+        include_package_data=True,
+        zip_safe=False,
+        license="MIT",
+        classifiers=[
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2",
+            "Programming Language :: Python :: 3",
+            "Development Status :: 5 - Production/Stable",
+            'Environment :: Web Environment',
+            "Intended Audience :: Developers",
+            "License :: OSI Approved :: MIT License",
+            "Operating System :: OS Independent",
+            "Topic :: Software Development :: Libraries :: Python Modules",
+            "Topic :: Software Development :: User Interfaces",
+            "Framework :: Django",
+        ],
+        long_description="""\
 Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.
 
 - Customize search query

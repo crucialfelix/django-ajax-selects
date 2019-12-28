@@ -1,11 +1,11 @@
 import json
 from django.http import HttpResponse
 from django.utils.encoding import force_text
+
 from ajax_select import registry
 
 
 def ajax_lookup(request, channel):
-
     """Load the named lookup channel and lookup matching models.
 
     GET or POST should contain 'term'
