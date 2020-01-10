@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import json
+import sys
 from six import text_type
 from django import forms
 from django.conf import settings
@@ -12,9 +13,13 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_text
 from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _
 
 from ajax_select.registry import registry
+
+if sys.version_info.major >= 3:
+    from django.utils.translation import gettext as _
+else:
+    from django.utils.translation import ugettext as _
 
 try:
     from django.urls import reverse
