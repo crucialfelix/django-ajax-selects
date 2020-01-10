@@ -8,6 +8,7 @@ setup(
     description="Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.",
     author="Chris Sattinger",
     author_email="crucialfelix@gmail.com",
+    install_requires=["six"],
     url="https://github.com/crucialfelix/django-ajax-selects/",
     packages=["ajax_select"],
     package_data={
