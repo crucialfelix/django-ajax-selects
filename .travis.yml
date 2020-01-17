@@ -17,6 +17,7 @@ env:
   - TOX_ENV=py37-dj111
   - TOX_ENV=py37-dj20
   - TOX_ENV=py37-dj21
+  - TOX_ENV=py37-dj30
 before_install:
   - pyenv install 2.7 --skip-existing
   - pyenv install 3.7 --skip-existing
