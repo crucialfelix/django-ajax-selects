@@ -50,7 +50,7 @@ Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI A
 - Integrate with other UI elements elsewhere on the page using the javascript API
 - Works in Admin as well as in normal views
 
-- Django >=1.8, <3.0
+- Django >=1.8, <=3
 - Python >=2.7, >=3.5
 """,
 )
