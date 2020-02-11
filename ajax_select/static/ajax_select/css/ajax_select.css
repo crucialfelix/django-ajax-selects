@@ -6,19 +6,19 @@
   padding: 0.25em 0;
 }
 form .aligned .results_on_deck {
-  padding-left: 38px;
-  margin-left: 7em;
+  padding-left: 14px;
+  margin-left: 160px;
 }
 .results_on_deck > div {
-  margin-bottom: 0.5em;
+  margin: 0.5em 0;
 }
 .ui-autocomplete-loading {
-  background:  url('../images/loading-indicator.gif') no-repeat;
+  background: url("../images/loading-indicator.gif") no-repeat;
   background-origin: content-box;
   background-position: right;
 }
 ul.ui-autocomplete {
-	/*
+  /*
   this is the dropdown menu.
 
   if max-width is not set and you are using django-admin

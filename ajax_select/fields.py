@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 
 import json
 import sys
-from six import text_type
+
+from ajax_select.registry import registry
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -14,7 +15,11 @@ from django.utils.encoding import force_text
 from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
 
-from ajax_select.registry import registry
+try:
+    from six import text_type
+except ImportError:
+    from django.utils.six import text_type
+
 
 if sys.version_info.major >= 3:
     from django.utils.translation import gettext as _

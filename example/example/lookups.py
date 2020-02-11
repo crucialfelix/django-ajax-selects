@@ -1,12 +1,16 @@
 from __future__ import unicode_literals
 
-from django.db.models import Q
-from django.utils.html import escape
-from django.utils.six import text_type
-from example.models import Group, Person, Song
-
 import ajax_select
 from ajax_select import LookupChannel
+from django.db.models import Q
+from django.utils.html import escape
+
+from example.models import Group, Person, Song
+
+try:
+    from six import text_type
+except ImportError:
+    from django.utils.six import text_type
 
 
 class PersonLookup(LookupChannel):
