@@ -240,7 +240,7 @@
     $(window).trigger('init-autocomplete');
     // When adding new rows in inline forms, reinitialize and activate newly added rows.
     $(document)
-      .on('click', '.inline-group ul.tools a.add, .inline-group div.add-row a, .inline-group .tabular tr.add-row td a', function() {
+      .on('click', '._inline-group ul.tools a.add, ._inline-group div.add-row a, ._inline-group .tabular tr.add-row td a, .inline-group ul.tools a.add, .inline-group div.add-row a, .inline-group .tabular tr.add-row td a', function() {
         $(window).trigger('init-autocomplete');
       });
   });
