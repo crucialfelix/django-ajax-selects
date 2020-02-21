@@ -36,7 +36,7 @@ Include the urls in your project::
 
 Write a LookupChannel to specify the models, search queries, formatting etc. and register it with a channel name::
 
-      # app_name/lookup.py
+      # app_name/lookups.py
       from ajax_select import register, LookupChannel
       from .models import Tag
 
