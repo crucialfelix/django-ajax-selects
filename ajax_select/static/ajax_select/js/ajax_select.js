@@ -1,6 +1,4 @@
-(function() {
-
-  var $ = window.jQuery;
+(function($) {
 
   $.fn.autocompleteselect = function(options) {
     return this.each(function() {
@@ -245,4 +243,4 @@
       });
   });
 
-})();
+})(window.jQuery);
