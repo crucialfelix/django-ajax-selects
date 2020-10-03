@@ -1,16 +1,10 @@
-from __future__ import unicode_literals
-
-import ajax_select
-from ajax_select import LookupChannel
 from django.db.models import Q
 from django.utils.html import escape
 
-from example.models import Group, Person, Song
+import ajax_select
+from ajax_select import LookupChannel
 
-try:
-    from six import text_type
-except ImportError:
-    from django.utils.six import text_type
+from example.models import Group, Person, Song
 
 
 class PersonLookup(LookupChannel):
@@ -25,12 +19,12 @@ class PersonLookup(LookupChannel):
 
     def format_match(self, obj):
         """ (HTML) formatted item for display in the dropdown """
-        return "%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+        return f"{escape(obj.name)}<div><i>{escape(obj.email)}</i></div>"
         # return self.format_item_display(obj)
 
     def format_item_display(self, obj):
         """ (HTML) formatted item for displaying item in the selected deck area """
-        return "%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.email))
+        return f"{escape(obj.name)}<div><i>{escape(obj.email)}</i></div>"
 
 
 class GroupLookup(LookupChannel):
@@ -40,13 +34,13 @@ class GroupLookup(LookupChannel):
         return Group.objects.filter(name__icontains=q).order_by('name')
 
     def get_result(self, obj):
-        return text_type(obj)
+        return str(obj)
 
     def format_match(self, obj):
         return self.format_item_display(obj)
 
     def format_item_display(self, obj):
-        return "%s<div><i>%s</i></div>" % (escape(obj.name), escape(obj.url))
+        return f"{escape(obj.name)}<div><i>{escape(obj.url)}</i></div>"
 
     def can_add(self, user, model):
         """ customize can_add by allowing anybody to add a Group.
@@ -63,13 +57,13 @@ class SongLookup(LookupChannel):
         return Song.objects.filter(title__icontains=q).select_related('group').order_by('title')
 
     def get_result(self, obj):
-        return text_type(obj.title)
+        return str(obj.title)
 
     def format_match(self, obj):
         return self.format_item_display(obj)
 
     def format_item_display(self, obj):
-        return "%s<div><i>by %s</i></div>" % (escape(obj.title), escape(obj.group.name))
+        return f"{escape(obj.title)}<div><i>by {escape(obj.group.name)}</i></div>"
 
 
 # Here using decorator syntax rather than settings.AJAX_LOOKUP_CHANNELS

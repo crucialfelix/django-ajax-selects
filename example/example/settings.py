@@ -121,8 +121,6 @@ SECRET_KEY = '=9fhrrwrazha6r_m)r#+in*@n@i322ubzy4r+zz%wz$+y(=qpb'
 
 ROOT_URLCONF = 'example.urls'
 
-ROOT_URLCONF = "example.urls"
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -141,6 +139,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                'django.template.context_processors.request',
             ],
         },
         # TEMPLATE_LOADERS = (
