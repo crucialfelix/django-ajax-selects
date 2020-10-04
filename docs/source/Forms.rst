@@ -58,7 +58,7 @@ There is possibly a better way to do this, but here is an initial example:
 
         # that adds the field in, overwriting the previous default field
         def add_fields(self, form, index):
-            super(BaseTaskFormSet, self).add_fields(form, index)
+            super().add_fields(form, index)
             form.fields["project"] = AutoCompleteSelectField('project', required=False)
 
     # pass in the base formset class to the factory

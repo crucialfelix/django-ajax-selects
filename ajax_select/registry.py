@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.module_loading import autodiscover_modules
 
 
-class LookupChannelRegistry(object):
+class LookupChannelRegistry:
     """
     Registry for LookupChannels activated for your django project.
 
@@ -56,7 +56,7 @@ class LookupChannelRegistry(object):
             lookup_spec = self._registry[channel]
         except KeyError:
             raise ImproperlyConfigured(
-                    "No ajax_select LookupChannel named %(channel)r is registered." % {'channel': channel})
+                    f"No ajax_select LookupChannel named {channel!r} is registered.")
 
         if (type(lookup_spec) is type) and issubclass(lookup_spec, LookupChannel):
             return lookup_spec()
@@ -77,7 +77,7 @@ class LookupChannelRegistry(object):
             lookup_class = getattr(lookup_module, lookup_spec[1])
             return lookup_class()
         else:
-            raise Exception("Invalid lookup spec: %s" % lookup_spec)
+            raise Exception(f"Invalid lookup spec: {lookup_spec}")
 
     def is_registered(self, channel):
         return channel in self._registry

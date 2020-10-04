@@ -71,14 +71,14 @@ Read the full documention here: [outside of the admin](http://django-ajax-select
 
 ## Assets included by default
 
-* //ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
-* //code.jquery.com/ui/1.10.3/jquery-ui.js
-* //code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css
+* //ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'
+* //code.jquery.com/ui/1.12.1/jquery-ui.js
+* //code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css
 
 ## Compatibility
 
-* Django >=1.8, <=3
-* Python >=2.7, >=3.5
+* Django >=2.2
+* Python >=3.6
 
 ## Contributors
 

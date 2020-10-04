@@ -24,7 +24,7 @@ or you must implement `get_form` yourself::
     class YourModelAdmin(admin.ModelAdmin):
 
       def get_form(self, request, obj=None, **kwargs):
-          form = super(YourModelAdmin, self).get_form(request, obj, **kwargs)
+          form = super().get_form(request, obj, **kwargs)
           autoselect_fields_check_can_add(form, self.model, request.user)
           return form
 

@@ -1,8 +1,8 @@
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.forms.models import ModelForm
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import capfirst
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False, **kwargs):
@@ -89,7 +89,7 @@ def make_ajax_field(related_model, fieldname_on_model, channel, show_help_text=F
 
     field = related_model._meta.get_field(fieldname_on_model)
     if 'label' not in kwargs:
-        kwargs['label'] = _(capfirst(force_text(field.verbose_name)))
+        kwargs['label'] = _(capfirst(force_str(field.verbose_name)))
 
     if ('help_text' not in kwargs) and field.help_text:
         kwargs['help_text'] = field.help_text

@@ -20,11 +20,11 @@
   }
 
   if (not(w.jQuery)) {
-    loadJS('//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js');
+    loadJS('//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js');
   }
 
   if (not(w.jQuery) || not(w.jQuery.ui) || not(w.jQuery.ui.autocomplete)) {
-    loadJS('//code.jquery.com/ui/1.10.3/jquery-ui.js');
-    loadCSS('//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css');
+    loadJS('//code.jquery.com/ui/1.12.1/jquery-ui.js');
+    loadCSS('//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css');
   }
 })(window);

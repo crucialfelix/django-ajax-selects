@@ -47,13 +47,14 @@ Add field to a form::
 Fully customizable
 ------------------
 
-- search query
-- query other resources besides Django ORM
-- format results with HTML
-- custom styling
-- customize security policy
-- customize UI
-- integrate with other UI elements on page using the javascript API
+- Customize search query
+- Query other resources besides Django ORM
+- Format results with HTML
+- Customize styling
+- Customize security policy
+- Add additional custom UI alongside widget
+- Integrate with other UI elements elsewhere on the page using the javascript API
+- Works in Admin as well as in normal views
 
 Assets included by default
 --------------------------
@@ -65,8 +66,8 @@ Assets included by default
 Compatibility
 -------------
 
-- Django >=1.5, <=1.9
-- Python >=2.7, <=3.4
+- Django >=1.8, <=3
+- Python >=2.7, >=3.5
 
 Index
 -----

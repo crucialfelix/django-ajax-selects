@@ -82,7 +82,7 @@ class BookInline(AjaxSelectAdminTabularInline):
     # you could implement this
     # def get_formset(self, request, obj=None, **kwargs):
     #     from ajax_select.fields import autoselect_fields_check_can_add
-    #     fs = super(BookInline, self).get_formset(request, obj,**kwargs)
+    #     fs = super().get_formset(request, obj,**kwargs)
     #     autoselect_fields_check_can_add(fs.form, self.model, request.user)
     #     return fs
 
