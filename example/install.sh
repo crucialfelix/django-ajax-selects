@@ -4,16 +4,16 @@
 set -e
 
 # creates a virtualenv
-virtualenv --no-site-packages AJAXSELECTS
+python3 -m venv AJAXSELECTS
 source AJAXSELECTS/bin/activate
 
 DJANGO=$1
 if [ "$DJANGO" != "" ]; then
     echo "Installing Django $DJANGO:"
-    pip install Django==$DJANGO
+    AJAXSELECTS/bin/pip install Django==$DJANGO
 else
     echo "Installing latest django:"
-    pip install django
+    AJAXSELECTS/bin/pip install django
 fi
 
 if [ ! -d ./ajax_select ]; then
