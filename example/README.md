@@ -10,7 +10,7 @@ Install a local django in a virtualenv:
 
 Or to install a specific django version:
 
-    ./install.sh 1.8.5
+    ./install.sh 3.1.1
 
 List of available django versions:
 

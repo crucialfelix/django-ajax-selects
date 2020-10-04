@@ -5,24 +5,14 @@ so we are testing with exactly what Django gives.
 Specific errors that are discovered through these tests
 should be unit tested in test_fields.py
 """
-from __future__ import unicode_literals
-
-import django
 from django.contrib.auth.models import User
 from django.forms.models import ModelForm
 from django.test import Client, TestCase
+from django.urls import reverse
 
 from ajax_select import fields
 from tests.models import Author, Book, Person
 
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-
-# Other versions will autoload
-if django.VERSION[1] < 7:
-    from tests import lookups  # noqa
 
 # ---------------  setup ----------------------------------- #
 
@@ -155,7 +145,7 @@ class TestBookAdmin(TestAdmin):
     def test_get_blank(self):
         app_label = 'tests'
         model = 'book'
-        response = self.client.get(reverse('admin:%s_%s_add' % (app_label, model)))
+        response = self.client.get(reverse(f'admin:{app_label}_{model}_add'))
         content = str(response.content)
         # print(content)
 
@@ -177,7 +167,7 @@ class TestAuthorAdmin(TestAdmin):
     def test_get_blank(self):
         app_label = 'tests'
         model = 'author'
-        response = self.client.get(reverse('admin:%s_%s_add' % (app_label, model)))
+        response = self.client.get(reverse(f'admin:{app_label}_{model}_add'))
         content = str(response.content)
         # print(content)
 

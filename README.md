@@ -77,8 +77,8 @@ Read the full documention here: [outside of the admin](http://django-ajax-select
 
 ## Compatibility
 
-* Django >=1.8, <=3
-* Python >=2.7, >=3.5
+* Django >=2.2
+* Python >=3.6
 
 ## Contributors
 

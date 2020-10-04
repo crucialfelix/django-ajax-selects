@@ -1,12 +1,6 @@
-# -*- coding: utf8 -*-
-
-from __future__ import unicode_literals
-
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
 class Person(models.Model):
     """ an actual singular human being """
     name = models.CharField(blank=True, max_length=100)
@@ -16,7 +10,6 @@ class Person(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class Group(models.Model):
     """ a music group """
 
@@ -30,7 +23,6 @@ class Group(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class Label(models.Model):
     """ a record label """
 
@@ -42,7 +34,6 @@ class Label(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class Song(models.Model):
     """ a song """
 
@@ -53,7 +44,6 @@ class Song(models.Model):
         return self.title
 
 
-@python_2_unicode_compatible
 class Release(models.Model):
     """ a music release/product """
 
@@ -70,7 +60,6 @@ class Release(models.Model):
         return self.title
 
 
-@python_2_unicode_compatible
 class Author(models.Model):
     """ Author has multiple books,
         via foreign keys
@@ -82,7 +71,6 @@ class Author(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class Book(models.Model):
     """ Book has no admin, its an inline in the Author admin"""
 
