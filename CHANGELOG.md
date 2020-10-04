@@ -1,5 +1,23 @@
 # Change Log
 
+## [2.0.0]
+
+Dropped support for older versions of Django and Python.
+
+Supported:
+
+- Django >= 2.2
+- Python >= 3.6
+
+Updates default frontend libraries to:
+* //ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'
+* //code.jquery.com/ui/1.12.1/jquery-ui.js
+* //code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css
+
+(These can still be customized if you need to run a different version or use different default css)
+
+Many thanks to @Cabilist and @teelee7133
+
 ## [1.8.0]
 
 Added/fixed support for Django 2.2
