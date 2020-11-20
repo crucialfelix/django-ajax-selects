@@ -12,6 +12,41 @@
 
 http://django-ajax-selects.readthedocs.org/en/latest/
 
+## Installation
+
+`pip install django-ajax-selects`
+
+Add the app:
+
+```py
+# settings.py
+INSTALLED_APPS = (
+    ...
+    'ajax_select',  # <-   add the app
+    ...
+)
+```
+Include the urls in your project:
+
+```py
+# urls.py
+from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.conf import settings
+from ajax_select import urls as ajax_select_urls
+
+admin.autodiscover()
+
+urlpatterns = [
+
+    # place it at whatever base url you like
+    url(r'^ajax_select/', include(ajax_select_urls)),
+
+    url(r'^admin/', include(admin.site.urls)),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+```
+
 ## Quick Usage
 
 Define a lookup channel:
