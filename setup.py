@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="django-ajax-selects",
-    version="2.0.0",
+    version="2.1.0",
     description="Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete.",
     author="Chris Sattinger",
     author_email="crucialfelix@gmail.com",
