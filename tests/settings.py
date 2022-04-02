@@ -5,6 +5,8 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
     }
 }
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 ROOT_URLCONF = "tests.urls"
 INSTALLED_APPS = [
     "django.contrib.auth",
