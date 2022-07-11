@@ -19,7 +19,7 @@ or be used as a mixin class::
 
 or you must implement `get_form` yourself::
 
-    from ajax_selects.fields import autoselect_fields_check_can_add
+    from ajax_select.fields import autoselect_fields_check_can_add
 
     class YourModelAdmin(admin.ModelAdmin):
 
