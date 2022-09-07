@@ -36,7 +36,8 @@ test:
 
 release: clean
 	python setup.py sdist upload
-	python setup.py bdist_wheel upload
+	python setup.py bdist_wheel
+	twine upload dist/*
 
 sdist: clean
 	python setup.py sdist
