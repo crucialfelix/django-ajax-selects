@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+Django = "4.2"
+coverage = ">=4.4.1"
+coveralls = ">=1.1"
+"flake8" = ">=3.3.0"
+tox = ">=2.7.0"
+Sphinx = ">=1.6.1"
+sphinx_rtd_theme = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.10"
