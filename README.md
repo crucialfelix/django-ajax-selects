@@ -31,7 +31,9 @@ Include the urls in your project:
 
 ```py
 # urls.py
-from django.conf.urls import url, include
+from django.urls import path
+from django.conf.urls import include
+
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
@@ -40,11 +42,10 @@ from ajax_select import urls as ajax_select_urls
 admin.autodiscover()
 
 urlpatterns = [
-
-    # place it at whatever base url you like
-    url(r'^ajax_select/', include(ajax_select_urls)),
-
-    url(r'^admin/', include(admin.site.urls)),
+    # This is the api endpoint that django-ajax-selects will call
+    # to lookup your model ids by name
+    path("admin/lookups/", include(ajax_select_urls)),
+    path("admin/", admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ```
 
