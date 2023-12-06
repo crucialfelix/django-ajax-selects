@@ -3,7 +3,6 @@ from django.utils.html import escape
 
 import ajax_select
 from ajax_select import LookupChannel
-
 from example.models import Group, Person, Song
 
 

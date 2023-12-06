@@ -1,9 +1,9 @@
 from django.contrib import admin
-from example.forms import ReleaseForm
-from example.models import Author, Book, Group, Label, Person, Release, Song
 
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminStackedInline, AjaxSelectAdminTabularInline
+from example.forms import ReleaseForm
+from example.models import Author, Book, Group, Label, Person, Release, Song
 
 
 @admin.register(Person)

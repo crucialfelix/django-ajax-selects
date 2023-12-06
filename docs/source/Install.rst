@@ -30,7 +30,7 @@ Include the urls in your project::
         # place it at whatever base url you like
         url(r'^ajax_select/', include(ajax_select_urls)),
 
-        url(r'^admin/', include(admin.site.urls)),
+        url(r'^admin/', admin.site.urls),
     ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

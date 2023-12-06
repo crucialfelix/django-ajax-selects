@@ -45,14 +45,14 @@ def make_ajax_form(model, fieldlist, superclass=ModelForm, show_help_text=False,
         class Meta:
             exclude = []
 
-        setattr(Meta, 'model', model)
+        Meta.model = model
         if hasattr(superclass, 'Meta'):
             if hasattr(superclass.Meta, 'fields'):
-                setattr(Meta, 'fields', superclass.Meta.fields)
+                Meta.fields = superclass.Meta.fields
             if hasattr(superclass.Meta, 'exclude'):
-                setattr(Meta, 'exclude', superclass.Meta.exclude)
+                Meta.exclude = superclass.Meta.exclude
             if hasattr(superclass.Meta, 'widgets'):
-                setattr(Meta, 'widgets', superclass.Meta.widgets)
+                Meta.widgets = superclass.Meta.widgets
 
     for model_fieldname, channel in fieldlist.items():
         f = make_ajax_field(model, model_fieldname, channel, show_help_text)
@@ -83,9 +83,7 @@ def make_ajax_field(related_model, fieldname_on_model, channel, show_help_text=F
     Returns:
         (AutoCompleteField, AutoCompleteSelectField, AutoCompleteSelectMultipleField): field
     """
-    from ajax_select.fields import AutoCompleteField, \
-        AutoCompleteSelectMultipleField, \
-        AutoCompleteSelectField
+    from ajax_select.fields import AutoCompleteField, AutoCompleteSelectField, AutoCompleteSelectMultipleField
 
     field = related_model._meta.get_field(fieldname_on_model)
     if 'label' not in kwargs:

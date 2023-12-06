@@ -2,6 +2,16 @@
 
 [![Build Status](https://travis-ci.org/crucialfelix/django-ajax-selects.svg?branch=master)](https://travis-ci.org/crucialfelix/django-ajax-selects) [![PyPI version](https://badge.fury.io/py/django-ajax-selects.svg)](https://badge.fury.io/py/django-ajax-selects)
 
+This Django app glues Django Admin, jQuery UI together to enable searching and managing ForeignKey  and ManyToMany relationships.
+
+At the time it was created Django did not have any way to do this, and this solution glued together some technologies of the day.
+
+If you are building a new project then you should not use this.
+
+Django has built in support now:
+https://docs.djangoproject.com/en/3.2/ref/contrib/admin/#django.contrib.admin.ModelAdmin.autocomplete_fields
+
+
 ---
 
 ![selecting](/docs/source/_static/kiss.png?raw=true)
@@ -31,7 +41,9 @@ Include the urls in your project:
 
 ```py
 # urls.py
-from django.conf.urls import url, include
+from django.urls import path
+from django.conf.urls import include
+
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.conf import settings
@@ -40,11 +52,10 @@ from ajax_select import urls as ajax_select_urls
 admin.autodiscover()
 
 urlpatterns = [
-
-    # place it at whatever base url you like
-    url(r'^ajax_select/', include(ajax_select_urls)),
-
-    url(r'^admin/', include(admin.site.urls)),
+    # This is the api endpoint that django-ajax-selects will call
+    # to lookup your model ids by name
+    path("admin/lookups/", include(ajax_select_urls)),
+    path("admin/", admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ```
 
@@ -107,14 +118,34 @@ Read the full documention here: [outside of the admin](http://django-ajax-select
 
 ## Assets included by default
 
-* //ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'
-* //code.jquery.com/ui/1.12.1/jquery-ui.js
-* //code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css
+https://jquery.com/ 3.7.1
+https://jqueryui.com/ 1.13.2
+
+## Customize jquery
+
+To use a custom jQuery UI theme you can set:
+
+```python
+# settings.py
+AJAX_SELECT_JQUERYUI_THEME = "/static/path-to-your-theme/jquery-ui-min.css"
+```
+
+https://jqueryui.com/themeroller/
+
+If you need to use a different jQuery or jQuery UI then turn off the default assets:
+
+```python
+# settings.py
+AJAX_SELECT_BOOTSTRAP = False
+```
+
+and include jquery and jquery-ui yourself, making sure they are loaded before the Django admin loads.
+
 
 ## Compatibility
 
-* Django >=2.2
-* Python >=3.6
+* Django >=3.2
+* Python >=3.10
 
 ## Contributors
 

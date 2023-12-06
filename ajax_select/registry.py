@@ -11,6 +11,7 @@ class LookupChannelRegistry:
     This includes any installed apps that contain lookup.py modules (django 1.7+)
     and any lookups that are explicitly declared in `settings.AJAX_LOOKUP_CHANNELS`
     """
+
     _registry = {}
 
     def load_channels(self):
@@ -18,9 +19,9 @@ class LookupChannelRegistry:
         Called when loading the application. Cannot be called a second time,
         (eg. for testing) as Django will not re-import and re-register anything.
         """
-        autodiscover_modules('lookups')
+        autodiscover_modules("lookups")
 
-        if hasattr(settings, 'AJAX_LOOKUP_CHANNELS'):
+        if hasattr(settings, "AJAX_LOOKUP_CHANNELS"):
             self.register(settings.AJAX_LOOKUP_CHANNELS)
 
     def register(self, lookup_specs):
@@ -54,9 +55,10 @@ class LookupChannelRegistry:
 
         try:
             lookup_spec = self._registry[channel]
-        except KeyError:
+        except KeyError as e:
             raise ImproperlyConfigured(
-                    f"No ajax_select LookupChannel named {channel!r} is registered.")
+                f"No ajax_select LookupChannel named {channel!r} is registered."
+            ) from e
 
         if (type(lookup_spec) is type) and issubclass(lookup_spec, LookupChannel):
             return lookup_spec()
@@ -68,12 +70,12 @@ class LookupChannelRegistry:
         elif isinstance(lookup_spec, dict):
             # 'channel' : dict(model='app.model', search_field='title' )
             #  generate a simple channel dynamically
-            return self.make_channel(lookup_spec['model'], lookup_spec['search_field'])
+            return self.make_channel(lookup_spec["model"], lookup_spec["search_field"])
         elif isinstance(lookup_spec, tuple):
             # a tuple
             # 'channel' : ('app.module','LookupClass')
             #  from app.module load LookupClass and instantiate
-            lookup_module = __import__(lookup_spec[0], {}, {}, [''])
+            lookup_module = __import__(lookup_spec[0], {}, {}, [""])
             lookup_class = getattr(lookup_module, lookup_spec[1])
             return lookup_class()
         else:
@@ -92,6 +94,7 @@ class LookupChannelRegistry:
             LookupChannel
         """
         from ajax_select import LookupChannel
+
         app_label, model_name = app_model.split(".")
 
         class MadeLookupChannel(LookupChannel):
@@ -127,7 +130,7 @@ def register(channel):
 
     def _wrapper(lookup_class):
         if not channel:
-            raise ValueError('Lookup Channel must have a channel name')
+            raise ValueError("Lookup Channel must have a channel name")
 
         registry.register({channel: lookup_class})
 
