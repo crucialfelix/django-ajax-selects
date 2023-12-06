@@ -1,5 +1,4 @@
 .results_on_deck .ui-icon-trash {
-  float: left;
   cursor: pointer;
 }
 
@@ -20,18 +19,18 @@ html[data-theme="dark"] {
 .results_on_deck {
   padding: 0.25em 0;
 }
-.results_on_deck > div {
+.results_on_deck .item_on_deck {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
+}
+.results_on_deck .item_on_deck > div {
+  margin: 0.5em 0;
 }
 
 form .aligned .results_on_deck {
   padding-left: 14px;
   margin-left: 160px;
-}
-.results_on_deck > div {
-  margin: 0.5em 0;
 }
 .ui-autocomplete-loading {
   background: url("../images/loading-indicator.gif") no-repeat;
