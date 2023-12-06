@@ -47,10 +47,7 @@ AJAX_LOOKUP_CHANNELS = {
     'song': ('example.lookups', 'SongLookup'),
 }
 
-# By default will use window.jQuery
-# or Django Admin's jQuery
-# or load one from google ajax apis
-# then load jquery-ui and a default css
+# By default will use the included jquery and jquery-ui files.
 # Set this to False if for some reason you want to supply your own
 # window.jQuery and jQuery UI
 

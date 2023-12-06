@@ -27,7 +27,7 @@ def _media(self):
     )
     if bootstrap:
         js = [
-            "ajax_select/vendor/jquery.3.5.1.min.js",
+            "ajax_select/vendor/jquery-3.7.1.min.js",
             "ajax_select/vendor/jquery-ui-1.13.2/jquery-ui.min.js",
             "ajax_select/js/ajax_select.js",
         ]
