@@ -145,7 +145,7 @@ and include jquery and jquery-ui yourself, making sure they are loaded before th
 ## Compatibility
 
 * Django >=3.2
-* Python >=3.8
+* Python >=3.10
 
 ## Contributors
 
