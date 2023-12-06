@@ -1,5 +1,5 @@
 """JQuery-Ajax Autocomplete fields for Django Forms."""
-__version__ = "1.7.0"
+__version__ = "2.2.1"
 __author__ = "crucialfelix"
 __contact__ = "crucialfelix@gmail.com"
 __homepage__ = "https://github.com/crucialfelix/django-ajax-selects/"
@@ -17,5 +17,6 @@ from django.apps import AppConfig  # noqa
 # Django 3.2+ does not need default_app_config set.
 # Remove this once django <3.2 support is removed
 import django
+
 if django.VERSION < (3, 2):
-    default_app_config = 'ajax_select.apps.AjaxSelectConfig'
+    default_app_config = "ajax_select.apps.AjaxSelectConfig"
