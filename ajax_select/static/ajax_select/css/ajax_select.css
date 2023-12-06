@@ -2,9 +2,30 @@
   float: left;
   cursor: pointer;
 }
+
+@media (prefers-color-scheme: dark) {
+  .ui-icon {
+    filter: invert(0.8);
+    margin-right: 0.25rem;
+  }
+}
+
+html[data-theme="dark"] {
+  .ui-icon {
+    filter: invert(0.8);
+    margin-right: 0.25rem;
+  }
+}
+
 .results_on_deck {
   padding: 0.25em 0;
 }
+.results_on_deck > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
 form .aligned .results_on_deck {
   padding-left: 14px;
   margin-left: 160px;
