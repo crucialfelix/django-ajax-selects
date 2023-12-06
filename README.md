@@ -2,6 +2,16 @@
 
 [![Build Status](https://travis-ci.org/crucialfelix/django-ajax-selects.svg?branch=master)](https://travis-ci.org/crucialfelix/django-ajax-selects) [![PyPI version](https://badge.fury.io/py/django-ajax-selects.svg)](https://badge.fury.io/py/django-ajax-selects)
 
+This Django app glues Django Admin, jQuery UI together to enable searching and managing ForeignKey  and ManyToMany relationships.
+
+At the time it was created Django did not have any way to do this, and this solution glued together some technologies of the day.
+
+If you are building a new project then you should not use this.
+
+Django has built in support now:
+https://docs.djangoproject.com/en/3.2/ref/contrib/admin/#django.contrib.admin.ModelAdmin.autocomplete_fields
+
+
 ---
 
 ![selecting](/docs/source/_static/kiss.png?raw=true)
@@ -134,8 +144,8 @@ and include jquery and jquery-ui yourself, making sure they are loaded before th
 
 ## Compatibility
 
-* Django >=2.2
-* Python >=3.6
+* Django >=3.2
+* Python >=3.8
 
 ## Contributors
 
