@@ -13,7 +13,6 @@ from django.urls import reverse
 from ajax_select import fields
 from tests.models import Author, Book, Person
 
-
 # ---------------  setup ----------------------------------- #
 
 

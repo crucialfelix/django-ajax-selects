@@ -10,9 +10,7 @@ from example import views
 admin.autodiscover()
 
 urlpatterns = [
-                  path('search_form',
-                       view=views.search_form,
-                       name='search_form'),
-                  path('admin/lookups/', include(ajax_select_urls)),
-                  path('admin/', admin.site.urls),
-              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path("search_form", view=views.search_form, name="search_form"),
+    path("admin/lookups/", include(ajax_select_urls)),
+    path("admin/", admin.site.urls),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

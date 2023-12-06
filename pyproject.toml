@@ -1,0 +1,64 @@
+[tool.poetry]
+name = "django-ajax-selects"
+version = "2.2.0"
+description = "Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete."
+authors = ["Chris Sattinger <crucialfelix@gmail.com>"]
+repository = "https://github.com/crucialfelix/django-ajax-selects"
+documentation = "https://django-ajax-selects.readthedocs.io/en/latest/"
+license = "MIT, GPL"
+readme = "README.md"
+packages = [{include = "ajax_select"}]
+classifiers = [
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: User Interfaces",
+  "Framework :: Django",
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = ">=3.2"
+
+[tool.poetry.group.dev.dependencies]
+tox = "^4.11.4"
+sphinx = "^7.2.6"
+sphinx-rtd-theme = "^2.0.0"
+ruff = "^0.1.7"
+
+[tool.ruff]
+exclude = [
+    "./example/AJAXSELECTS/lib/*",
+    "./example/AJAXSELECTS/bin/*",
+    "./docs/*",
+]
+ignore = []
+line-length = 120
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    "C9",
+    "W",
+]
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
