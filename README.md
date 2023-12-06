@@ -108,9 +108,29 @@ Read the full documention here: [outside of the admin](http://django-ajax-select
 
 ## Assets included by default
 
-* //ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'
-* //code.jquery.com/ui/1.12.1/jquery-ui.js
-* //code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css
+https://jquery.com/ 3.7.1
+https://jqueryui.com/ 1.13.2
+
+## Customize jquery
+
+To use a custom jQuery UI theme you can set:
+
+```python
+# settings.py
+AJAX_SELECT_JQUERYUI_THEME = "/static/path-to-your-theme/jquery-ui-min.css"
+```
+
+https://jqueryui.com/themeroller/
+
+If you need to use a different jQuery or jQuery UI then turn off the default assets:
+
+```python
+# settings.py
+AJAX_SELECT_BOOTSTRAP = False
+```
+
+and include jquery and jquery-ui yourself, making sure they are loaded before the Django admin loads.
+
 
 ## Compatibility
 
