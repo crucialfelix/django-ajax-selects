@@ -1,7 +1,7 @@
 from django.forms.models import ModelForm
-from example.models import Release
 
 from ajax_select import make_ajax_field
+from example.models import Release
 
 
 class ReleaseForm(ModelForm):

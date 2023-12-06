@@ -100,15 +100,12 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             objs = lookup.get_objects([value])
             try:
                 obj = objs[0]
-            except IndexError:
-                raise Exception(f"{lookup} cannot find object:{value}")
+            except IndexError as e:
+                raise Exception(f"{lookup} cannot find object:{value}") from e
             current_repr = lookup.format_item_display(obj)
             initial = [current_repr, obj.pk]
 
-        if self.show_help_text:
-            help_text = self.help_text
-        else:
-            help_text = ""
+        help_text = self.help_text if self.show_help_text else ""
 
         context = {
             "name": name,
@@ -153,7 +150,7 @@ class AutoCompleteSelectField(forms.fields.CharField):
         )
         widget_kwargs.update(kwargs.pop("widget_options", {}))
         kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
-        super().__init__(max_length=255, *args, **kwargs)
+        super().__init__(*args, **kwargs, max_length=255)
 
     def clean(self, value):
         if value:
@@ -222,20 +219,18 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         lookup = registry.get(self.channel)
 
         values = list(value)
-        if all([isinstance(v, Model) for v in values]):
-            objects = values
-        else:
-            objects = lookup.get_objects(values)
+        objects = (
+            values
+            if all([isinstance(v, Model) for v in values])
+            else lookup.get_objects(values)
+        )
 
         current_ids = pack_ids([obj.pk for obj in objects])
 
         # text repr of currently selected items
         initial = [[lookup.format_item_display(obj), obj.pk] for obj in objects]
 
-        if self.show_help_text:
-            help_text = self.help_text
-        else:
-            help_text = ""
+        help_text = self.help_text if self.show_help_text else ""
 
         context = {
             "name": name,
@@ -371,10 +366,7 @@ class AutoCompleteWidget(forms.TextInput):
         final_attrs.pop("required", None)
 
         lookup = registry.get(self.channel)
-        if self.show_help_text:
-            help_text = self.help_text
-        else:
-            help_text = ""
+        help_text = self.help_text if self.show_help_text else ""
 
         context = {
             "current_repr": initial,
