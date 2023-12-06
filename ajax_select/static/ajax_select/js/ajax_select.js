@@ -8,34 +8,33 @@
 
       function receiveResult(event, ui) {
         if ($this.val()) {
-          kill();
+          removeItem();
         }
         $this.val(ui.item.pk);
         $text.val("");
-        addKiller(ui.item.repr, ui.item.pk);
+        addItemOnDeck(ui.item.repr, ui.item.pk);
         $deck.trigger("added", [ui.item.pk, ui.item]);
         $this.trigger("change");
 
         return false;
       }
 
-      function addKiller(repr, pk) {
-        var killId = "kill_" + pk + id,
-          killButton =
-            '<span class="ui-icon ui-icon-trash" id="' + killId + '">X</span> ';
+      function addItemOnDeck(repr, pk) {
+        var trashId = "trash_" + pk + id,
+          killButton = `<span class="ui-icon ui-icon-trash" id="${trashId}">X</span>`;
         if (repr) {
           $deck.empty();
-          $deck.append("<div>" + killButton + repr + "</div>");
+          $deck.append(`<div>${killButton}${repr}</div>`);
         } else {
-          $("#" + id + "_on_deck > div").prepend(killButton);
+          $(`#${id}_on_deck > div`).prepend(killButton);
         }
-        $("#" + killId).click(function () {
-          kill();
+        $("#" + trashId).click(function () {
+          removeItem();
           $deck.trigger("killed", [pk]);
         });
       }
 
-      function kill() {
+      function removeItem() {
         $this.val("");
         $deck.children().fadeOut(1.0).remove();
       }
@@ -45,10 +44,10 @@
 
       function reset() {
         if (options.initial) {
-          addKiller(options.initial[0], options.initial[1]);
+          addItemOnDeck(options.initial[0], options.initial[1]);
           $this.val(options.initial[1]);
         } else {
-          kill();
+          removeItem();
         }
       }
 
@@ -69,8 +68,8 @@
     return this.each(function () {
       var id = this.id,
         $this = $(this),
-        $text = $("#" + id + "_text"),
-        $deck = $("#" + id + "_on_deck");
+        $text = $(`#${id}_text`),
+        $deck = $(`#${id}_on_deck`);
 
       function receiveResult(event, ui) {
         var pk = ui.item.pk,
@@ -87,18 +86,12 @@
       }
 
       function addKiller(repr, pk) {
-        var killId = "kill_" + pk + id,
-          killButton =
-            '<span class="ui-icon ui-icon-trash" id="' + killId + '">X</span> ';
+        var killId = "kill_" + pk + id;
         $deck.append(
-          '<div id="' +
-            id +
-            "_on_deck_" +
-            pk +
-            '">' +
-            killButton +
-            repr +
-            " </div>"
+          `<div id="${id}_on_deck_${pk}" class="item_on_deck">
+            <span class="ui-icon ui-icon-trash" id="${killId}">X</span>
+            <div class="repr">${repr}</div>
+          </div>`
         );
 
         $("#" + killId).click(function () {
@@ -109,9 +102,7 @@
 
       function kill(pk) {
         $this.val($this.val().replace("|" + pk + "|", "|"));
-        $("#" + id + "_on_deck_" + pk)
-          .fadeOut()
-          .remove();
+        $(`#${id}_on_deck_${pk}`).fadeOut().remove();
       }
 
       options.select = receiveResult;
