@@ -19,7 +19,7 @@ cleandb:
 help:
 	@echo make install
 	@echo or:
-	@echo make clean install DJANGO=1.11
+	@echo make clean install
 
 
 .PHONY: install clean cleandb help
