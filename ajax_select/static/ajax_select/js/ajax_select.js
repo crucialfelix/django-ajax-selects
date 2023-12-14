@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, djangoJQuery) {
   $.fn.autocompleteselect = function (options) {
     return this.each(function () {
       var id = this.id,
@@ -150,7 +150,6 @@
 
   // allow html in the results menu
   // https://github.com/scottgonzalez/jquery-ui-extensions
-  console.log($, $.ui);
   var proto = $.ui.autocomplete.prototype,
     initSource = proto._initSource;
 
@@ -183,30 +182,6 @@
         .appendTo(ul);
     },
   });
-
-  /* Called by the popup create object when it closes.
-   * For the popup this is opener.dismissAddRelatedObjectPopup
-   * Django implements this in RelatedObjectLookups.js
-   * In django >= 1.10 we can rely on input.trigger('change')
-   * and avoid this hijacking.
-   */
-  var djangoDismissAddRelatedObjectPopup =
-    window.dismissAddRelatedObjectPopup || window.dismissAddAnotherPopup;
-  window.dismissAddRelatedObjectPopup = function (win, newId, newRepr) {
-    // Iff this is an ajax-select input then close the window and
-    // trigger didAddPopup
-    var input = $("#" + win.name);
-    if (input.data("ajax-select")) {
-      console.log("input", input, win, newId, newRepr);
-      win.close();
-      // newRepr is django's repr of object
-      // not the Lookup's formatting of it.
-      input.trigger("didAddPopup", [newId, newRepr]);
-    } else {
-      // Call the normal django set and close function.
-      djangoDismissAddRelatedObjectPopup(win, newId, newRepr);
-    }
-  };
 
   // activate any on page
   $(window).bind("init-autocomplete", function () {
@@ -249,4 +224,32 @@
       }
     );
   });
-})(window.jQuery);
+
+  /* Called by the popup create object when it closes.
+   * For the popup this is opener.dismissAddRelatedObjectPopup
+   * Django implements this in RelatedObjectLookups.js
+   * In django >= 1.10 we could try to rely on input.trigger('change')
+   * and avoid this hijacking, but the id and repr isn't passed.
+   */
+  djangoJQuery(document).ready(function () {
+    var djangoDismissAddRelatedObjectPopup =
+      window.dismissAddRelatedObjectPopup;
+    if (!djangoDismissAddRelatedObjectPopup) {
+      throw new Error("dismissAddAnotherPopup not found");
+    }
+
+    window.dismissAddRelatedObjectPopup = function (win, newId, newRepr) {
+      // Iff this is an ajax-select input then close the window and
+      // trigger didAddPopup
+      var input = $("#" + win.name.replace("__1", ""));
+      if (input.length && input.data("ajax-select")) {
+        win.close();
+        // note: newRepr is django's repr of object, not the Lookup's formatting of it.
+        input.trigger("didAddPopup", [newId, newRepr]);
+      } else {
+        // Call the normal django set and close function.
+        djangoDismissAddRelatedObjectPopup(win, newId, newRepr);
+      }
+    };
+  });
+})(window.jQuery, window.django.jQuery);
