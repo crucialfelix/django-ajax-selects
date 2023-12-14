@@ -12,5 +12,3 @@ from ajax_select.lookup_channel import LookupChannel  # noqa
 # and any specified in settings.AJAX_LOOKUP_CHANNELS
 # It will do this after all apps are imported.
 from django.apps import AppConfig  # noqa
-
-default_app_config = "ajax_select.apps.AjaxSelectConfig"
