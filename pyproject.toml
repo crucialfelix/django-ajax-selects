@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-ajax-selects"
-version = "3.0.1"
+version = "3.0.2"
 description = "Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete."
 authors = ["Chris Sattinger <crucialfelix@gmail.com>"]
 repository = "https://github.com/crucialfelix/django-ajax-selects"
