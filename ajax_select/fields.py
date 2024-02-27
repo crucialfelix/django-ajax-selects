@@ -26,9 +26,13 @@ def _media(self):
         "ajax_select/vendor/jquery-ui-1.13.2/jquery-ui.min.css",
     )
     if bootstrap:
+        extra = "" if settings.DEBUG else ".min"
+
         js = [
             "ajax_select/vendor/jquery-3.7.1.min.js",
             "ajax_select/vendor/jquery-ui-1.13.2/jquery-ui.min.js",
+            "admin/js/vendor/jquery/jquery%s.js" % extra,
+            "admin/js/jquery.init.js",
             "ajax_select/js/ajax_select.js",
         ]
         css = [
