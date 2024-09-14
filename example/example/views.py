@@ -6,18 +6,17 @@ from ajax_select.fields import AutoCompleteField
 
 class SearchForm(forms.Form):
     q = AutoCompleteField('cliche',
-                          required=True,
-                          help_text="Autocomplete will suggest clichés about cats, but "
-                                    "you can enter anything you like.",
-                          label="Favorite Cliché",
-                          attrs={'size': 100})
+                        required=True,
+                        help_text="Enter a few words, search using autocomplete...",
+                        label="Select a cliché about cats",
+                        attrs={'size': 100})
 
 
 def search_form(request):
-    dd = {}
+    context = {}
     if 'q' in request.GET:
-        dd['entered'] = request.GET.get('q')
-    initial = {'q': "\"This is an initial value,\" said O'Leary."}
+        context['entered'] = request.GET.get('q')
+    initial = {'q': "out of the bag"}
     form = SearchForm(initial=initial)
-    dd['form'] = form
-    return render('search_form.html', dd)
+    context['form'] = form
+    return render(request, 'example/search_form.html', context)

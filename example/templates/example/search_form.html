@@ -1,5 +1,9 @@
 <html>
 
+<head>
+    <title>Search</title>
+    {{ form.media }}
+</head>
 <body>
 
 {% if entered %}
@@ -7,7 +11,7 @@
     <blockquote>{{ entered }}</blockquote></p>
 {% endif %}
 
-<form action="{% url search_form %}" method="GET">
+<form action="{% url "search_form" %}" method="GET">
     <table>
         {{ form }}
         <tr>

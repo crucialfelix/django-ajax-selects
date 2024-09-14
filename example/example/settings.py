@@ -1,4 +1,5 @@
 # Django settings for example project.
+import os
 
 ###########################################################################
 
@@ -123,11 +124,13 @@ SECRET_KEY = "=9fhrrwrazha6r_m)r#+in*@n@i322ubzy4r+zz%wz$+y(=qpb"
 
 ROOT_URLCONF = "example.urls"
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            # insert your TEMPLATE_DIRS here
+            os.path.join(BASE_DIR, "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -144,9 +147,5 @@ TEMPLATES = [
                 "django.template.context_processors.request",
             ],
         },
-        # TEMPLATE_LOADERS = (
-        #     'django.template.loaders.filesystem.Loader',
-        #     'django.template.loaders.app_directories.Loader'
-        # )
     }
 ]
