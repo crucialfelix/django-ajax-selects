@@ -1,12 +1,13 @@
 *.pyc
 *.egg-info/
-example/AJAXSELECTS/*
 .tox
 htmlcov
 .coverage
 docs/_build
-example/ajax_select
-example/ajax_selects_example_db
 dist
 MANIFEST
 build
+example/AJAXSELECTS/*
+example/ajax_select
+example/ajax_selects_example_db
+example/static

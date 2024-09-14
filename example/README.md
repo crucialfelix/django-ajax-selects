@@ -31,3 +31,7 @@ Active the virtualenv:
 Go visit the admin site and play around:
 
 http://127.0.0.1:8000/admin
+
+Try this page outside of the Django admin:
+
+http://127.0.0.1:8000/search_form?
