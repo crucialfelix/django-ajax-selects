@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-ajax-selects"
-version = "3.0.1"
+version = "3.0.3"
 description = "Edit ForeignKey, ManyToManyField and CharField in Django Admin using jQuery UI AutoComplete."
 authors = ["Chris Sattinger <crucialfelix@gmail.com>"]
 repository = "https://github.com/crucialfelix/django-ajax-selects"
@@ -29,7 +29,7 @@ Django = ">=3.2"
 tox = "^4.11.4"
 sphinx = "^7.2.6"
 sphinx-rtd-theme = "^2.0.0"
-ruff = "^0.1.7"
+ruff = "^0.6.5"
 
 [tool.ruff]
 exclude = [
@@ -37,26 +37,119 @@ exclude = [
     "./example/AJAXSELECTS/bin/*",
     "./docs/*",
 ]
-ignore = []
 line-length = 120
+
+[tool.ruff.lint]
 select = [
-    # pycodestyle
-    "E",
-    # Pyflakes
-    "F",
-    # pyupgrade
-    "UP",
-    # flake8-bugbear
-    "B",
-    # flake8-simplify
-    "SIM",
-    # isort
-    "I",
-    "C9",
-    "W",
+    "F",    # Pyflakes
+    "E",    # pycodestyle
+    "W",    # pycodestyle
+    "C90",  # mccabe
+    "I",    # isort
+    "N",    # pep8-naming
+    "D",    # pydocstyle
+    "UP",   # pyupgrade
+    "YTT",  # flake8-2020
+    # "ANN",  # flake8-annotations
+    "ASYNC",# flake8-async
+    "S",    # flake8-bandit
+    "BLE",  # flake8-blind-except
+    "FBT",  # flake8-boolean-trap
+    "B",    # flake8-bugbear
+    "A",    # flake8-builtins
+    "COM",  # flake8-commas
+    "CPY",  # flake8-copyright
+    "C4",   # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "T10",  # flake8-debugger
+    "DJ",   # flake8-django
+    "EM",   # flake8-errmsg
+    "EXE",  # flake8-executable
+    "FA",   # flake8-future-annotations
+    "ISC",  # flake8-implicit-str-concat
+    "ICN",  # flake8-import-conventions
+    "LOG",  # flake8-logging
+    "G",    # flake8-logging-format
+    "INP",  # flake8-no-pep420
+    "PIE",  # flake8-pie
+    "T20",  # flake8-print
+    "PYI",  # flake8-pyi
+    "PT",   # flake8-pytest-style
+    "Q",    # flake8-quotes
+    "RSE",  # flake8-raise
+    "RET",  # flake8-return
+    "SLF",  # flake8-self
+    "SLOT", # flake8-slots
+    "SIM",  # flake8-simplify
+    "TID",  # flake8-tidy-imports
+    "TCH",  # flake8-type-checking
+    "INT",  # flake8-gettext
+    "ARG",  # flake8-unused-arguments
+    "PTH",  # flake8-use-pathlib
+    "TD",   # flake8-todos
+    "FIX",  # flake8-fixme
+    "ERA",  # eradicate
+    "PD",   # pandas-vet
+    "PGH",  # pygrep-hooks
+    "PL",   # Pylint
+    "TRY",  # tryceratops
+    "FLY",  # flynt
+    "NPY",  # NumPy-specific rules
+    "FAST", # FastAPI
+    "AIR",  # Airflow
+    "PERF", # Perflint
+    "FURB", # refurb
+    "DOC",  # pydoclint
+    # "RUF",  # Ruff-specific rules
+]
+ignore = [
+    "ANN101",  # public methods must have type annotations
+    "ARG001",  #
+    "ARG002", # unused argument
+    "COM812",
+    "D100", # missing docstring in public module
+    "D101", # missing docstring in public class
+    "D102", # public method
+    "D103", # missing docstring in public function
+    "D104",    #
+    "D105", # missing docstring in magic method
+    "D106",    #
+    "D107",    #
+    "D200",    #
+    "D203", # 1 blank line required before class docstring
+    "D205",    #
+    "D211", # no-blank-line-before-class
+    "D212",    #
+    "D401",    #
+    "D404",    #
+    "D415", # docstring should end in a period
+    "D417",    #
+    "DJ001",   #
+    "DJ006",   #
+    "DJ008",   #
+    "ERA001", # commented out code
+    "FBT002",  #
+    "FIX002",  #
+    "ISC001",
+    "PGH004",  #
+    "PT009", # should use regular assert in tests
+    "PTH100",  #
+    "PTH118",  #
+    "PTH120",  #
+    "RUF005",
+    "RUF012", # mutable class attributes should be annotated
+    "S105",    #
+    "S106", # password in example app
+    "S308",    #
+    "SLF001",  #
+    "TD002",   #
+    "TD003",   #
+    "TRY002",  #
+    # "D200", # One-line docstring should fit on one line
+    # "D212",  # multi line docstring should start at first line
 ]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
 [build-system]

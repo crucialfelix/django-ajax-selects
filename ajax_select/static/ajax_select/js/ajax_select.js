@@ -231,25 +231,28 @@
    * In django >= 1.10 we could try to rely on input.trigger('change')
    * and avoid this hijacking, but the id and repr isn't passed.
    */
-  djangoJQuery(document).ready(function () {
-    var djangoDismissAddRelatedObjectPopup =
-      window.dismissAddRelatedObjectPopup;
-    if (!djangoDismissAddRelatedObjectPopup) {
-      throw new Error("dismissAddAnotherPopup not found");
-    }
-
-    window.dismissAddRelatedObjectPopup = function (win, newId, newRepr) {
-      // Iff this is an ajax-select input then close the window and
-      // trigger didAddPopup
-      var input = $("#" + win.name.replace("__1", ""));
-      if (input.length && input.data("ajax-select")) {
-        win.close();
-        // note: newRepr is django's repr of object, not the Lookup's formatting of it.
-        input.trigger("didAddPopup", [newId, newRepr]);
-      } else {
-        // Call the normal django set and close function.
-        djangoDismissAddRelatedObjectPopup(win, newId, newRepr);
+  if (djangoJQuery) {
+    // only for Django Admin
+    djangoJQuery(document).ready(function () {
+      var djangoDismissAddRelatedObjectPopup =
+          window.dismissAddRelatedObjectPopup;
+      if (!djangoDismissAddRelatedObjectPopup) {
+        throw new Error("dismissAddAnotherPopup not found");
       }
-    };
-  });
-})(window.jQuery, window.django.jQuery);
+
+      window.dismissAddRelatedObjectPopup = function (win, newId, newRepr) {
+        // Iff this is an ajax-select input then close the window and
+        // trigger didAddPopup
+        var input = $("#" + win.name.replace("__1", ""));
+        if (input.length && input.data("ajax-select")) {
+          win.close();
+          // note: newRepr is django's repr of object, not the Lookup's formatting of it.
+          input.trigger("didAddPopup", [newId, newRepr]);
+        } else {
+          // Call the normal django set and close function.
+          djangoDismissAddRelatedObjectPopup(win, newId, newRepr);
+        }
+      };
+    });
+  }
+})(window.jQuery, window.django && window.django.jQuery);

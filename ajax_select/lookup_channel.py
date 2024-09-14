@@ -39,6 +39,7 @@ class LookupChannel:
 
         Returns:
             (QuerySet, list, generator): iterable of related_models
+
         """
         kwargs = {f"{self.search_field}__icontains": q}
         return self.model.objects.filter(**kwargs).order_by(self.search_field)
@@ -59,6 +60,7 @@ class LookupChannel:
             obj (Model):
         Returns:
             str: The object as string
+
         """
         return escape(force_str(obj))
 
@@ -70,6 +72,7 @@ class LookupChannel:
             obj (Model):
         Returns:
             str: formatted string, may contain HTML.
+
         """
         return escape(force_str(obj))
 
@@ -81,6 +84,7 @@ class LookupChannel:
             obj (Model):
         Returns:
             str: formatted string, may contain HTML.
+
         """
         return escape(force_str(obj))
 
@@ -92,6 +96,7 @@ class LookupChannel:
             ids (list): list of primary keys
         Returns:
             list: list of Model objects
+
         """
         # Inherited models have a OneToOneField (rather than eg AutoField)
         if getattr(self.model._meta.pk, "remote_field", False):
@@ -118,10 +123,13 @@ class LookupChannel:
         Args:
             user (User)
             other_model (Model): the ForeignKey or M2M model to check if the User can add.
+
         Returns:
             bool
+
         """
         from django.contrib.contenttypes.models import ContentType
+
         ctype = ContentType.objects.get_for_model(other_model)
         return user.has_perm(f"{ctype.app_label}.add_{ctype.model}")
 
@@ -138,8 +146,10 @@ class LookupChannel:
 
         Args:
             request (Request)
+
         Raises:
             PermissionDenied
+
         """
         if not request.user.is_staff:
             raise PermissionDenied

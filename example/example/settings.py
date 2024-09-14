@@ -1,4 +1,5 @@
 # Django settings for example project.
+import os
 
 ###########################################################################
 
@@ -110,17 +111,26 @@ MEDIA_URL = ""
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
 STATIC_URL = "/static/"
+STATIC_ROOT = "static"
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+        "LOCATION": STATIC_ROOT,
+    }
+}
 
 # Make this unique, and don't share it with nobody.
 SECRET_KEY = "=9fhrrwrazha6r_m)r#+in*@n@i322ubzy4r+zz%wz$+y(=qpb"
 
 ROOT_URLCONF = "example.urls"
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            # insert your TEMPLATE_DIRS here
+            os.path.join(BASE_DIR, "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -137,9 +147,5 @@ TEMPLATES = [
                 "django.template.context_processors.request",
             ],
         },
-        # TEMPLATE_LOADERS = (
-        #     'django.template.loaders.filesystem.Loader',
-        #     'django.template.loaders.app_directories.Loader'
-        # )
     }
 ]
