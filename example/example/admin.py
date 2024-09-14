@@ -13,45 +13,48 @@ class PersonAdmin(AjaxSelectAdmin):
 
 @admin.register(Label)
 class LabelAdmin(AjaxSelectAdmin):
-    """ to get + popup buttons, subclass AjaxSelectAdmin
-
-        multi-inheritance is also possible if you have an Admin class you want to inherit from:
-
-        class PersonAdmin(YourAdminSuperclass, AjaxSelectAdmin):
-
-        this acts as a MixIn to add the relevant methods
     """
+    to get + popup buttons, subclass AjaxSelectAdmin.
+
+    multi-inheritance is also possible if you have an Admin class you want to inherit from:
+
+    class PersonAdmin(YourAdminSuperclass, AjaxSelectAdmin):
+
+    this acts as a MixIn to add the relevant methods
+    """
+
     # this shows a ForeignKey field
 
     # create an ajax form class using the factory function
     #                     model, fieldlist,   [form superclass]
-    form = make_ajax_form(Label, {'owner': 'person'})
+    form = make_ajax_form(Label, {"owner": "person"})
 
 
 class ReleaseInline(AjaxSelectAdminStackedInline):
     # Example of the stacked inline
 
     model = Release
-    form = make_ajax_form(Release, {
-        'group': 'group',
-        'label': 'label',
-        'songs': 'song',
-    })
+    form = make_ajax_form(
+        Release,
+        {
+            "group": "group",
+            "label": "label",
+            "songs": "song",
+        },
+    )
     extra = 1
 
 
 @admin.register(Group)
 class GroupAdmin(AjaxSelectAdmin):
     # this shows a ManyToMany field
-    form = make_ajax_form(Group, {'members': 'person'})
-    inlines = [
-        ReleaseInline
-    ]
+    form = make_ajax_form(Group, {"members": "person"})
+    inlines = [ReleaseInline]
 
 
 @admin.register(Song)
 class SongAdmin(AjaxSelectAdmin):
-    form = make_ajax_form(Song, {'group': 'group', 'title': 'cliche'})
+    form = make_ajax_form(Song, {"group": "group", "title": "cliche"})
     # django bug:
     # readonly_fields = ('group',)
     # django displays group twice if its listed as a readonly_field
@@ -70,11 +73,7 @@ class BookInline(AjaxSelectAdminTabularInline):
     # AjaxSelectAdminTabularInline enables the + add option
 
     model = Book
-    form = make_ajax_form(Book, {
-        'about_group': 'group',
-        'mentions_persons': 'person'
-    },
-                          show_help_text=True)
+    form = make_ajax_form(Book, {"about_group": "group", "mentions_persons": "person"}, show_help_text=True)
     extra = 2
 
     # to enable the + add option

@@ -8,6 +8,6 @@ from ajax_select import urls as ajax_select_urls
 admin.autodiscover()
 
 urlpatterns = [
-                  path('ajax_lookups/', include(ajax_select_urls)),
-                  path('admin/', admin.site.urls),
-              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path("ajax_lookups/", include(ajax_select_urls)),
+    path("admin/", admin.site.urls),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

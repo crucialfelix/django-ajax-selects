@@ -101,7 +101,8 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             try:
                 obj = objs[0]
             except IndexError as e:
-                raise Exception(f"{lookup} cannot find object:{value}") from e
+                msg = f"{lookup} cannot find object:{value}"
+                raise Exception(msg) from e
             current_repr = lookup.format_item_display(obj)
             initial = [current_repr, obj.pk]
 
@@ -117,9 +118,7 @@ class AutoCompleteSelectWidget(forms.widgets.TextInput):
             "func_slug": self.html_id.replace("-", ""),
             "add_link": self.add_link,
         }
-        context.update(
-            make_plugin_options(lookup, self.channel, self.plugin_options, initial)
-        )
+        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = [
             f"ajax_select/autocompleteselect_{self.channel}.html",
             "ajax_select/autocompleteselect.html",
@@ -142,12 +141,12 @@ class AutoCompleteSelectField(forms.fields.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
 
-        widget_kwargs = dict(
-            channel=channel,
-            help_text=kwargs.get("help_text", _(as_default_help)),
-            show_help_text=kwargs.pop("show_help_text", True),
-            plugin_options=kwargs.pop("plugin_options", {}),
-        )
+        widget_kwargs = {
+            "channel": channel,
+            "help_text": kwargs.get("help_text", _(as_default_help)),
+            "show_help_text": kwargs.pop("show_help_text", True),
+            "plugin_options": kwargs.pop("plugin_options", {}),
+        }
         widget_kwargs.update(kwargs.pop("widget_options", {}))
         kwargs["widget"] = AutoCompleteSelectWidget(**widget_kwargs)
         super().__init__(*args, **kwargs, max_length=255)
@@ -161,12 +160,12 @@ class AutoCompleteSelectField(forms.fields.CharField):
                 # or your channel is faulty
                 # out of the scope of this field to do anything more than
                 # tell you it doesn't exist
-                raise forms.ValidationError(f"{lookup} cannot find object: {value}")
+                msg = f"{lookup} cannot find object: {value}"
+                raise forms.ValidationError(msg)
             return objs[0]
-        else:
-            if self.required:
-                raise forms.ValidationError(self.error_messages["required"])
-            return None
+        if self.required:
+            raise forms.ValidationError(self.error_messages["required"])
+        return None
 
     def check_can_add(self, user, model):
         _check_can_add(self, user, model)
@@ -219,11 +218,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
         lookup = registry.get(self.channel)
 
         values = list(value)
-        objects = (
-            values
-            if all([isinstance(v, Model) for v in values])
-            else lookup.get_objects(values)
-        )
+        objects = values if all(isinstance(v, Model) for v in values) else lookup.get_objects(values)
 
         current_ids = pack_ids([obj.pk for obj in objects])
 
@@ -243,9 +238,7 @@ class AutoCompleteSelectMultipleWidget(forms.widgets.SelectMultiple):
             "func_slug": self.html_id.replace("-", ""),
             "add_link": self.add_link,
         }
-        context.update(
-            make_plugin_options(lookup, self.channel, self.plugin_options, initial)
-        )
+        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = [
             f"ajax_select/autocompleteselectmultiple_{self.channel}.html",
             "ajax_select/autocompleteselectmultiple.html",
@@ -377,9 +370,7 @@ class AutoCompleteWidget(forms.TextInput):
             "extra_attrs": mark_safe(flatatt(final_attrs)),
             "func_slug": self.html_id.replace("-", ""),
         }
-        context.update(
-            make_plugin_options(lookup, self.channel, self.plugin_options, initial)
-        )
+        context.update(make_plugin_options(lookup, self.channel, self.plugin_options, initial))
         templates = [
             f"ajax_select/autocomplete_{self.channel}.html",
             "ajax_select/autocomplete.html",
@@ -398,11 +389,11 @@ class AutoCompleteField(forms.CharField):
     def __init__(self, channel, *args, **kwargs):
         self.channel = channel
 
-        widget_kwargs = dict(
-            help_text=kwargs.get("help_text", _(as_default_help)),
-            show_help_text=kwargs.pop("show_help_text", True),
-            plugin_options=kwargs.pop("plugin_options", {}),
-        )
+        widget_kwargs = {
+            "help_text": kwargs.get("help_text", _(as_default_help)),
+            "show_help_text": kwargs.pop("show_help_text", True),
+            "plugin_options": kwargs.pop("plugin_options", {}),
+        }
         widget_kwargs.update(kwargs.pop("widget_options", {}))
         if "attrs" in kwargs:
             widget_kwargs["attrs"] = kwargs.pop("attrs")
@@ -446,9 +437,7 @@ def autoselect_fields_check_can_add(form, model, user):
     related_model.
     """
     for name, form_field in form.declared_fields.items():
-        if isinstance(
-            form_field, (AutoCompleteSelectMultipleField, AutoCompleteSelectField)
-        ):
+        if isinstance(form_field, (AutoCompleteSelectMultipleField, AutoCompleteSelectField)):
             db_field = model._meta.get_field(name)
             if hasattr(db_field, "remote_field"):
                 form_field.check_can_add(user, db_field.remote_field.model)
@@ -480,5 +469,4 @@ def pack_ids(ids):
     if ids:
         # |pk|pk| of current
         return "|" + "|".join(str(pk) for pk in ids) + "|"
-    else:
-        return "|"
+    return "|"

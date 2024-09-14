@@ -10,9 +10,10 @@ class AjaxSelectConfig(AppConfig):
     Your LookupClass subclass may register itself.
     """
 
-    name = 'ajax_select'
-    verbose_name = 'Ajax Selects'
+    name = "ajax_select"
+    verbose_name = "Ajax Selects"
 
     def ready(self):
         from ajax_select.registry import registry
+
         registry.load_channels()

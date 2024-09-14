@@ -5,97 +5,108 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Author',
+            name="Author",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='Book',
+            name="Book",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='Group',
+            name="Group",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text='Name of the group', max_length=200, unique=True)),
-                ('url', models.URLField(blank=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(help_text="Name of the group", max_length=200, unique=True)),
+                ("url", models.URLField(blank=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Label',
+            name="Label",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200, unique=True)),
-                ('url', models.URLField(blank=True)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=200, unique=True)),
+                ("url", models.URLField(blank=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Person',
+            name="Person",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(blank=True, max_length=100)),
-                ('email', models.EmailField(max_length=254)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(blank=True, max_length=100)),
+                ("email", models.EmailField(max_length=254)),
             ],
         ),
         migrations.CreateModel(
-            name='Release',
+            name="Release",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=100)),
-                ('catalog', models.CharField(blank=True, max_length=100)),
-                ('group', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='example.Group', verbose_name='\u0420\u0443\u0441\u0441\u043a\u0438\u0439 \u0442\u0435\u043a\u0441\u0442 (group)')),
-                ('label', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='example.Label')),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(max_length=100)),
+                ("catalog", models.CharField(blank=True, max_length=100)),
+                (
+                    "group",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="example.Group",
+                        verbose_name="\u0420\u0443\u0441\u0441\u043a\u0438\u0439 \u0442\u0435\u043a\u0441\u0442 (group)",
+                    ),
+                ),
+                ("label", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="example.Label")),
             ],
         ),
         migrations.CreateModel(
-            name='Song',
+            name="Song",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='example.Group')),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("title", models.CharField(max_length=200)),
+                ("group", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="example.Group")),
             ],
         ),
         migrations.AddField(
-            model_name='release',
-            name='songs',
-            field=models.ManyToManyField(blank=True, to='example.Song'),
+            model_name="release",
+            name="songs",
+            field=models.ManyToManyField(blank=True, to="example.Song"),
         ),
         migrations.AddField(
-            model_name='label',
-            name='owner',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='example.Person'),
+            model_name="label",
+            name="owner",
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="example.Person"
+            ),
         ),
         migrations.AddField(
-            model_name='group',
-            name='members',
-            field=models.ManyToManyField(blank=True, help_text='Enter text to search for and add each member of the group.', to='example.Person'),
+            model_name="group",
+            name="members",
+            field=models.ManyToManyField(
+                blank=True, help_text="Enter text to search for and add each member of the group.", to="example.Person"
+            ),
         ),
         migrations.AddField(
-            model_name='book',
-            name='about_group',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='example.Group'),
+            model_name="book",
+            name="about_group",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="example.Group"),
         ),
         migrations.AddField(
-            model_name='book',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='example.Author'),
+            model_name="book",
+            name="author",
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="example.Author"),
         ),
         migrations.AddField(
-            model_name='book',
-            name='mentions_persons',
-            field=models.ManyToManyField(help_text='Person lookup renders html in menu', to='example.Person'),
+            model_name="book",
+            name="mentions_persons",
+            field=models.ManyToManyField(help_text="Person lookup renders html in menu", to="example.Person"),
         ),
     ]

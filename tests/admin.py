@@ -18,9 +18,7 @@ class BookInline(AjaxSelectAdminTabularInline):
 
 @admin.register(Author)
 class AuthorAdmin(AjaxSelectAdmin):
-    inlines = [
-        BookInline
-    ]
+    inlines = [BookInline]
 
 
 @admin.register(Person)
