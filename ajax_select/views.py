@@ -7,7 +7,8 @@ from ajax_select import registry
 
 
 def ajax_lookup(request, channel):
-    """Load the named lookup channel and lookup matching models.
+    """
+    Load the named lookup channel and lookup matching models.
 
     GET or POST should contain 'term'
 
@@ -15,8 +16,8 @@ def ajax_lookup(request, channel):
         HttpResponse - JSON: `[{pk: value: match: repr:}, ...]`
     Raises:
         PermissionDenied - depending on the LookupChannel's implementation of check_auth
-    """
 
+    """
     # it should come in as GET unless global $.ajaxSetup({type:"POST"}) has been set
     # in which case we'll support POST
     if request.method == "GET":
@@ -33,11 +34,7 @@ def ajax_lookup(request, channel):
     if hasattr(lookup, "check_auth"):
         lookup.check_auth(request)
 
-    instances = (
-        lookup.get_query(query, request)
-        if len(query) >= getattr(lookup, "min_length", 1)
-        else []
-    )
+    instances = lookup.get_query(query, request) if len(query) >= getattr(lookup, "min_length", 1) else []
 
     results = json.dumps(
         [

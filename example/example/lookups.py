@@ -10,19 +10,19 @@ class PersonLookup(LookupChannel):
     model = Person
 
     def get_query(self, q, request):
-        return Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by('name')
+        return Person.objects.filter(Q(name__icontains=q) | Q(email__istartswith=q)).order_by("name")
 
     def get_result(self, obj):
-        """ result is the simple text that is the completion of what the person typed """
+        """Result is the simple text that is the completion of what the person typed."""
         return obj.name
 
     def format_match(self, obj):
-        """ (HTML) formatted item for display in the dropdown """
+        """(HTML) formatted item for display in the dropdown."""
         return f"{escape(obj.name)}<div><i>{escape(obj.email)}</i></div>"
         # return self.format_item_display(obj)
 
     def format_item_display(self, obj):
-        """ (HTML) formatted item for displaying item in the selected deck area """
+        """(HTML) formatted item for displaying item in the selected deck area."""
         return f"{escape(obj.name)}<div><i>{escape(obj.email)}</i></div>"
 
 
@@ -30,7 +30,7 @@ class GroupLookup(LookupChannel):
     model = Group
 
     def get_query(self, q, request):
-        return Group.objects.filter(name__icontains=q).order_by('name')
+        return Group.objects.filter(name__icontains=q).order_by("name")
 
     def get_result(self, obj):
         return str(obj)
@@ -42,10 +42,11 @@ class GroupLookup(LookupChannel):
         return f"{escape(obj.name)}<div><i>{escape(obj.url)}</i></div>"
 
     def can_add(self, user, model):
-        """ customize can_add by allowing anybody to add a Group.
-            the superclass implementation uses django's permissions system to check.
-            only those allowed to add will be offered a [+ add] popup link
-            """
+        """
+        customize can_add by allowing anybody to add a Group.
+        the superclass implementation uses django's permissions system to check.
+        only those allowed to add will be offered a [+ add] popup link.
+        """
         return True
 
 
@@ -53,7 +54,7 @@ class SongLookup(LookupChannel):
     model = Song
 
     def get_query(self, q, request):
-        return Song.objects.filter(title__icontains=q).select_related('group').order_by('title')
+        return Song.objects.filter(title__icontains=q).select_related("group").order_by("title")
 
     def get_result(self, obj):
         return str(obj.title)
@@ -66,12 +67,13 @@ class SongLookup(LookupChannel):
 
 
 # Here using decorator syntax rather than settings.AJAX_LOOKUP_CHANNELS
-@ajax_select.register('cliche')
+@ajax_select.register("cliche")
 class ClicheLookup(LookupChannel):
-    """ an autocomplete lookup does not need to search models
-        though the words here could also be stored in a model and
-        searched as in the lookups above
-        """
+    """
+    an autocomplete lookup does not need to search models
+    though the words here could also be stored in a model and
+    searched as in the lookups above.
+    """
 
     words = [
         "rain cats and dogs",
@@ -138,7 +140,8 @@ class ClicheLookup(LookupChannel):
         "A Cat has nine lives",
         "a cheshire-cat smile",
         "cat's pajamas",
-        "cat got your tongue?"]
+        "cat got your tongue?",
+    ]
 
     def get_query(self, q, request):
         return sorted([w for w in self.words if q in w])

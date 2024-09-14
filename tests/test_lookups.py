@@ -6,14 +6,9 @@ from tests.models import PersonWithTitle
 
 
 class TestLookups(TestCase):
-
     def test_get_objects(self):
-        user1 = User.objects.create(username='user1',
-                                    email='user1@example.com',
-                                    password='password')
-        user2 = User.objects.create(username='user2',
-                                    email='user2@example.com',
-                                    password='password')
+        user1 = User.objects.create(username="user1", email="user1@example.com", password="password")
+        user2 = User.objects.create(username="user2", email="user2@example.com", password="password")
         lookup = UserLookup()
         # deliberately asking for them backwards:
         users = lookup.get_objects([user2.id, user1.id])
@@ -25,10 +20,10 @@ class TestLookups(TestCase):
 
     def test_get_objects_inherited_model(self):
         """
-        Tests that get_objects works with inherited models
+        Tests that get_objects works with inherited models.
         """
-        one = PersonWithTitle.objects.create(name='one', title='The One')
-        two = PersonWithTitle.objects.create(name='two', title='The Other')
+        one = PersonWithTitle.objects.create(name="one", title="The One")
+        two = PersonWithTitle.objects.create(name="two", title="The Other")
         lookup = PersonWithTitleLookup()
         users = lookup.get_objects([one.id, two.id])
         self.assertEqual(len(users), 2)

@@ -4,7 +4,7 @@ from ajax_select.fields import autoselect_fields_check_can_add
 
 
 class AjaxSelectAdmin(admin.ModelAdmin):
-    """in order to get + popup functions subclass this or do the same hook inside of your get_form"""
+    """in order to get + popup functions subclass this or do the same hook inside of your get_form."""
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -20,13 +20,9 @@ class AjaxSelectAdminInlineFormsetMixin:
         return fs
 
 
-class AjaxSelectAdminTabularInline(
-    AjaxSelectAdminInlineFormsetMixin, admin.TabularInline
-):
+class AjaxSelectAdminTabularInline(AjaxSelectAdminInlineFormsetMixin, admin.TabularInline):
     pass
 
 
-class AjaxSelectAdminStackedInline(
-    AjaxSelectAdminInlineFormsetMixin, admin.StackedInline
-):
+class AjaxSelectAdminStackedInline(AjaxSelectAdminInlineFormsetMixin, admin.StackedInline):
     pass
