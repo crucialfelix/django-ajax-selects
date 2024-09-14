@@ -29,7 +29,7 @@ Django = ">=3.2"
 tox = "^4.11.4"
 sphinx = "^7.2.6"
 sphinx-rtd-theme = "^2.0.0"
-ruff = "^0.1.7"
+ruff = "^0.6.5"
 
 [tool.ruff]
 exclude = [
@@ -37,8 +37,9 @@ exclude = [
     "./example/AJAXSELECTS/bin/*",
     "./docs/*",
 ]
-ignore = []
 line-length = 120
+
+[tool.ruff.lint]
 select = [
     # pycodestyle
     "E",
@@ -56,7 +57,7 @@ select = [
     "W",
 ]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
 [build-system]
