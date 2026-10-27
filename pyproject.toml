@@ -6,18 +6,18 @@ authors = [{name = "Chris Sattinger", email = "crucialfelix@gmail.com"}]
 license = "MIT OR GPL-3.0-or-later"
 license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
   "Django>=5.2",
 ]
 classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.15",
   "Development Status :: 5 - Production/Stable",
   "Environment :: Web Environment",
   "Intended Audience :: Developers",
