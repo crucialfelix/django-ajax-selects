@@ -2,14 +2,17 @@
 
 ## [Unreleased]
 
-Dropped support for older versions of Django.
+Dropped support for older versions of Django and Python.
 
 Supported:
 
 - Django >= 5.2 (tested with 5.2 LTS, 6.0, 6.1)
-- Python >= 3.10 (Django 6.x requires Python >= 3.12)
+- Python >= 3.11 (Django 6.x requires Python >= 3.12)
 
 Updated development dependencies to resolve security advisories.
+
+Releases are now published to PyPI with trusted publishing, and the publish
+workflow refuses to run if the release tag does not match the package version.
 
 ## [2.0.0]
 
