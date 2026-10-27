@@ -1,5 +1,16 @@
 # Change Log
 
+## [Unreleased]
+
+Dropped support for older versions of Django.
+
+Supported:
+
+- Django >= 5.2 (tested with 5.2 LTS, 6.0, 6.1)
+- Python >= 3.10 (Django 6.x requires Python >= 3.12)
+
+Updated development dependencies to resolve security advisories.
+
 ## [2.0.0]
 
 Dropped support for older versions of Django and Python.
