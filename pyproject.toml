@@ -11,6 +11,11 @@ packages = [{include = "ajax_select"}]
 classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Development Status :: 5 - Production/Stable",
   "Environment :: Web Environment",
   "Intended Audience :: Developers",
@@ -19,17 +24,20 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Software Development :: User Interfaces",
   "Framework :: Django",
+  "Framework :: Django :: 5.2",
+  "Framework :: Django :: 6.0",
+  "Framework :: Django :: 6.1",
 ]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-Django = ">=3.2"
+Django = ">=5.2"
 
 [tool.poetry.group.dev.dependencies]
-tox = "^4.11.4"
-sphinx = "^7.2.6"
-sphinx-rtd-theme = "^2.0.0"
-ruff = "^0.6.5"
+tox = "^4.30"
+sphinx = "^8.1"
+sphinx-rtd-theme = "^3.0"
+ruff = "^0.17"
 
 [tool.ruff]
 exclude = [
@@ -107,6 +115,7 @@ ignore = [
     "ARG001",  #
     "ARG002", # unused argument
     "COM812",
+    "CPY001", # missing copyright notice
     "D100", # missing docstring in public module
     "D101", # missing docstring in public class
     "D102", # public method
@@ -132,6 +141,7 @@ ignore = [
     "FIX002",  #
     "ISC001",
     "PGH004",  #
+    "PLC0415", # import outside top-level (lazy imports avoid app registry / circular imports)
     "PT009", # should use regular assert in tests
     "PTH100",  #
     "PTH118",  #
